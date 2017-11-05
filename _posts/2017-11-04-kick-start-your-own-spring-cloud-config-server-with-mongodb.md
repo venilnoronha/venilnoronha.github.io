@@ -87,8 +87,8 @@ We can now add configuration documents to MongoDB and access it via the REST API
       "profile": "prod",
       "source": {
         "user": {
-          "max-connections": 1,
-          "timeout-ms": 3600
+          "maxConnections": NumberInt(8),
+          "timeoutMs": NumberInt(3600)
         }
       }
     });
@@ -96,9 +96,9 @@ We can now add configuration documents to MongoDB and access it via the REST API
 
 2\. Access it by invoking `http://localhost:8080/master/gateway-prod.properties`:
 
-```
-    user.max-connections: 1.0
-    user.timeout-ms: 3600.0
+```properties
+    user.maxConnections: 8
+    user.timeoutMs: 3600
 ```
 
 Spring Cloud Config Client-backed components can be configured to automatically load configuration from MongoDB by leveraging Spring Cloud Config Server MongoDB. See [here](https://github.com/spring-cloud/spring-cloud-config/tree/master/spring-cloud-config-sample) for an example!
