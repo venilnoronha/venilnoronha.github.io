@@ -4,7 +4,7 @@ email: hello@venilnoronha.com
 description: A blog by Venil Noronha
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://venilnoronha.com" # the base hostname & protocol for your site
-google_analytics: "UA-XXXXXXXX-X"
+google_analytics: "UA-109280867-1"
 
 # User Settings
 username: Venil Noronha
