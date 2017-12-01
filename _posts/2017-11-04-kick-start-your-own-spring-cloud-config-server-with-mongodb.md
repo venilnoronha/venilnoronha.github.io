@@ -4,7 +4,7 @@ title: "Kick start your own Spring Cloud Config Server with MongoDB"
 date: 2017-11-04 10:38:00
 image: '/assets/img/2017-11-04-kick-start-your-own-spring-cloud-config-server-with-mongodb/banner.jpg'
 description: Learn how to start your own Spring Cloud Config Server instance backed with MongoDB.
-category: 'open source'
+category: 'distributed systems'
 tags:
 - open source
 - software
