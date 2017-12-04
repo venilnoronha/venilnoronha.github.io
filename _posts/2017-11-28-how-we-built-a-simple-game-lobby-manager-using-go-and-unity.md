@@ -95,7 +95,7 @@ To solve the lobby shutdown problem, we put together the following algorithm. Th
 
 1. The Load Balancer Informer periodically sends an HTTP `PUT /lobby` request along with information about the Headless Server's `port` and number of players connected to it.
 2. The Load Balancer updates its in-memory lobby cache with the information it receives from the Load Balancer Informer.
-3. A reaper [goroutine](https://gobyexample.com/goroutines) periodically checks this cache and identifies process that are ready to be reaped.
+3. A `reaper` [goroutine](https://gobyexample.com/goroutines) periodically checks this cache and identifies processes that are ready to be reaped.
 4. The reaper goroutine then sends a `SIGKILL` signal and safely terminates the Headless Server process.
 
 Very briefly, the reaping logic looks like the following.
