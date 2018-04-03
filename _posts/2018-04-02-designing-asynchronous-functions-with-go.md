@@ -3,14 +3,14 @@ layout: post
 title: "Designing Asynchronous Functions With Go"
 date: 2018-04-02 20:34:00
 image: '/assets/img/2018-04-02-designing-asynchronous-functions-with-go/banner.jpg'
-description: A tutorial about designing asynchronous functions in Golang.
+description: A tutorial on asynchronous function design in Golang.
 category: 'distributed systems'
 tags:
 - software
 - design
 - golang
 twitter_text: Designing Asynchronous Functions With Go.
-introduction: A tutorial about designing asynchronous functions in Golang.
+introduction: A tutorial on asynchronous function design in Golang.
 ---
 
 Who doesn't love fully controllable asynchronous APIs? This post is about crafting asynchronous functions using Golang's [Context](https://godoc.org/context), [Channels](https://gobyexample.com/channels), and [Goroutines](https://gobyexample.com/goroutines).
@@ -20,7 +20,7 @@ Who doesn't love fully controllable asynchronous APIs? This post is about crafti
 For the purpose of this post, let's consider a user who is searching for a few flights on a flight search engine. The user has a complex query, and therefore, must be handled at two levels:
 
 1\. The search engine must query third-party APIs to obtain broad flight listings.<br>
-2\. The search engine then has to apply complex filters and stream data to the user.
+2\. The search engine then has to apply complex filters and stream flights to the user.
 
 ## The Design
 
@@ -117,7 +117,7 @@ func streamFlights(q ComplexQuery, numFlights int) {
 }
 ```
 
-The `streamFlights` function calls `AsyncListFlights` to start the third-party querying. It then spawns a few worker goroutines, which use `sync.WaitGroup` to synchronize themselves when finishing. Each worker listens to `flightsChan` and `errorsChan` channels, and return when the channels are closed. If an `error` other than `context.Canceled` is received, it is logged. If a `Flight` instance is received, it is further matched with the `ComplexQuery` and published via `publishFlightToUser` if it does match. Once published, the `numPublished` counter is incremented atomically. The `Context` is canceled when `numPublished` equals the desired `numFlights`. And, once the `Context` is canceled, no more third-party API calls are made by `asyncListFlights`, and it exits after closing the channels. On encoutering closed channels, all goroutines in `streamFlights` exit, and `wg.Wait()` resumes.
+The `streamFlights` function calls `AsyncListFlights` to start the third-party querying. It then spawns a few worker goroutines, which use `sync.WaitGroup` to synchronize themselves in `wg.Wait()` when finishing. Each worker listens to `flightsChan` and `errorsChan` channels, and exit when these channels are closed. If a `Flight` instance is received, it is further matched with the `ComplexQuery` and published via `publishFlightToUser` if it does match. Once published, the `numPublished` counter is incremented atomically, and once it equals the desired `numFlights`, the `Context` is canceled. Once the `Context` is canceled, no more third-party API calls are made by `asyncListFlights`, and it exits after closing the channels, which, in turn, causes the workers to stop.
 
 And, there you have it - fully controllable asynchronous functions in Golang.
 
