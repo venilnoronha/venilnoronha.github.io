@@ -2,35 +2,37 @@
 markdown: kramdown
 highlighter: rouge
 paginate: 100 # it will paginate after this number
-language: 'en-uk'
+language: 'en-us'
 
 # edit baseurl to simply '/' if using as your personal page (instead of a project page)
-baseurl: /jasper2/
+baseurl: '/'
 
 # Website info
-title: Ghost
-description: The professional publishing platform
+title: Venil Noronha
+description: Distributed systems, software design, and more...
 cover: assets/images/blog-cover.jpg
-logo: assets/images/blog-icon.png
+logo: False # assets/images/blog-icon.png
 logo_dark: assets/images/favicon.png
 favicon: assets/images/favicon.png
-production_url: https://jekyller.github.io/jasper2/
-source_url: https://github.com/jekyller/jasper2/
+url: https://venilnoronha.io
+production_url: https://venilnoronha.io/
+source_url: https://github.com/venilnoronha/venilnoronha.github.io/
 
 # Social info
 navigation: True # show the navbar links
-subscribers: True # you need to connect an external service for this to work,
+subscribers: False # you need to connect an external service for this to work,
 # if 'True' the submit button is disabled for now, but you can change that
 # by editing `_includes/subscribe-form.html`
-twitter: tryghost # replace by your username
-facebook: ghost # replace by your username
+github: venilnoronha
+twitter: venilnoronha
+facebook: False
 
 # Disqus
-disqus: False
-disqus_shortname: jekyller # replace with your disqus username
+disqus: True
+disqus_shortname: venilnoronha-io
 
 # Google Analytics
-google_analytics: UA-69281367-1 # replace with your GA tracking identifier
+google_analytics: UA-109280867-1
 
 # Permalinks
 permalink: /:title
@@ -66,13 +68,13 @@ feed:
 # or "master" otherwise
 safe: False
 lsi: False
-username: jekyller
-repo: jasper2
-branch: master
+username: venilnoronha
+repo: venilnoronha.github.io
+branch: source
 relative_source: ../jasper2/
 destination: ../jasper2-pages/
-production_url:  https://jekyller.github.io/jasper2/
-source_url:  https://github.com/jekyller/jasper2/
+production_url: https://venilnoronha.io/
+source_url: https://github.com/venilnoronha/venilnoronha.github.io/
 
 exclude:
   - assets/css

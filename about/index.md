@@ -3,15 +3,30 @@ layout: page
 current: about
 title: About
 navigation: true
-logo: 'assets/images/ghost.png'
+logo: 'assets/images/venilnoronha.jpg'
 class: page-template
 subclass: 'post page'
 ---
+<img class="author-profile-image" src="/assets/images/venilnoronha.jpg" alt="Venil Noronha" style="width: 300px; height: 300px;" />
 
-Ghost is professional publishing platform designed for modern journalism. This is a demo site of a basic Ghost install to give you a general sense of what a new Ghost site looks like when set up for the first time.
+I'm a Software Developer with over 4 years of industry experience in building
+cloud products. I currently work with the Open Source Technology Center at
+VMware, Inc. where I primarily contribute to upstream projects like
+[Istio](https://github.com/istio/istio) and [Envoy Proxy](https://github.com/envoyproxy/envoy).
+Previously, I doubly interned with VMware, Inc. and developed software for a
+Microsoft-backed Big Data startup in Bombay (Mumbai) named [Germin8](https://germin8.com).
 
-> If you'd like to set up a site like this for yourself, head over to [Ghost.org](https://ghost.org/) and start a free 14 day trial to give Ghost a try!
+I hold a Master's degree in Computer Science from the University of Southern
+California, and a Bachelor's degree in Information Technology from the University
+of Mumbai. I love contributing to eminent Open Source projects in my free time,
+and, so far, I've contributed to 25+ projects (like Kubernetes, Spring Boot,
+Spring Kafka, RabbitMQ, etc.) on [GitHub](https://github.com/venilnoronha). I'm
+a member of [Kubernetes](https://github.com/kubernetes), [Istio](https://github.com/istio)
+and [Envoy Proxy](https://github.com/envoyproxy). I've also donated one of my
+projects, [Spring Cloud Config Server MongoDB](https://github.com/spring-cloud-incubator/spring-cloud-config-server-mongodb),
+to Pivotal's Spring Cloud Incubator.
 
-If you're a developer: Ghost is a completely open source (MIT) Node.js application built on a JSON API with an Ember.js admin client. It works with MySQL and SQLite, and is publicly available [on Github](https://github.com/TryGhost/ghost).
-
-If you need help with using Ghost, you'll find a ton of useful articles on [our knowledgebase](https://help.ghost.org/), as well as extensive [developer documentation](https://docs.ghost.org/).
+I'm very passionate about Distributed Systems, Cloud Computing, Microservices,
+Scalability, Fault Tolerance, High Availability and Software Architecture. I'm
+also greatly enthusiastic about Open Source Software, so if you have a cool idea
+and are looking for someone to collaborate with, feel free to hit me up.

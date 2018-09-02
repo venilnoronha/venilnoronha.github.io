@@ -14,3 +14,7 @@ getting-started:
   name: getting-started
   description: False
   cover: False
+distributed-systems:
+  name: distributed-systems
+  description: False
+  cover: assets/images/distributed-systems.jpg
