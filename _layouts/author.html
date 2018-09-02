@@ -37,13 +37,16 @@ logo: 'assets/images/ghost.png'
                         <a class="social-link social-link-wb" href="{{ author[1].url_full }}" target="_blank" rel="noopener">{% include website.html %}</a>
                     {% endif %}
                     {% if author[1].github %}
-                        <a class="social-link social-link" href="https://github.com/{{ author[1].github }}" target="_blank" rel="noopener">{% include github.html %}</a>
+                        <a class="social-link" href="https://github.com/{{ author[1].github }}" target="_blank" rel="noopener">{% include github.html %}</a>
                     {% endif %}
                     {% if author[1].twitter %}
                         <a class="social-link social-link-tw" href="https://twitter.com/{{ author[1].twitter }}" target="_blank" rel="noopener">{% include twitter.html %}</a>
                     {% endif %}
                     {% if author[1].facebook %}
                         <a class="social-link social-link-fb" href="https://facebook.com/{{ author[1].facebook }}" target="_blank" rel="noopener">{% include facebook.html %}</a>
+                    {% endif %}
+                    {% if author[1].instagram %}
+                        <a class="social-link" href="https://instagram.com/{{ author[1].instagram }}" target="_blank" rel="noopener">{% include instagram.html %}</a>
                     {% endif %}
                     <a class="social-link social-link-rss" href="https://feedly.com/i/subscription/feed/{{ site.url }}{{ site.baseurl }}/feed.xml" target="_blank" rel="noopener">{% include rss.html %}</a>
                 </div>

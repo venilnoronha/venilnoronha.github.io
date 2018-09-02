@@ -26,6 +26,7 @@ subscribers: False # you need to connect an external service for this to work,
 github: venilnoronha
 twitter: venilnoronha
 facebook: False
+instagram: venilnoronha
 
 # Disqus
 disqus: True
