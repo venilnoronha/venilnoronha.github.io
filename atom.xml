@@ -1,28 +1,55 @@
----
-layout: null
----
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>{{ site.name | xml_escape }} - Articles</title>
-    <description>{% if site.description %}{{ site.description | xml_escape }}{% endif %}</description>
+    <title> - Articles</title>
+    <description>Distributed systems, software design, and more...</description>
     <link>
-    {{ site.url }}</link>
-    {% for post in site.posts %}
-      {% unless post.link %}
+    https://venilnoronha.io</link>
+    
+      
       <item>
-        <title>{{ post.title | xml_escape }}</title>
-        {% if post.excerpt %}
-          <description>{{ post.excerpt | xml_escape }}</description>
-        {% else %}
-          <description>{{ post.content | xml_escape }}</description>
-        {% endif %}
-        <pubDate>{{ post.date | date: "%a, %d %b %Y %H:%M:%S %z" }}</pubDate>
+        <title>Designing Asynchronous Functions With Go</title>
+        
+          <description>&lt;p&gt;Who doesn’t love fully controllable asynchronous APIs? This post is about crafting asynchronous functions using Golang’s &lt;a href=&quot;https://godoc.org/context&quot;&gt;Context&lt;/a&gt;, &lt;a href=&quot;https://gobyexample.com/channels&quot;&gt;Channels&lt;/a&gt;, and &lt;a href=&quot;https://gobyexample.com/goroutines&quot;&gt;Goroutines&lt;/a&gt;.&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Mon, 02 Apr 2018 20:34:00 +0000</pubDate>
         <link>
-        {{ site.url }}{{ post.url }}</link>
-        <guid isPermaLink="true">{{ site.url }}{{ post.url }}</guid>
+        https://venilnoronha.io/designing-asynchronous-functions-with-go</link>
+        <guid isPermaLink="true">https://venilnoronha.io/designing-asynchronous-functions-with-go</guid>
       </item>
-      {% endunless %}
-    {% endfor %}
+      
+    
+      
+      <item>
+        <title>How we built a simple Game Lobby Manager using Go and Unity</title>
+        
+          <description>&lt;p&gt;Lobby managers are one of the most critical components of today’s online gaming infrastructure. In this post, I elaborate my experience of building a simple lobby manager using Golang and Unity.&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Tue, 28 Nov 2017 16:51:00 +0000</pubDate>
+        <link>
+        https://venilnoronha.io/how-we-built-a-simple-game-lobby-manager-using-go-and-unity</link>
+        <guid isPermaLink="true">https://venilnoronha.io/how-we-built-a-simple-game-lobby-manager-using-go-and-unity</guid>
+      </item>
+      
+    
+      
+      <item>
+        <title>Kick start your own Spring Cloud Config Server with MongoDB</title>
+        
+          <description>&lt;p&gt;Spring Cloud Config Server MongoDB enables the seamless integration of the regular Spring Cloud Config Server with MongoDB to manage external properties for applications across all environments.&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Sat, 04 Nov 2017 10:38:00 +0000</pubDate>
+        <link>
+        https://venilnoronha.io/kick-start-your-own-spring-cloud-config-server-with-mongodb</link>
+        <guid isPermaLink="true">https://venilnoronha.io/kick-start-your-own-spring-cloud-config-server-with-mongodb</guid>
+      </item>
+      
+    
   </channel>
 </rss>
