@@ -483,4 +483,4 @@ h6 {
 
 /* Venil's Styles */
 
-div.highlighter-rouge { min-width: 100%; }
+div.highlighter-rouge { min-width: 100%; max-width: 100%; }
