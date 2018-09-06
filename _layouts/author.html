@@ -48,6 +48,9 @@ logo: 'assets/images/ghost.png'
                     {% if author[1].instagram %}
                         <a class="social-link" href="https://instagram.com/{{ author[1].instagram }}" target="_blank" rel="noopener">{% include instagram.html %}</a>
                     {% endif %}
+                    {% if author[1].linkedin %}
+                        <a class="social-link" href="https://linkedin.com/in/{{ author[1].linkedin }}" target="_blank" rel="noopener">{% include linkedin.html %}</a>
+                    {% endif %}
 		    <a class="social-link social-link-rss" href="{{ site.url }}{{ site.baseurl }}feed.xml" target="_blank" rel="noopener">{% include rss.html %}</a>
                 </div>
             </div>

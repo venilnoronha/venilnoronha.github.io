@@ -25,6 +25,9 @@
             {% if site.instagram %}
                 <a class="social-link" href="https://instagram.com/{{ site.instagram }}" target="_blank" rel="noopener">{% include instagram.html %}</a>
             {% endif %}
+            {% if site.linkedin %}
+                <a class="social-link" href="https://linkedin.com/in/{{ site.linkedin }}" target="_blank" rel="noopener">{% include linkedin.html %}</a>
+            {% endif %}
         </div>
         {% if site.subscribers %}
             <a class="subscribe-button" href="#subscribe">Subscribe</a>
