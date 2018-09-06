@@ -230,7 +230,7 @@ pair for the Server certificate.
 
 ```diff
 -	// Listen to HTTPS connections on port 8443 and wait
--	log.Fatal(http.ListenAndServeTLS(":8443", "server.cert.pem", "server.key.pem", nil))
+-	log.Fatal(http.ListenAndServeTLS(":8443", "cert.pem", "key.pem", nil))
 
 +	// Create a CA certificate pool and add cert.pem to it
 +	caCert, err := ioutil.ReadFile("cert.pem")
