@@ -380,7 +380,7 @@ serve as the authority to validate Client certificates. We also use the same key
 pair for the Server certificate.</p>
 
 <div class="language-diff highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gd">-	// Listen to HTTPS connections on port 8443 and wait
--	log.Fatal(http.ListenAndServeTLS(":8443", "server.cert.pem", "server.key.pem", nil))
+-	log.Fatal(http.ListenAndServeTLS(":8443", "cert.pem", "key.pem", nil))
 </span>
 <span class="gi">+	// Create a CA certificate pool and add cert.pem to it
 +	caCert, err := ioutil.ReadFile("cert.pem")
