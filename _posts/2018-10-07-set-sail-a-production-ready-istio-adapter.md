@@ -217,7 +217,7 @@ annotations:
 
 This tells the Kubernetes scheduler to not inject the Istio Proxy sidecar if automatic injection is in place. We do that because we don't really need a Proxy in front of our Adapter. Also, the second annotation marks this pod as _critical_ for the system.
 
-We also create a transient volume named `tranient-storage` which is used for storing the Adapter output i.e. the `out.txt` file. The following snippet from the above configuration enables us to do that.
+We also create a transient volume named `transient-storage` which is used for storing the Adapter output i.e. the `out.txt` file. The following snippet from the above configuration enables us to do that.
 
 ```yaml
     volumeMounts:
