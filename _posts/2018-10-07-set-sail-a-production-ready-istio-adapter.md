@@ -13,6 +13,8 @@ author: venilnoronha
 
 So, you've walked through the Istio Mixer Adapter [guide](https://github.com/istio/istio/wiki/Mixer-Out-Of-Process-Adapter-Dev-Guide) and want to now publish your own **amazing** adapter? This post will run you through the process of setting sail your own adapter on the seas of production.
 
+<img src="assets/images/2018-10-07-set-sail-a-production-ready-istio-adapter/istio-logo.svg" alt="Istio" style="width: 150px;" />
+
 ## Introduction
 
 Depending on your knowledge of [Go](https://golang.org/), [Protobufs](https://developers.google.com/protocol-buffers/), [gRPC](https://grpc.io/), [Istio](https://istio.io/), [Docker](https://www.docker.com/) and [Kubernetes](https://kubernetes.io/), you may find the process of publishing an Istio Mixer Adapter from being easy to tasking. This post assumes that you have some experience with these technologies, and that you've been able to complete at least one of the walk-throughs from the Istio Wiki.
