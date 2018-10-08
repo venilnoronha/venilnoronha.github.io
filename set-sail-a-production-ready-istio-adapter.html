@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Document Settings -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Base Meta -->
+    <!-- dynamically fixing the title for tag/author pages -->
+
+
+
+    <title>Set sail a production-ready Istio Adapter</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Styles'n'Scripts -->
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.edited.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/syntax.css" />
+    <!-- highlight.js -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+    <style>.hljs { background: none; }</style>
+
+    <!-- This tag outputs SEO meta+structured data and other important settings -->
+    <meta name="description" content="Distributed systems, software design, and more..." />
+    <link rel="shortcut icon" href="https://venilnoronha.io/assets/images/favicon.png" type="image/png" />
+    <link rel="canonical" href="https://venilnoronha.io/set-sail-a-production-ready-istio-adapter" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+
+     <!--title below is coming from _includes/dynamic_title-->
+    <meta property="og:site_name" content="Venil Noronha" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Set sail a production-ready Istio Adapter" />
+    <meta property="og:description" content="So, you’ve walked through the Istio Mixer Adapter guide and want to now publish your own amazing adapter? This post will run you through the process of setting sail your own adapter on the seas of production. Introduction Depending on your knowledge of Go, Protobufs, gRPC, Istio, Docker and Kubernetes," />
+    <meta property="og:url" content="https://venilnoronha.io/set-sail-a-production-ready-istio-adapter" />
+    <meta property="og:image" content="https://venilnoronha.io/assets/images/2018-10-07-set-sail-a-production-ready-istio-adapter/banner.jpg" />
+    <meta property="article:publisher" content="https://www.facebook.com/false" />
+    <meta property="article:author" content="https://www.facebook.com/false" />
+    <meta property="article:published_time" content="2018-10-07T04:49:00-07:00" />
+    <meta property="article:modified_time" content="2018-10-07T04:49:00-07:00" />
+    <meta property="article:tag" content="Distributed Systems" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Set sail a production-ready Istio Adapter" />
+    <meta name="twitter:description" content="So, you’ve walked through the Istio Mixer Adapter guide and want to now publish your own amazing adapter? This post will run you through the process of setting sail your own adapter on the seas of production. Introduction Depending on your knowledge of Go, Protobufs, gRPC, Istio, Docker and Kubernetes," />
+    <meta name="twitter:url" content="https://venilnoronha.io/" />
+    <meta name="twitter:image" content="https://venilnoronha.io/assets/images/2018-10-07-set-sail-a-production-ready-istio-adapter/banner.jpg" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Venil Noronha" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="Distributed Systems" />
+    <meta name="twitter:site" content="@venilnoronha" />
+    <meta name="twitter:creator" content="@venilnoronha" />
+    <meta property="og:image:width" content="1400" />
+    <meta property="og:image:height" content="933" />
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Website",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Venil Noronha",
+        "logo": "https://venilnoronha.io/false"
+    },
+    "url": "https://venilnoronha.io/set-sail-a-production-ready-istio-adapter",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://venilnoronha.io/assets/images/2018-10-07-set-sail-a-production-ready-istio-adapter/banner.jpg",
+        "width": 2000,
+        "height": 666
+    },
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://venilnoronha.io/set-sail-a-production-ready-istio-adapter"
+    },
+    "description": "So, you’ve walked through the Istio Mixer Adapter guide and want to now publish your own amazing adapter? This post will run you through the process of setting sail your own adapter on the seas of production. Introduction Depending on your knowledge of Go, Protobufs, gRPC, Istio, Docker and Kubernetes,"
+}
+    </script>
+
+    <!-- <script type="text/javascript" src="https://demo.ghost.io/public/ghost-sdk.min.js?v=724281a32e"></script>
+    <script type="text/javascript">
+    ghost.init({
+    	clientId: "ghost-frontend",
+    	clientSecret: "f84a07a72b17"
+    });
+    </script> -->
+
+    <meta name="generator" content="Jekyll 3.6.2" />
+    <link rel="alternate" type="application/rss+xml" title="Set sail a production-ready Istio Adapter" href="/feed.xml" />
+
+
+</head>
+<body class="post-template">
+
+    <div class="site-wrapper">
+        <!-- All the main content gets inserted here, index.hbs, post.hbs, etc -->
+        <!-- default -->
+
+<!-- The tag above means: insert everything in this file
+into the {body} of the default.hbs template -->
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+        
+            
+                <a class="site-nav-logo" href="https://venilnoronha.io/">Venil Noronha</a>
+            
+        
+        
+            <ul class="nav" role="menu">
+    <li class="nav-home" role="menuitem"><a href="/">Home</a></li>
+    <li class="nav-about" role="menuitem"><a href="/about/">About</a></li>
+    <li class="nav-feed" role="menuitem"><a href="https://venilnoronha.io/feed.xml">Feed</a></li>
+</ul>
+
+        
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+            
+                <a class="social-link" href="https://github.com/venilnoronha" target="_blank" rel="noopener"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M896 128q209 0 385.5 103t279.5 279.5 103 385.5q0 251-146.5 451.5t-378.5 277.5q-27 5-40-7t-13-30q0-3 .5-76.5t.5-134.5q0-97-52-142 57-6 102.5-18t94-39 81-66.5 53-105 20.5-150.5q0-119-79-206 37-91-8-204-28-9-81 11t-92 44l-38 24q-93-26-192-26t-192 26q-16-11-42.5-27t-83.5-38.5-85-13.5q-45 113-8 204-79 87-79 206 0 85 20.5 150t52.5 105 80.5 67 94 39 102.5 18q-39 36-49 103-21 10-45 15t-57 5-65.5-21.5-55.5-62.5q-19-32-48.5-52t-49.5-24l-20-3q-21 0-29 4.5t-5 11.5 9 14 13 12l7 5q22 10 43.5 38t31.5 51l10 23q13 38 44 61.5t67 30 69.5 7 55.5-3.5l23-4q0 38 .5 88.5t.5 54.5q0 18-13 30t-40 7q-232-77-378.5-277.5t-146.5-451.5q0-209 103-385.5t279.5-279.5 385.5-103zm-477 1103q3-7-7-12-10-3-13 2-3 7 7 12 9 6 13-2zm31 34q7-5-2-16-10-9-16-3-7 5 2 16 10 10 16 3zm30 45q9-7 0-19-8-13-17-6-9 5 0 18t17 7zm42 42q8-8-4-19-12-12-20-3-9 8 4 19 12 12 20 3zm57 25q3-11-13-16-15-4-19 7t13 15q15 6 19-6zm63 5q0-13-17-11-16 0-16 11 0 13 17 11 16 0 16-11zm58-10q-2-11-18-9-16 3-14 15t18 8 14-14z"/></svg>
+</a>
+            
+            
+            
+                <a class="social-link social-link-tw" href="https://twitter.com/venilnoronha" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+</a>
+            
+            
+                <a class="social-link" href="https://instagram.com/venilnoronha" target="_blank" rel="noopener"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1152 896q0-106-75-181t-181-75-181 75-75 181 75 181 181 75 181-75 75-181zm138 0q0 164-115 279t-279 115-279-115-115-279 115-279 279-115 279 115 115 279zm108-410q0 38-27 65t-65 27-65-27-27-65 27-65 65-27 65 27 27 65zm-502-220q-7 0-76.5-.5t-105.5 0-96.5 3-103 10-71.5 18.5q-50 20-88 58t-58 88q-11 29-18.5 71.5t-10 103-3 96.5 0 105.5.5 76.5-.5 76.5 0 105.5 3 96.5 10 103 18.5 71.5q20 50 58 88t88 58q29 11 71.5 18.5t103 10 96.5 3 105.5 0 76.5-.5 76.5.5 105.5 0 96.5-3 103-10 71.5-18.5q50-20 88-58t58-88q11-29 18.5-71.5t10-103 3-96.5 0-105.5-.5-76.5.5-76.5 0-105.5-3-96.5-10-103-18.5-71.5q-20-50-58-88t-88-58q-29-11-71.5-18.5t-103-10-96.5-3-105.5 0-76.5.5zm768 630q0 229-5 317-10 208-124 322t-322 124q-88 5-317 5t-317-5q-208-10-322-124t-124-322q-5-88-5-317t5-317q10-208 124-322t322-124q88-5 317-5t317 5q208 10 322 124t124 322q5 88 5 317z"/></svg>
+</a>
+            
+            
+                <a class="social-link" href="https://linkedin.com/in/venilnoronha" target="_blank" rel="noopener"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M365 1414h231v-694h-231v694zm246-908q-1-52-36-86t-93-34-94.5 34-36.5 86q0 51 35.5 85.5t92.5 34.5h1q59 0 95-34.5t36-85.5zm585 908h231v-398q0-154-73-233t-193-79q-136 0-209 117h2v-101h-231q3 66 0 694h231v-388q0-38 7-56 15-35 45-59.5t74-24.5q116 0 116 157v371zm468-998v960q0 119-84.5 203.5t-203.5 84.5h-960q-119 0-203.5-84.5t-84.5-203.5v-960q0-119 84.5-203.5t203.5-84.5h960q119 0 203.5 84.5t84.5 203.5z"/></svg>
+</a>
+            
+        </div>
+        
+    </div>
+</nav>
+
+    </div>
+</header>
+
+<!-- Everything inside the #post tags pulls data from the post -->
+<!-- #post -->
+
+<main id="site-main" class="site-main outer" role="main">
+    <div class="inner">
+
+        <article class="post-full post tag-distributed-systems ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime=" 7 October 2018"> 7 October 2018</time>
+                    
+                        <span class="date-divider">/</span>
+                        
+                            
+                               <a href='/tag/distributed-systems/'>DISTRIBUTED SYSTEMS</a>
+                            
+                        
+                    
+                </section>
+                <h1 class="post-full-title">Set sail a production-ready Istio Adapter</h1>
+            </header>
+
+            
+            <figure class="post-full-image" style="background-image: url(/assets/images/2018-10-07-set-sail-a-production-ready-istio-adapter/banner.jpg)">
+            </figure>
+            
+
+            <section class="post-full-content">
+                <div class="kg-card-markdown">
+                    <p>So, you’ve walked through the Istio Mixer Adapter <a href="https://github.com/istio/istio/wiki/Mixer-Out-Of-Process-Adapter-Dev-Guide">guide</a> and want to now publish your own <strong>amazing</strong> adapter? This post will run you through the process of setting sail your own adapter on the seas of production.</p>
+
+<h2 id="introduction">Introduction</h2>
+
+<p>Depending on your knowledge of <a href="https://golang.org/">Go</a>, <a href="https://developers.google.com/protocol-buffers/">Protobufs</a>, <a href="https://grpc.io/">gRPC</a>, <a href="https://istio.io/">Istio</a>, <a href="https://www.docker.com/">Docker</a> and <a href="https://kubernetes.io/">Kubernetes</a>, you may find the process of publishing an Istio Mixer Adapter from being easy to tasking. This post assumes that you have some experience with these technologies, and that you’ve been able to complete at least one of the walk-throughs from the Istio Wiki.</p>
+
+<p>For the purpose of this post, I’d be talking about building an Istio Mixer Adapter that consumes <a href="https://preliminary.istio.io/docs/reference/config/policy-and-telemetry/templates/metric/">Metrics</a>. Here’s a run-down of the steps we’ll be looking at:</p>
+
+<ol>
+  <li>The Istio Mixer - Adapter Interface Architecture</li>
+  <li>Creating An Out-Of-Tree Mixer Adapter</li>
+  <li>Publishing The Adapter To Docker Hub</li>
+  <li>Writing Kubernetes Config For The Adapter</li>
+  <li>Deploying And Testing The Adapter With Istio</li>
+</ol>
+
+<p>Again, I will try my best to render all the important details in this post to bring your new adapter to life.</p>
+
+<h2 id="the-istio-mixer---adapter-interface-architecture">The Istio Mixer - Adapter Interface Architecture</h2>
+
+<p>Let’s first have a look at how the adapter is to be interfaced with the Istio Mixer. Kubernetes abstracts the interfacing to some extent; however, it’s important for us to understand this, at least, in a little detail.</p>
+
+<p><img src="assets/images/2018-10-07-set-sail-a-production-ready-istio-adapter/architecture.svg" alt="The Architecture" /></p>
+
+<p>Here’s a brief description of each of the elements in the architecture above.</p>
+
+<ul>
+  <li><strong>Microservice</strong> is a user application that is deployed over Istio</li>
+  <li><strong>Proxy</strong> is the Istio component, i.e. <a href="https://www.envoyproxy.io/">Envoy Proxy</a>, that controls the network communication in the <a href="https://en.wikipedia.org/wiki/Microservices#Service_Mesh">Service Mesh</a></li>
+  <li><strong>Mixer</strong> refers to the Istio component that receives metric (and other) data from the Proxy and forwards it to other components, in this case, the Adapter</li>
+  <li><strong>Adapter</strong> is the application we’re building which consumes metric data from the Mixer over a gRPC channel</li>
+  <li><strong>Operator</strong> is an actor who is responsible for configuring the deployment, in this case, Istio and the Adapter</li>
+</ul>
+
+<p>The important thing to note here is that each of these components run as seperate processes, and that they may be distributed over a network. Also, Mixer establishes a gRPC channel with the Adapter for the purpose of providing it with user configuration and metric data.</p>
+
+<h2 id="creating-an-out-of-tree-mixer-adapter">Creating An Out-Of-Tree Mixer Adapter</h2>
+
+<p>For brevity, I’m relying on the Istio <a href="https://github.com/istio/istio/wiki/Mixer-Out-of-Tree-Adapter-Walkthrough">Mixer Out Of Tree Adapter Walkthrough</a> for you to follow and build a working out-of-tree mixer adapter. Below is an outline of the steps you’re required to follow to create a working out-of-tree Istio Mixer Adapter that consumes metric data.</p>
+
+<ol>
+  <li>Create <code class="highlighter-rouge">config.proto</code> to represent the Adapter configuration</li>
+  <li>Create the <code class="highlighter-rouge">mygrpcadapter.go</code> implementation which handles the <code class="highlighter-rouge">HandleMetric(context.Context, *metric.HandleMetricRequest) (*v1beta11.ReportResult, error)</code> gRPC API call</li>
+  <li>Generate the configuration files via <code class="highlighter-rouge">go generate ./...</code></li>
+  <li>Create <code class="highlighter-rouge">main.go</code> which creates the gRPC server and listens to API calls</li>
+  <li>Write the <code class="highlighter-rouge">sample_operator_config.yaml</code> for the adapter</li>
+  <li>Test and validate your adapter by starting a local Mixer process</li>
+  <li>Configure the out-of-tree project</li>
+  <li>Vendor the necessary dependencies (using <a href="https://github.com/golang/go/wiki/Modules">Go Modules</a>, <a href="https://glide.sh/">Glide</a>, <a href="https://golang.github.io/dep/">Dep</a>, etc. this time)</li>
+  <li>Build and test the out-of-tree adapter by starting a local Mixer process</li>
+</ol>
+
+<h2 id="publishing-the-adapter-to-docker-hub">Publishing The Adapter To Docker Hub</h2>
+
+<p>Once you have the <code class="highlighter-rouge">myootadapter</code> project set up and tested locally, it’s time to build and publish the Adapter to a repository like <a href="https://hub.docker.com/">Docker Hub</a>. Please perform the following steps before proceeding.</p>
+
+<ol>
+  <li>Move the contents of the <code class="highlighter-rouge">mygrpcadapter/testdata/</code> directory to under <code class="highlighter-rouge">operatorconfig/</code></li>
+  <li>Create a file named <code class="highlighter-rouge">Dockerfile</code> to hold the steps to create the Docker image</li>
+  <li>Finally, create a file named <code class="highlighter-rouge">mygrpcadapter-k8s.yaml</code> under <code class="highlighter-rouge">operatorconfig/</code> which we’ll use later to deploy the Adapter via Kubernetes</li>
+</ol>
+
+<p>Once you’ve followed these steps, you should have a project structure like below.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>── myootadapter
+   ├── Dockerfile
+   ├── glide.lock <span class="c"># Depending on your vendoring tool,</span>
+   ├── glide.yaml <span class="c"># you'd have some files like these.</span>
+   ├── mygrpcadapter
+   │   ├── cmd
+   │   │   └── main.go
+   │   ├── config
+   │   │   ├── config.pb.go
+   │   │   ├── config.proto
+   │   │   ├── config.proto_descriptor
+   │   │   ├── mygrpcadapter.config.pb.html
+   │   │   └── mygrpcadapter.yaml
+   │   └── mygrpcadapter.go
+   └── operatorconfig
+       ├── attributes.yaml
+       ├── metrictemplate.yaml
+       ├── sample_operator_config.yaml
+       ├── mygrpcadapter-k8s.yaml
+       └── mygrpcadapter.yaml
+</code></pre></div></div>
+
+<p>Let’s now build the Docker image and publish it to Docker Hub.</p>
+
+<h3 id="building-the-docker-image">Building The Docker Image</h3>
+
+<p>The <a href="https://docs.docker.com/develop/develop-images/multistage-build/">multi-stage builds</a> pattern can be used to build the Docker image. Copy the following contents to your <code class="highlighter-rouge">Dockerfile</code>.</p>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> golang:1.11 as builder</span>
+<span class="k">WORKDIR</span><span class="s"> /go/src/github.com/username/myootadapter/</span>
+<span class="k">COPY</span><span class="s"> ./ .</span>
+<span class="k">RUN </span><span class="nv">CGO_ENABLED</span><span class="o">=</span>0 <span class="nv">GOOS</span><span class="o">=</span>linux <span class="se">\
+</span>    go build <span class="nt">-a</span> <span class="nt">-installsuffix</span> cgo <span class="nt">-v</span> <span class="nt">-o</span> bin/mygrpcadapter ./mygrpcadapter/cmd/
+
+<span class="k">FROM</span><span class="s"> alpine:3.8</span>
+<span class="k">RUN </span>apk <span class="nt">--no-cache</span> add ca-certificates
+<span class="k">WORKDIR</span><span class="s"> /bin/</span>
+<span class="k">COPY</span><span class="s"> --from=builder /go/src/github.com/username/myootadapter/bin/mygrpcadapter .</span>
+<span class="k">ENTRYPOINT</span><span class="s"> [ "/bin/mygrpcadapter" ]</span>
+<span class="k">CMD</span><span class="s"> [ "8000" ]</span>
+<span class="k">EXPOSE</span><span class="s"> 8000</span>
+</code></pre></div></div>
+
+<p>The <code class="highlighter-rouge">CMD [ "8000" ]</code> line tells Docker to pass <code class="highlighter-rouge">8000</code> as an argument to <code class="highlighter-rouge">/bin/mygrpcadapter</code> which is defined by the <code class="highlighter-rouge">ENTRYPOINT [ "/bin/mygrpcadapter" ]</code> line. Since we fix the gRPC listener port to <code class="highlighter-rouge">8000</code> here, we must also update the <code class="highlighter-rouge">sample_operator_config.yaml</code> to reflect the same. We do that by replacing <code class="highlighter-rouge">address: "{ADDRESS}"</code> with <code class="highlighter-rouge">address: mygrpcadapter:8000</code>.</p>
+
+<p>Let’s also update the <code class="highlighter-rouge">file_path</code> to store the output on a volume which we’ll create later. Update <code class="highlighter-rouge">file_path: "out.txt"</code> to <code class="highlighter-rouge">file_path: "/volume/out.txt"</code>. You’d then land up with a Handler configuration like below.</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s2">"</span><span class="s">config.istio.io/v1alpha2"</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">handler</span>
+<span class="na">metadata</span><span class="pi">:</span>
+ <span class="na">name</span><span class="pi">:</span> <span class="s">h1</span>
+ <span class="na">namespace</span><span class="pi">:</span> <span class="s">istio-system</span>
+<span class="na">spec</span><span class="pi">:</span>
+ <span class="na">adapter</span><span class="pi">:</span> <span class="s">mygrpcadapter</span>
+ <span class="na">connection</span><span class="pi">:</span>
+   <span class="na">address</span><span class="pi">:</span> <span class="s2">"</span><span class="s">mygrpcadapter:8000"</span>
+ <span class="na">params</span><span class="pi">:</span>
+   <span class="na">file_path</span><span class="pi">:</span> <span class="s2">"</span><span class="s">/volume/out.txt"</span>
+</code></pre></div></div>
+
+<p>Now, we run the following command from the <code class="highlighter-rouge">myootadapter</code> directory to build and tag the Docker image.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build <span class="nt">-t</span> dockerhub-username/mygrpcadapter:latest <span class="nb">.</span>
+</code></pre></div></div>
+
+<h3 id="publishing-the-image-to-docker-hub">Publishing The Image To Docker Hub</h3>
+
+<p>First, login to Docker Hub via your terminal.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker login
+</code></pre></div></div>
+
+<p>Next, push the image using the following command.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker push dockerhub-username/mygrpcadapter:latest
+</code></pre></div></div>
+
+<h2 id="writing-kubernetes-config-for-the-adapter">Writing Kubernetes Config For The Adapter</h2>
+
+<p>Let’s now fill out the configuration for deploying the adapter via Kubernetes. Copy the following configuration to the <code class="highlighter-rouge">mygrpcadapter-k8s.yaml</code> file which we created earlier.</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">mygrpcadapter</span>
+  <span class="na">namespace</span><span class="pi">:</span> <span class="s">istio-system</span>
+  <span class="na">labels</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">mygrpcadapter</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">ClusterIP</span>
+  <span class="na">ports</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">grpc</span>
+    <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
+    <span class="na">port</span><span class="pi">:</span> <span class="s">8000</span>
+    <span class="na">targetPort</span><span class="pi">:</span> <span class="s">8000</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">mygrpcadapter</span>
+<span class="nn">---</span>
+<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">extensions/v1beta1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">mygrpcadapter</span>
+  <span class="na">namespace</span><span class="pi">:</span> <span class="s">istio-system</span>
+  <span class="na">labels</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">mygrpcadapter</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">replicas</span><span class="pi">:</span> <span class="s">1</span>
+  <span class="na">template</span><span class="pi">:</span>
+    <span class="na">metadata</span><span class="pi">:</span>
+      <span class="na">labels</span><span class="pi">:</span>
+        <span class="na">app</span><span class="pi">:</span> <span class="s">mygrpcadapter</span>
+      <span class="na">annotations</span><span class="pi">:</span>
+        <span class="s">sidecar.istio.io/inject</span><span class="pi">:</span> <span class="s2">"</span><span class="s">false"</span>
+        <span class="s">scheduler.alpha.kubernetes.io/critical-pod</span><span class="pi">:</span> <span class="s2">"</span><span class="s">"</span>
+    <span class="na">spec</span><span class="pi">:</span>
+      <span class="na">containers</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">mygrpcadapter</span>
+        <span class="na">image</span><span class="pi">:</span> <span class="s">dockerhub-username/mygrpcadapter:latest</span>
+        <span class="na">imagePullPolicy</span><span class="pi">:</span> <span class="s">Always</span>
+        <span class="na">ports</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="s">8000</span>
+        <span class="na">volumeMounts</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">transient-storage</span>
+          <span class="na">mountPath</span><span class="pi">:</span> <span class="s">/volume</span>
+      <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">transient-storage</span>
+        <span class="na">emptyDir</span><span class="pi">:</span> <span class="pi">{}</span>
+</code></pre></div></div>
+
+<p>The above configuration defines a simple service with just a single replica which is created out of the image at <code class="highlighter-rouge">dockerhub-username/mygrpcadapter:latest</code>. The service can be referred to by name as <code class="highlighter-rouge">mygrpcadapter</code> and can be addressed to via port <code class="highlighter-rouge">8000</code>. That’s how the <code class="highlighter-rouge">address: "mygrpcadapter:8000"</code> configuration  in <code class="highlighter-rouge">sample_operator_config.yaml</code> refers to this particular deployment.</p>
+
+<p>Also, notice these special annotations:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">annotations</span><span class="pi">:</span>
+  <span class="s">sidecar.istio.io/inject</span><span class="pi">:</span> <span class="s2">"</span><span class="s">false"</span>
+  <span class="s">scheduler.alpha.kubernetes.io/critical-pod</span><span class="pi">:</span> <span class="s2">"</span><span class="s">"</span>
+</code></pre></div></div>
+
+<p>This tells the Kubernetes scheduler to not inject the Istio Proxy sidecar if automatic injection is in place. We do that because we don’t really need a Proxy in front of our Adapter. Also, the second annotation marks this pod as <em>critical</em> for the system.</p>
+
+<p>We also create a transient volume named <code class="highlighter-rouge">tranient-storage</code> which is used for storing the Adapter output i.e. the <code class="highlighter-rouge">out.txt</code> file. The following snippet from the above configuration enables us to do that.</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="na">volumeMounts</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">transient-storage</span>
+      <span class="na">mountPath</span><span class="pi">:</span> <span class="s">/volume</span>
+  <span class="na">volumes</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">transient-storage</span>
+    <span class="na">emptyDir</span><span class="pi">:</span> <span class="pi">{}</span>
+</code></pre></div></div>
+
+<h2 id="deploying-and-testing-the-adapter-with-istio">Deploying And Testing The Adapter With Istio</h2>
+
+<p>Again, for brevity, I’m relying on the project documentation for you to <a href="https://istio.io/docs/setup/kubernetes/quick-start/">deploy Istio</a>, <a href="https://istio.io/docs/examples/bookinfo/">run the Bookinfo sample application</a> and to <a href="https://istio.io/docs/tasks/traffic-management/ingress/#determining-the-ingress-ip-and-ports">determine the ingress IP and port</a>.</p>
+
+<h3 id="deploying-the-adapter">Deploying The Adapter</h3>
+
+<p>We can now deploy the Adapter via Kubernetes like so:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl apply <span class="nt">-f</span> operatorconfig/
+</code></pre></div></div>
+
+<p>This should deploy the <code class="highlighter-rouge">mygrpcadapter</code> service under the <code class="highlighter-rouge">istio-system</code> namespace. You can verify this by executing the following command.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get pods <span class="nt">-n</span> istio-system
+</code></pre></div></div>
+
+<p>This would print a log like below.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>NAME                                       READY     STATUS        RESTARTS   AGE
+istio-citadel-75c88f897f-zfw8b             1/1       Running       0          1m
+istio-egressgateway-7d8479c7-khjvk         1/1       Running       0          1m
+.
+.
+mygrpcadapter-86cb6dd77c-hwvqd             1/1       Running       0          1m
+</code></pre></div></div>
+
+<p>You could also check the Adapter logs by executing the following command.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl logs mygrpcadapter-86cb6dd77c-hwvqd <span class="nt">-n</span> istio-system
+</code></pre></div></div>
+
+<p>It should then print the following log.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>listening on "[::]:8000"
+</code></pre></div></div>
+
+<h3 id="testing-the-adapter">Testing The Adapter</h3>
+
+<p>Execute the following command in your terminal, or hit the <code class="highlighter-rouge">http://${GATEWAY_URL}/productpage</code> URL in your browser to send a request to the Bookinfo deployment.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-o</span> /dev/null <span class="nt">-s</span> <span class="nt">-w</span> <span class="s2">"%{http_code}</span><span class="se">\n</span><span class="s2">"</span> http://<span class="k">${</span><span class="nv">GATEWAY_URL</span><span class="k">}</span>/productpage
+</code></pre></div></div>
+
+<p>Verify the output in the <code class="highlighter-rouge">/volume/out.txt</code> file by accessing the Adapter container.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl <span class="nb">exec </span>mygrpcadapter-86cb6dd77c-hwvqd <span class="nb">cat</span> /volume/out.txt
+</code></pre></div></div>
+
+<p>You should see an output like below.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>HandleMetric invoked with:
+  Adapter config: &amp;Params{FilePath:/volume/out.txt,}
+  Instances: 'i1metric.instance.istio-system':
+  {
+		Value = 1235
+		Dimensions = map[response_code:200]
+  }
+</code></pre></div></div>
+
+<h3 id="conclusion">Conclusion</h3>
+
+<p>Istio provides a standard mechanism to manage and observe microservices in the cloud. Mixer enables developers to easily extend Istio to custom platforms. And, I hope that this guide has given you a glimpse of the Istio Mixer - Adapter interfacing, and how to build a production-ready Adapter yourself!</p>
+
+<hr />
+
+<p>Go, publish your own Istio Mixer Adapter! Feel free to use the <a href="https://github.com/vmware/wavefront-adapter-for-istio">Wavefront by VMware Adapter for Istio</a> for reference.</p>
+
+<p><strong>Disclaimer:</strong> My postings are my own and don’t necessarily represent VMware’s positions, strategies or opinions.</p>
+
+                </div>
+            </section>
+
+            <!-- Email subscribe form at the bottom of the page -->
+            
+
+            <footer class="post-full-footer">
+                <!-- Everything inside the #author tags pulls data from the author -->
+                <!-- #author-->
+                
+                    
+                        <section class="author-card">
+                            
+                                <img class="author-profile-image" src="/assets/images/venilnoronha.jpg" alt="venilnoronha" />
+                            
+                            <section class="author-card-content">
+                                <h4 class="author-card-name"><a href="/author/venilnoronha">Venil Noronha</a></h4>
+                                
+                                    <p>Open Source Enthusiast</p>
+                                
+                            </section>
+                        </section>
+                        <div class="post-full-footer-right">
+                            <a class="author-card-button" href="/author/venilnoronha">Read More</a>
+                        </div>
+                    
+                
+                <!-- /author  -->
+            </footer>
+
+            <!-- If you use Disqus comments, just uncomment this block.
+            The only thing you need to change is "test-apkdzgmqhj" - which
+            should be replaced with your own Disqus site-id. -->
+            
+                <section class="post-full-comments">
+                    <div id="disqus_thread"></div>
+                    <script>
+                        var disqus_config = function () {
+                            this.page.url = 'https://venilnoronha.io/';
+                            this.page.identifier = 'Venil Noronha';
+                        };
+                        (function() {
+                            var d = document, s = d.createElement('script');
+                            s.src = 'https://venilnoronha-io.disqus.com/embed.js';
+                            s.setAttribute('data-timestamp', +new Date());
+                            (d.head || d.body).appendChild(s);
+                        })();
+                    </script>
+                </section>
+            
+
+        </article>
+
+    </div>
+</main>
+
+<!-- Links to Previous/Next posts -->
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+            
+                
+                
+                
+                
+                    <article class="read-next-card"
+                        
+                            style="background-image: url(/assets/images/blog-cover.jpg)"
+                        
+                    >
+                        <header class="read-next-card-header">
+                            <small class="read-next-card-header-sitetitle">&mdash; Venil Noronha &mdash;</small>
+                            
+                                <h3 class="read-next-card-header-title"><a href="/tag/distributed-systems/">Distributed systems</a></h3>
+                            
+                        </header>
+                        <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
+</div>
+                        <div class="read-next-card-content">
+                            <ul>
+                                
+                                
+                                  
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/a-step-by-step-guide-to-mtls-in-go">A step by step guide to mTLS in Go</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/designing-asynchronous-functions-with-go">Designing Asynchronous Functions with Go</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/how-we-built-a-simple-game-lobby-manager-using-go-and-unity">How we built a simple Game Lobby Manager using Go and Unity</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                            </ul>
+                        </div>
+                        <footer class="read-next-card-footer">
+                            <a href="/tag/distributed-systems/">
+                                
+                                    See all 4 posts  →
+                                
+                            </a>
+                        </footer>
+                    </article>
+                
+            
+
+            <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
+            
+
+            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+    <article class="post-card post-template">
+        
+            <a class="post-card-image-link" href="/a-step-by-step-guide-to-mtls-in-go">
+                <div class="post-card-image" style="background-image: url(/assets/images/2018-09-04-a-step-by-step-guide-to-mtls-in-go/banner.jpg)"></div>
+            </a>
+        
+        <div class="post-card-content">
+            <a class="post-card-content-link" href="/a-step-by-step-guide-to-mtls-in-go">
+                <header class="post-card-header">
+                    
+                        
+                            
+                                <span class="post-card-tags">Distributed systems</span>
+                            
+                        
+                    
+
+                    <h2 class="post-card-title">A step by step guide to mTLS in Go</h2>
+                </header>
+                <section class="post-card-excerpt">
+                    <p>Ever wondered what mTLS (mutual TLS) looks like? Come, learn to implement mTLS using Golang and OpenSSL. Introduction TLS (Transport Layer Security) provides the necessary encryption for applications when communicating over a network.</p>
+                </section>
+            </a>
+            <footer class="post-card-meta">
+                
+                    
+                        
+                        <img class="author-profile-image" src="/assets/images/venilnoronha.jpg" alt="Venil Noronha" />
+                        
+                        <span class="post-card-author">
+                            <a href="/author/venilnoronha/">Venil Noronha</a>
+                        </span>
+                    
+                
+            </footer>
+        </div>
+    </article>
+
+            
+
+        </div>
+    </div>
+</aside>
+
+<!-- Floating header which appears on-scroll, included from includes/floating-header.hbs -->
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="https://venilnoronha.io/">
+            
+                <img src="/assets/images/favicon.png" alt="Venil Noronha icon" />
+            
+            <span>Venil Noronha</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">&mdash;</span>
+    <div class="floating-header-title">Set sail a production-ready Istio Adapter</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
+</svg>
+</div>
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Set+sail+a+production-ready+Istio+Adapter&amp;url=https://venilnoronha.io/set-sail-a-production-ready-istio-adapter"
+            onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+
+        </a>
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://venilnoronha.io/set-sail-a-production-ready-istio-adapter"
+            onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
+
+        </a>
+    </div>
+    <progress class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+<!-- /post -->
+
+<!-- The #contentFor helper here will send everything inside it up to the matching #block helper found in default.hbs -->
+
+
+        <!-- Previous/next page links - displayed on every page -->
+        
+
+        <!-- The footer at the very bottom of the screen -->
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="https://venilnoronha.io/">Venil Noronha</a> &copy; 2018</section>
+                <section class="poweredby">Proudly published with <a href="https://jekyllrb.com/">Jekyll</a> &
+                    <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> using
+                    <a href="https://github.com/jekyller/jasper2" target="_blank" rel="noopener">Jasper2</a></section>
+                <nav class="site-footer-nav">
+                    <a href="https://github.com/venilnoronha" target="_blank" rel="noopener">GitHub</a>
+                    
+                    <a href="https://twitter.com/venilnoronha" target="_blank" rel="noopener">Twitter</a>
+                    <a href="https://instagram.com/venilnoronha" target="_blank" rel="noopener">Instagram</a>
+                    <a href="https://linkedin.com/in/venilnoronha" target="_blank" rel="noopener">LinkedIn</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- The big email subscribe modal content -->
+    
+
+    <!-- highlight.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.10.0/components/prism-abap.min.js"></script>
+    <script>$(document).ready(function() {
+      $('pre code').each(function(i, block) {
+        hljs.highlightBlock(block);
+      });
+    });</script>
+
+    <!-- jQuery + Fitvids, which makes all video embeds responsive -->
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="https://demo.ghost.io/assets/js/jquery.fitvids.js?v=724281a32e"></script>
+
+
+    <!-- Paginator increased to "infinit" in _config.yml -->
+    <!-- if paginator.posts  -->
+    <!-- <script>
+        var maxPages = parseInt('');
+    </script>
+    <script src="/assets/js/infinitescroll.js"></script> -->
+    <!-- /endif -->
+
+    
+
+
+    <!-- Add Google Analytics  -->
+    <!-- Google Analytics Tracking code -->
+ <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-109280867-1', 'auto');
+  ga('send', 'pageview');
+
+ </script>
+
+
+    <!-- The #block helper will pull in data from the #contentFor other template files. In this case, there's some JavaScript which we only want to use in post.hbs, but it needs to be included down here, after jQuery has already loaded. -->
+    
+        <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+});
+</script>
+
+    
+
+    <!-- Ghost outputs important scripts and data with this tag - it should always be the very last thing before the closing body tag -->
+    <!-- ghost_foot -->
+
+</body>
+</html>

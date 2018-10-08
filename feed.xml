@@ -1,4 +1,285 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://venilnoronha.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://venilnoronha.io/" rel="alternate" type="text/html" /><updated>2018-09-06T11:39:33-07:00</updated><id>https://venilnoronha.io/</id><title type="html">Venil Noronha</title><subtitle>Distributed systems, software design, and more...</subtitle><entry><title type="html">A step by step guide to mTLS in Go</title><link href="https://venilnoronha.io/a-step-by-step-guide-to-mtls-in-go" rel="alternate" type="text/html" title="A step by step guide to mTLS in Go" /><published>2018-09-04T13:51:00-07:00</published><updated>2018-09-04T13:51:00-07:00</updated><id>https://venilnoronha.io/a-step-by-step-guide-to-mtls-in-go</id><content type="html" xml:base="https://venilnoronha.io/a-step-by-step-guide-to-mtls-in-go">&lt;p&gt;Ever wondered what mTLS (mutual TLS) looks like? Come, learn to implement mTLS
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://venilnoronha.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://venilnoronha.io/" rel="alternate" type="text/html" /><updated>2018-10-08T11:40:09-07:00</updated><id>https://venilnoronha.io/</id><title type="html">Venil Noronha</title><subtitle>Distributed systems, software design, and more...</subtitle><entry><title type="html">Set sail a production-ready Istio Adapter</title><link href="https://venilnoronha.io/set-sail-a-production-ready-istio-adapter" rel="alternate" type="text/html" title="Set sail a production-ready Istio Adapter" /><published>2018-10-07T04:49:00-07:00</published><updated>2018-10-07T04:49:00-07:00</updated><id>https://venilnoronha.io/set-sail-a-production-ready-istio-adapter</id><content type="html" xml:base="https://venilnoronha.io/set-sail-a-production-ready-istio-adapter">&lt;p&gt;So, you’ve walked through the Istio Mixer Adapter &lt;a href=&quot;https://github.com/istio/istio/wiki/Mixer-Out-Of-Process-Adapter-Dev-Guide&quot;&gt;guide&lt;/a&gt; and want to now publish your own &lt;strong&gt;amazing&lt;/strong&gt; adapter? This post will run you through the process of setting sail your own adapter on the seas of production.&lt;/p&gt;
+
+&lt;h2 id=&quot;introduction&quot;&gt;Introduction&lt;/h2&gt;
+
+&lt;p&gt;Depending on your knowledge of &lt;a href=&quot;https://golang.org/&quot;&gt;Go&lt;/a&gt;, &lt;a href=&quot;https://developers.google.com/protocol-buffers/&quot;&gt;Protobufs&lt;/a&gt;, &lt;a href=&quot;https://grpc.io/&quot;&gt;gRPC&lt;/a&gt;, &lt;a href=&quot;https://istio.io/&quot;&gt;Istio&lt;/a&gt;, &lt;a href=&quot;https://www.docker.com/&quot;&gt;Docker&lt;/a&gt; and &lt;a href=&quot;https://kubernetes.io/&quot;&gt;Kubernetes&lt;/a&gt;, you may find the process of publishing an Istio Mixer Adapter from being easy to tasking. This post assumes that you have some experience with these technologies, and that you’ve been able to complete at least one of the walk-throughs from the Istio Wiki.&lt;/p&gt;
+
+&lt;p&gt;For the purpose of this post, I’d be talking about building an Istio Mixer Adapter that consumes &lt;a href=&quot;https://preliminary.istio.io/docs/reference/config/policy-and-telemetry/templates/metric/&quot;&gt;Metrics&lt;/a&gt;. Here’s a run-down of the steps we’ll be looking at:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;The Istio Mixer - Adapter Interface Architecture&lt;/li&gt;
+  &lt;li&gt;Creating An Out-Of-Tree Mixer Adapter&lt;/li&gt;
+  &lt;li&gt;Publishing The Adapter To Docker Hub&lt;/li&gt;
+  &lt;li&gt;Writing Kubernetes Config For The Adapter&lt;/li&gt;
+  &lt;li&gt;Deploying And Testing The Adapter With Istio&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Again, I will try my best to render all the important details in this post to bring your new adapter to life.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-istio-mixer---adapter-interface-architecture&quot;&gt;The Istio Mixer - Adapter Interface Architecture&lt;/h2&gt;
+
+&lt;p&gt;Let’s first have a look at how the adapter is to be interfaced with the Istio Mixer. Kubernetes abstracts the interfacing to some extent; however, it’s important for us to understand this, at least, in a little detail.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/2018-10-07-set-sail-a-production-ready-istio-adapter/architecture.svg&quot; alt=&quot;The Architecture&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Here’s a brief description of each of the elements in the architecture above.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Microservice&lt;/strong&gt; is a user application that is deployed over Istio&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Proxy&lt;/strong&gt; is the Istio component, i.e. &lt;a href=&quot;https://www.envoyproxy.io/&quot;&gt;Envoy Proxy&lt;/a&gt;, that controls the network communication in the &lt;a href=&quot;https://en.wikipedia.org/wiki/Microservices#Service_Mesh&quot;&gt;Service Mesh&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Mixer&lt;/strong&gt; refers to the Istio component that receives metric (and other) data from the Proxy and forwards it to other components, in this case, the Adapter&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Adapter&lt;/strong&gt; is the application we’re building which consumes metric data from the Mixer over a gRPC channel&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Operator&lt;/strong&gt; is an actor who is responsible for configuring the deployment, in this case, Istio and the Adapter&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The important thing to note here is that each of these components run as seperate processes, and that they may be distributed over a network. Also, Mixer establishes a gRPC channel with the Adapter for the purpose of providing it with user configuration and metric data.&lt;/p&gt;
+
+&lt;h2 id=&quot;creating-an-out-of-tree-mixer-adapter&quot;&gt;Creating An Out-Of-Tree Mixer Adapter&lt;/h2&gt;
+
+&lt;p&gt;For brevity, I’m relying on the Istio &lt;a href=&quot;https://github.com/istio/istio/wiki/Mixer-Out-of-Tree-Adapter-Walkthrough&quot;&gt;Mixer Out Of Tree Adapter Walkthrough&lt;/a&gt; for you to follow and build a working out-of-tree mixer adapter. Below is an outline of the steps you’re required to follow to create a working out-of-tree Istio Mixer Adapter that consumes metric data.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Create &lt;code class=&quot;highlighter-rouge&quot;&gt;config.proto&lt;/code&gt; to represent the Adapter configuration&lt;/li&gt;
+  &lt;li&gt;Create the &lt;code class=&quot;highlighter-rouge&quot;&gt;mygrpcadapter.go&lt;/code&gt; implementation which handles the &lt;code class=&quot;highlighter-rouge&quot;&gt;HandleMetric(context.Context, *metric.HandleMetricRequest) (*v1beta11.ReportResult, error)&lt;/code&gt; gRPC API call&lt;/li&gt;
+  &lt;li&gt;Generate the configuration files via &lt;code class=&quot;highlighter-rouge&quot;&gt;go generate ./...&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Create &lt;code class=&quot;highlighter-rouge&quot;&gt;main.go&lt;/code&gt; which creates the gRPC server and listens to API calls&lt;/li&gt;
+  &lt;li&gt;Write the &lt;code class=&quot;highlighter-rouge&quot;&gt;sample_operator_config.yaml&lt;/code&gt; for the adapter&lt;/li&gt;
+  &lt;li&gt;Test and validate your adapter by starting a local Mixer process&lt;/li&gt;
+  &lt;li&gt;Configure the out-of-tree project&lt;/li&gt;
+  &lt;li&gt;Vendor the necessary dependencies (using &lt;a href=&quot;https://github.com/golang/go/wiki/Modules&quot;&gt;Go Modules&lt;/a&gt;, &lt;a href=&quot;https://glide.sh/&quot;&gt;Glide&lt;/a&gt;, &lt;a href=&quot;https://golang.github.io/dep/&quot;&gt;Dep&lt;/a&gt;, etc. this time)&lt;/li&gt;
+  &lt;li&gt;Build and test the out-of-tree adapter by starting a local Mixer process&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;publishing-the-adapter-to-docker-hub&quot;&gt;Publishing The Adapter To Docker Hub&lt;/h2&gt;
+
+&lt;p&gt;Once you have the &lt;code class=&quot;highlighter-rouge&quot;&gt;myootadapter&lt;/code&gt; project set up and tested locally, it’s time to build and publish the Adapter to a repository like &lt;a href=&quot;https://hub.docker.com/&quot;&gt;Docker Hub&lt;/a&gt;. Please perform the following steps before proceeding.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Move the contents of the &lt;code class=&quot;highlighter-rouge&quot;&gt;mygrpcadapter/testdata/&lt;/code&gt; directory to under &lt;code class=&quot;highlighter-rouge&quot;&gt;operatorconfig/&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Create a file named &lt;code class=&quot;highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt; to hold the steps to create the Docker image&lt;/li&gt;
+  &lt;li&gt;Finally, create a file named &lt;code class=&quot;highlighter-rouge&quot;&gt;mygrpcadapter-k8s.yaml&lt;/code&gt; under &lt;code class=&quot;highlighter-rouge&quot;&gt;operatorconfig/&lt;/code&gt; which we’ll use later to deploy the Adapter via Kubernetes&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Once you’ve followed these steps, you should have a project structure like below.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;── myootadapter
+   ├── Dockerfile
+   ├── glide.lock &lt;span class=&quot;c&quot;&gt;# Depending on your vendoring tool,&lt;/span&gt;
+   ├── glide.yaml &lt;span class=&quot;c&quot;&gt;# you'd have some files like these.&lt;/span&gt;
+   ├── mygrpcadapter
+   │   ├── cmd
+   │   │   └── main.go
+   │   ├── config
+   │   │   ├── config.pb.go
+   │   │   ├── config.proto
+   │   │   ├── config.proto_descriptor
+   │   │   ├── mygrpcadapter.config.pb.html
+   │   │   └── mygrpcadapter.yaml
+   │   └── mygrpcadapter.go
+   └── operatorconfig
+       ├── attributes.yaml
+       ├── metrictemplate.yaml
+       ├── sample_operator_config.yaml
+       ├── mygrpcadapter-k8s.yaml
+       └── mygrpcadapter.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Let’s now build the Docker image and publish it to Docker Hub.&lt;/p&gt;
+
+&lt;h3 id=&quot;building-the-docker-image&quot;&gt;Building The Docker Image&lt;/h3&gt;
+
+&lt;p&gt;The &lt;a href=&quot;https://docs.docker.com/develop/develop-images/multistage-build/&quot;&gt;multi-stage builds&lt;/a&gt; pattern can be used to build the Docker image. Copy the following contents to your &lt;code class=&quot;highlighter-rouge&quot;&gt;Dockerfile&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-dockerfile highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; golang:1.11 as builder&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;WORKDIR&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; /go/src/github.com/username/myootadapter/&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;COPY&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; ./ .&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;RUN &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;CGO_ENABLED&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0 &lt;span class=&quot;nv&quot;&gt;GOOS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;linux &lt;span class=&quot;se&quot;&gt;\
+&lt;/span&gt;    go build &lt;span class=&quot;nt&quot;&gt;-a&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-installsuffix&lt;/span&gt; cgo &lt;span class=&quot;nt&quot;&gt;-v&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; bin/mygrpcadapter ./mygrpcadapter/cmd/
+
+&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; alpine:3.8&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;RUN &lt;/span&gt;apk &lt;span class=&quot;nt&quot;&gt;--no-cache&lt;/span&gt; add ca-certificates
+&lt;span class=&quot;k&quot;&gt;WORKDIR&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; /bin/&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;COPY&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; --from=builder /go/src/github.com/username/myootadapter/bin/mygrpcadapter .&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;ENTRYPOINT&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; [ &quot;/bin/mygrpcadapter&quot; ]&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;CMD&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; [ &quot;8000&quot; ]&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;EXPOSE&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; 8000&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;CMD [ &quot;8000&quot; ]&lt;/code&gt; line tells Docker to pass &lt;code class=&quot;highlighter-rouge&quot;&gt;8000&lt;/code&gt; as an argument to &lt;code class=&quot;highlighter-rouge&quot;&gt;/bin/mygrpcadapter&lt;/code&gt; which is defined by the &lt;code class=&quot;highlighter-rouge&quot;&gt;ENTRYPOINT [ &quot;/bin/mygrpcadapter&quot; ]&lt;/code&gt; line. Since we fix the gRPC listener port to &lt;code class=&quot;highlighter-rouge&quot;&gt;8000&lt;/code&gt; here, we must also update the &lt;code class=&quot;highlighter-rouge&quot;&gt;sample_operator_config.yaml&lt;/code&gt; to reflect the same. We do that by replacing &lt;code class=&quot;highlighter-rouge&quot;&gt;address: &quot;{ADDRESS}&quot;&lt;/code&gt; with &lt;code class=&quot;highlighter-rouge&quot;&gt;address: mygrpcadapter:8000&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Let’s also update the &lt;code class=&quot;highlighter-rouge&quot;&gt;file_path&lt;/code&gt; to store the output on a volume which we’ll create later. Update &lt;code class=&quot;highlighter-rouge&quot;&gt;file_path: &quot;out.txt&quot;&lt;/code&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;file_path: &quot;/volume/out.txt&quot;&lt;/code&gt;. You’d then land up with a Handler configuration like below.&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;config.istio.io/v1alpha2&quot;&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;handler&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+ &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;h1&lt;/span&gt;
+ &lt;span class=&quot;na&quot;&gt;namespace&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;istio-system&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+ &lt;span class=&quot;na&quot;&gt;adapter&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;mygrpcadapter&lt;/span&gt;
+ &lt;span class=&quot;na&quot;&gt;connection&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+   &lt;span class=&quot;na&quot;&gt;address&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;mygrpcadapter:8000&quot;&lt;/span&gt;
+ &lt;span class=&quot;na&quot;&gt;params&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+   &lt;span class=&quot;na&quot;&gt;file_path&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;/volume/out.txt&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now, we run the following command from the &lt;code class=&quot;highlighter-rouge&quot;&gt;myootadapter&lt;/code&gt; directory to build and tag the Docker image.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;docker build &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; dockerhub-username/mygrpcadapter:latest &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;publishing-the-image-to-docker-hub&quot;&gt;Publishing The Image To Docker Hub&lt;/h3&gt;
+
+&lt;p&gt;First, login to Docker Hub via your terminal.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;docker login
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Next, push the image using the following command.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;docker push dockerhub-username/mygrpcadapter:latest
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;writing-kubernetes-config-for-the-adapter&quot;&gt;Writing Kubernetes Config For The Adapter&lt;/h2&gt;
+
+&lt;p&gt;Let’s now fill out the configuration for deploying the adapter via Kubernetes. Copy the following configuration to the &lt;code class=&quot;highlighter-rouge&quot;&gt;mygrpcadapter-k8s.yaml&lt;/code&gt; file which we created earlier.&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;v1&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Service&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;mygrpcadapter&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;namespace&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;istio-system&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;labels&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;mygrpcadapter&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;ClusterIP&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;grpc&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;protocol&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;TCP&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;8000&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;targetPort&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;8000&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;selector&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;mygrpcadapter&lt;/span&gt;
+&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;extensions/v1beta1&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Deployment&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;mygrpcadapter&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;namespace&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;istio-system&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;labels&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;mygrpcadapter&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;replicas&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;1&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;template&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;labels&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;mygrpcadapter&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;annotations&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;sidecar.istio.io/inject&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;false&quot;&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;scheduler.alpha.kubernetes.io/critical-pod&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;containers&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;mygrpcadapter&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;dockerhub-username/mygrpcadapter:latest&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;imagePullPolicy&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Always&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;containerPort&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;8000&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;volumeMounts&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;transient-storage&lt;/span&gt;
+          &lt;span class=&quot;na&quot;&gt;mountPath&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;/volume&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;volumes&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;transient-storage&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;emptyDir&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;{}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The above configuration defines a simple service with just a single replica which is created out of the image at &lt;code class=&quot;highlighter-rouge&quot;&gt;dockerhub-username/mygrpcadapter:latest&lt;/code&gt;. The service can be referred to by name as &lt;code class=&quot;highlighter-rouge&quot;&gt;mygrpcadapter&lt;/code&gt; and can be addressed to via port &lt;code class=&quot;highlighter-rouge&quot;&gt;8000&lt;/code&gt;. That’s how the &lt;code class=&quot;highlighter-rouge&quot;&gt;address: &quot;mygrpcadapter:8000&quot;&lt;/code&gt; configuration  in &lt;code class=&quot;highlighter-rouge&quot;&gt;sample_operator_config.yaml&lt;/code&gt; refers to this particular deployment.&lt;/p&gt;
+
+&lt;p&gt;Also, notice these special annotations:&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;annotations&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;sidecar.istio.io/inject&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;false&quot;&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;scheduler.alpha.kubernetes.io/critical-pod&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This tells the Kubernetes scheduler to not inject the Istio Proxy sidecar if automatic injection is in place. We do that because we don’t really need a Proxy in front of our Adapter. Also, the second annotation marks this pod as &lt;em&gt;critical&lt;/em&gt; for the system.&lt;/p&gt;
+
+&lt;p&gt;We also create a transient volume named &lt;code class=&quot;highlighter-rouge&quot;&gt;tranient-storage&lt;/code&gt; which is used for storing the Adapter output i.e. the &lt;code class=&quot;highlighter-rouge&quot;&gt;out.txt&lt;/code&gt; file. The following snippet from the above configuration enables us to do that.&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;na&quot;&gt;volumeMounts&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;transient-storage&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;mountPath&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;/volume&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;volumes&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;transient-storage&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;emptyDir&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;{}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;deploying-and-testing-the-adapter-with-istio&quot;&gt;Deploying And Testing The Adapter With Istio&lt;/h2&gt;
+
+&lt;p&gt;Again, for brevity, I’m relying on the project documentation for you to &lt;a href=&quot;https://istio.io/docs/setup/kubernetes/quick-start/&quot;&gt;deploy Istio&lt;/a&gt;, &lt;a href=&quot;https://istio.io/docs/examples/bookinfo/&quot;&gt;run the Bookinfo sample application&lt;/a&gt; and to &lt;a href=&quot;https://istio.io/docs/tasks/traffic-management/ingress/#determining-the-ingress-ip-and-ports&quot;&gt;determine the ingress IP and port&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;deploying-the-adapter&quot;&gt;Deploying The Adapter&lt;/h3&gt;
+
+&lt;p&gt;We can now deploy the Adapter via Kubernetes like so:&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kubectl apply &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; operatorconfig/
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This should deploy the &lt;code class=&quot;highlighter-rouge&quot;&gt;mygrpcadapter&lt;/code&gt; service under the &lt;code class=&quot;highlighter-rouge&quot;&gt;istio-system&lt;/code&gt; namespace. You can verify this by executing the following command.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kubectl get pods &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; istio-system
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This would print a log like below.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;NAME                                       READY     STATUS        RESTARTS   AGE
+istio-citadel-75c88f897f-zfw8b             1/1       Running       0          1m
+istio-egressgateway-7d8479c7-khjvk         1/1       Running       0          1m
+.
+.
+mygrpcadapter-86cb6dd77c-hwvqd             1/1       Running       0          1m
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;You could also check the Adapter logs by executing the following command.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kubectl logs mygrpcadapter-86cb6dd77c-hwvqd &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; istio-system
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;It should then print the following log.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;listening on &quot;[::]:8000&quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;testing-the-adapter&quot;&gt;Testing The Adapter&lt;/h3&gt;
+
+&lt;p&gt;Execute the following command in your terminal, or hit the &lt;code class=&quot;highlighter-rouge&quot;&gt;http://${GATEWAY_URL}/productpage&lt;/code&gt; URL in your browser to send a request to the Bookinfo deployment.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;curl &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; /dev/null &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-w&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;%{http_code}&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; http://&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;GATEWAY_URL&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;/productpage
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Verify the output in the &lt;code class=&quot;highlighter-rouge&quot;&gt;/volume/out.txt&lt;/code&gt; file by accessing the Adapter container.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kubectl &lt;span class=&quot;nb&quot;&gt;exec &lt;/span&gt;mygrpcadapter-86cb6dd77c-hwvqd &lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; /volume/out.txt
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;You should see an output like below.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;HandleMetric invoked with:
+  Adapter config: &amp;amp;Params{FilePath:/volume/out.txt,}
+  Instances: 'i1metric.instance.istio-system':
+  {
+		Value = 1235
+		Dimensions = map[response_code:200]
+  }
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;Istio provides a standard mechanism to manage and observe microservices in the cloud. Mixer enables developers to easily extend Istio to custom platforms. And, I hope that this guide has given you a glimpse of the Istio Mixer - Adapter interfacing, and how to build a production-ready Adapter yourself!&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Go, publish your own Istio Mixer Adapter! Feel free to use the &lt;a href=&quot;https://github.com/vmware/wavefront-adapter-for-istio&quot;&gt;Wavefront by VMware Adapter for Istio&lt;/a&gt; for reference.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Disclaimer:&lt;/strong&gt; My postings are my own and don’t necessarily represent VMware’s positions, strategies or opinions.&lt;/p&gt;</content><author><name>Venil Noronha</name></author><category term="Distributed Systems" /><summary type="html">So, you’ve walked through the Istio Mixer Adapter guide and want to now publish your own amazing adapter? This post will run you through the process of setting sail your own adapter on the seas of production.</summary></entry><entry><title type="html">A step by step guide to mTLS in Go</title><link href="https://venilnoronha.io/a-step-by-step-guide-to-mtls-in-go" rel="alternate" type="text/html" title="A step by step guide to mTLS in Go" /><published>2018-09-04T13:51:00-07:00</published><updated>2018-09-04T13:51:00-07:00</updated><id>https://venilnoronha.io/a-step-by-step-guide-to-mtls-in-go</id><content type="html" xml:base="https://venilnoronha.io/a-step-by-step-guide-to-mtls-in-go">&lt;p&gt;Ever wondered what mTLS (mutual TLS) looks like? Come, learn to implement mTLS
 using Golang and OpenSSL.&lt;/p&gt;
 
 &lt;h2 id=&quot;introduction&quot;&gt;Introduction&lt;/h2&gt;
@@ -348,7 +629,7 @@ Client, like so:&lt;/p&gt;
 
 &lt;hr /&gt;
 
-&lt;p&gt;I’d love to hear what you think.&lt;/p&gt;</content><author><name>Venil Noronha</name></author><category term="Distributed Systems" /><summary type="html">Ever wondered what mTLS (mutual TLS) looks like? Come, learn to implement mTLS using Golang and OpenSSL.</summary></entry><entry><title type="html">Designing Asynchronous Functions With Go</title><link href="https://venilnoronha.io/designing-asynchronous-functions-with-go" rel="alternate" type="text/html" title="Designing Asynchronous Functions With Go" /><published>2018-04-02T13:34:00-07:00</published><updated>2018-04-02T13:34:00-07:00</updated><id>https://venilnoronha.io/designing-asynchronous-functions-with-go</id><content type="html" xml:base="https://venilnoronha.io/designing-asynchronous-functions-with-go">&lt;p&gt;Who doesn’t love fully controllable asynchronous APIs? This post is about crafting asynchronous functions using Golang’s &lt;a href=&quot;https://godoc.org/context&quot;&gt;Context&lt;/a&gt;, &lt;a href=&quot;https://gobyexample.com/channels&quot;&gt;Channels&lt;/a&gt;, and &lt;a href=&quot;https://gobyexample.com/goroutines&quot;&gt;Goroutines&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I’d love to hear what you think.&lt;/p&gt;</content><author><name>Venil Noronha</name></author><category term="Distributed Systems" /><summary type="html">Ever wondered what mTLS (mutual TLS) looks like? Come, learn to implement mTLS using Golang and OpenSSL.</summary></entry><entry><title type="html">Designing Asynchronous Functions with Go</title><link href="https://venilnoronha.io/designing-asynchronous-functions-with-go" rel="alternate" type="text/html" title="Designing Asynchronous Functions with Go" /><published>2018-04-02T13:34:00-07:00</published><updated>2018-04-02T13:34:00-07:00</updated><id>https://venilnoronha.io/designing-asynchronous-functions-with-go</id><content type="html" xml:base="https://venilnoronha.io/designing-asynchronous-functions-with-go">&lt;p&gt;Who doesn’t love fully controllable asynchronous APIs? This post is about crafting asynchronous functions using Golang’s &lt;a href=&quot;https://godoc.org/context&quot;&gt;Context&lt;/a&gt;, &lt;a href=&quot;https://gobyexample.com/channels&quot;&gt;Channels&lt;/a&gt;, and &lt;a href=&quot;https://gobyexample.com/goroutines&quot;&gt;Goroutines&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h2 id=&quot;introduction&quot;&gt;Introduction&lt;/h2&gt;
 
