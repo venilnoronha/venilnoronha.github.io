@@ -290,4 +290,6 @@ Istio provides a standard mechanism to manage and observe microservices in the c
 
 -----
 
-Go, publish your own Istio Mixer Adapter!
+Go, publish your own Istio Mixer Adapter! Feel free to use the [Wavefront by VMware Adapter for Istio](https://github.com/vmware/wavefront-adapter-for-istio) for reference.
+
+**Disclaimer:** My postings are my own and don't necessarily represent VMware's positions, strategies or opinions.
