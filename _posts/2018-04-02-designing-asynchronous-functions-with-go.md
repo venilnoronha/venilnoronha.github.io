@@ -3,7 +3,7 @@ layout: post
 current: post
 cover: assets/images/2018-04-02-designing-asynchronous-functions-with-go/banner.jpg
 navigation: True
-title: Designing Asynchronous Functions With Go
+title: Designing Asynchronous Functions with Go
 date: 2018-04-02 20:34:00
 tags: [Distributed Systems]
 class: post-template
