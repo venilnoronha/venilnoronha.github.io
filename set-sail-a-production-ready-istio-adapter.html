@@ -381,7 +381,7 @@ into the {body} of the default.hbs template -->
 
 <p>This tells the Kubernetes scheduler to not inject the Istio Proxy sidecar if automatic injection is in place. We do that because we don’t really need a Proxy in front of our Adapter. Also, the second annotation marks this pod as <em>critical</em> for the system.</p>
 
-<p>We also create a transient volume named <code class="highlighter-rouge">tranient-storage</code> which is used for storing the Adapter output i.e. the <code class="highlighter-rouge">out.txt</code> file. The following snippet from the above configuration enables us to do that.</p>
+<p>We also create a transient volume named <code class="highlighter-rouge">transient-storage</code> which is used for storing the Adapter output i.e. the <code class="highlighter-rouge">out.txt</code> file. The following snippet from the above configuration enables us to do that.</p>
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="na">volumeMounts</span><span class="pi">:</span>
     <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">transient-storage</span>
