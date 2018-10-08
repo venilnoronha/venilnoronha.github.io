@@ -21,8 +21,8 @@ For the purpose of this post, I'd be talking about building an Istio Mixer Adapt
 
 1. The Istio Mixer - Adapter Interface Architecture
 2. Creating An Out-Of-Tree Mixer Adapter
-3. Building And Publishing The Adapter To Docker Hub
-4. Writing The Kubernetes Configuration For The Adapter
+3. Publishing The Adapter To Docker Hub
+4. Writing Kubernetes Config For The Adapter
 5. Deploying And Testing The Adapter With Istio
 
 Again, I will try my best to render all the important details in this post to bring your new adapter to life.
@@ -57,7 +57,7 @@ For brevity, I'm relying on the Istio [Mixer Out Of Tree Adapter Walkthrough](ht
 8. Vendor the necessary dependencies (using [Go Modules](https://github.com/golang/go/wiki/Modules), [Glide](https://glide.sh/), [Dep](https://golang.github.io/dep/), etc. this time)
 9. Build and test the out-of-tree adapter by starting a local Mixer process
 
-## Building And Publishing The Adapter To Docker Hub
+## Publishing The Adapter To Docker Hub
 
 Once you have the `myootadapter` project set up and tested locally, it's time to build and publish the Adapter to a repository like [Docker Hub](https://hub.docker.com/). Please perform the following steps before proceeding.
 
@@ -150,7 +150,7 @@ Next, push the image using the following command.
 docker push dockerhub-username/mygrpcadapter:latest
 ```
 
-## Writing The Kubernetes Configuration For The Adapter
+## Writing Kubernetes Config For The Adapter
 
 Let's now fill out the configuration for deploying the adapter via Kubernetes. Copy the following configuration to the `mygrpcadapter-k8s.yaml` file which we created earlier.
 
@@ -205,7 +205,7 @@ spec:
 
 The above configuration defines a simple service with just a single replica which is created out of the image at `dockerhub-username/mygrpcadapter:latest`. The service can be referred to by name as `mygrpcadapter` and can be addressed to via port `8000`. That's how the `address: "mygrpcadapter:8000"` configuration  in `sample_operator_config.yaml` refers to this particular deployment.
 
-Also, notice this special annotation:
+Also, notice these special annotations:
 
 ```yaml
 annotations:
@@ -213,9 +213,18 @@ annotations:
   scheduler.alpha.kubernetes.io/critical-pod: ""
 ```
 
-This tells the Kubernetes scheduler to not inject the Istio Proxy sidecar if automatic injection is in place. We do that because we don't really need a Proxy in front of our Adapter.
+This tells the Kubernetes scheduler to not inject the Istio Proxy sidecar if automatic injection is in place. We do that because we don't really need a Proxy in front of our Adapter. Also, the second annotation marks this pod as _critical_ for the system.
 
-We also create a transient volume named `tranient-storage` which is used for storing the Adapter output i.e. the `out.txt` file.
+We also create a transient volume named `tranient-storage` which is used for storing the Adapter output i.e. the `out.txt` file. The following snippet from the above configuration enables us to do that.
+
+```yaml
+    volumeMounts:
+    - name: transient-storage
+      mountPath: /volume
+  volumes:
+  - name: transient-storage
+    emptyDir: {}
+```
 
 ## Deploying And Testing The Adapter With Istio
 
