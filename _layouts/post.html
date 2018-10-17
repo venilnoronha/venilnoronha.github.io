@@ -95,8 +95,8 @@ into the {body} of the default.hbs template -->
                     <div id="disqus_thread"></div>
                     <script>
                         var disqus_config = function () {
-                            this.page.url = '{{ site.url }}{{ site.baseurl }}';
-                            this.page.identifier = '{{ site.title }}';
+                            this.page.url = '{{ site.url }}{{ page.url }}';
+                            this.page.identifier = '{{ page.title }}';
                         };
                         (function() {
                             var d = document, s = d.createElement('script');
@@ -161,7 +161,7 @@ into the {body} of the default.hbs template -->
                         <footer class="read-next-card-footer">
                             <a href="{{ site.baseurl }}tag/{{ primary | downcase | replace: ' ', '-' }}/">
                                 {% if related_posts > 1 %}
-                                    See all {{ related_posts | minus: 1 }} posts  →
+                                    See all {{ related_posts }} posts  →
                                 {% elsif related_posts == 1 %}
                                     {{ related_posts }} post  →
                                 {% else %}
