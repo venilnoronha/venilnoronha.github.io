@@ -295,7 +295,7 @@ HandleMetric invoked with:
   }
 ```
 
-### Conclusion
+## Conclusion
 
 Istio provides a standard mechanism to manage and observe microservices in the cloud. Mixer enables developers to easily extend Istio to custom platforms. And, I hope that this guide has given you a glimpse of the Istio Mixer - Adapter interfacing, and how to build a production-ready Adapter yourself!
 

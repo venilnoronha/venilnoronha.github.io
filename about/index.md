@@ -11,7 +11,7 @@ subclass: 'post page'
 
 I'm a Software Developer with over 4 years of industry experience in building
 cloud products. I currently work with the Open Source Technology Center at
-VMware, Inc. where I primarily contribute to upstream projects like
+VMware, Inc. where I primarily contribute upstream to projects like
 [Istio](https://github.com/istio/istio) and [Envoy Proxy](https://github.com/envoyproxy/envoy).
 Previously, I doubly interned with VMware, Inc. and developed software for a
 Microsoft-backed Big Data startup in Bombay (Mumbai) named [Germin8](https://germin8.com).
