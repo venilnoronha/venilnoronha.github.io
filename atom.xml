@@ -8,6 +8,30 @@
     
       
       <item>
+        <title>Raw TCP Traffic Shaping with Istio 1.1.0</title>
+        
+          <description>&lt;p&gt;&lt;a href=&quot;https://istio.io/&quot;&gt;Istio&lt;/a&gt; provides sophisticated routing mechanics via concepts
+like &lt;a href=&quot;https://istio.io/docs/reference/config/istio.networking.v1alpha3/#VirtualService&quot;&gt;VirtualService&lt;/a&gt;,
+&lt;a href=&quot;https://istio.io/docs/reference/config/istio.networking.v1alpha3/#DestinationRule&quot;&gt;DestinationRule&lt;/a&gt;,
+&lt;a href=&quot;https://istio.io/docs/reference/config/istio.networking.v1alpha3/#Gateway&quot;&gt;Gateway&lt;/a&gt;,
+etc. Istio 1.0 enabled HTTP traffic shifting via &lt;a href=&quot;https://istio.io/docs/tasks/traffic-management/traffic-shifting/#apply-weight-based-routing&quot;&gt;weighted route definitions&lt;/a&gt;.
+I was able to contribute a similar feature for TCP/TLS services via my PRs
+&lt;a href=&quot;https://github.com/envoyproxy/envoy/pull/4430&quot;&gt;on Envoy&lt;/a&gt; and &lt;a href=&quot;https://github.com/istio/istio/pull/9112&quot;&gt;on Istio&lt;/a&gt;.
+The feature in Envoy was released in &lt;a href=&quot;https://www.envoyproxy.io/docs/envoy/latest/intro/version_history#oct-4-2018&quot;&gt;1.8.0&lt;/a&gt;
+and the one in Istio will be available in the upcoming &lt;a href=&quot;https://github.com/istio/istio/releases/&quot;&gt;1.1.0&lt;/a&gt;
+release.&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Fri, 19 Oct 2018 13:00:00 +0000</pubDate>
+        <link>
+        https://venilnoronha.io/raw-tcp-traffic-shaping-with-istio-1.1.0</link>
+        <guid isPermaLink="true">https://venilnoronha.io/raw-tcp-traffic-shaping-with-istio-1.1.0</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>Set sail a production-ready Istio Adapter</title>
         
           <description>&lt;p&gt;So, you’ve walked through the Istio Mixer Adapter &lt;a href=&quot;https://github.com/istio/istio/wiki/Mixer-Out-Of-Process-Adapter-Dev-Guide&quot;&gt;guide&lt;/a&gt; and want to now publish your own &lt;strong&gt;amazing&lt;/strong&gt; adapter? This post will run you through the process of setting sail your own adapter on the seas of production.&lt;/p&gt;

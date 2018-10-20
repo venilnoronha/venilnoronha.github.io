@@ -450,7 +450,7 @@ mygrpcadapter-86cb6dd77c-hwvqd             1/1       Running       0          1m
   }
 </code></pre></div></div>
 
-<h3 id="conclusion">Conclusion</h3>
+<h2 id="conclusion">Conclusion</h2>
 
 <p>Istio provides a standard mechanism to manage and observe microservices in the cloud. Mixer enables developers to easily extend Istio to custom platforms. And, I hope that this guide has given you a glimpse of the Istio Mixer - Adapter interfacing, and how to build a production-ready Adapter yourself!</p>
 
@@ -546,6 +546,15 @@ mygrpcadapter-86cb6dd77c-hwvqd             1/1       Running       0          1m
                                 
                                   
                                     
+                                        
+                                        
+                                            <li><a href="/raw-tcp-traffic-shaping-with-istio-1.1.0">Raw TCP Traffic Shaping with Istio 1.1.0</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
                                   
                                 
                                   
@@ -570,8 +579,6 @@ mygrpcadapter-86cb6dd77c-hwvqd             1/1       Running       0          1m
                                     
                                         
                                         
-                                            <li><a href="/how-we-built-a-simple-game-lobby-manager-using-go-and-unity">How we built a simple Game Lobby Manager using Go and Unity</a></li>
-                                        
                                     
                                   
                                 
@@ -587,7 +594,7 @@ mygrpcadapter-86cb6dd77c-hwvqd             1/1       Running       0          1m
                         <footer class="read-next-card-footer">
                             <a href="/tag/distributed-systems/">
                                 
-                                    See all 5 posts  →
+                                    See all 6 posts  →
                                 
                             </a>
                         </footer>
@@ -596,6 +603,46 @@ mygrpcadapter-86cb6dd77c-hwvqd             1/1       Running       0          1m
             
 
             <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+    <article class="post-card post-template">
+        
+            <a class="post-card-image-link" href="/raw-tcp-traffic-shaping-with-istio-1.1.0">
+                <div class="post-card-image" style="background-image: url(/assets/images/2018-10-19-raw-tcp-traffic-shaping-with-istio-1.1.0/banner.jpg)"></div>
+            </a>
+        
+        <div class="post-card-content">
+            <a class="post-card-content-link" href="/raw-tcp-traffic-shaping-with-istio-1.1.0">
+                <header class="post-card-header">
+                    
+                        
+                            
+                                <span class="post-card-tags">Distributed systems</span>
+                            
+                        
+                    
+
+                    <h2 class="post-card-title">Raw TCP Traffic Shaping with Istio 1.1.0</h2>
+                </header>
+                <section class="post-card-excerpt">
+                    <p>[Istio](https://istio.io/) provides sophisticated routing mechanics via concepts like [VirtualService](https://istio.io/docs/reference/config/istio.networking.v1alpha3/#VirtualService), [DestinationRule](https://istio.io/docs/reference/config/istio.networking.v1alpha3/#DestinationRule), [Gateway](https://istio.io/docs/reference/config/istio.networking.v1alpha3/#Gateway), etc. Istio 1.0 enabled HTTP traffic shifting via [weighted route definitions](https://istio.io/docs/tasks/traffic-management/traffic-shifting/#apply-weight-based-routing). I was able to contribute a similar feature for TCP/TLS services</p>
+                </section>
+            </a>
+            <footer class="post-card-meta">
+                
+                    
+                        
+                        <img class="author-profile-image" src="/assets/images/venilnoronha.jpg" alt="Venil Noronha" />
+                        
+                        <span class="post-card-author">
+                            <a href="/author/venilnoronha/">Venil Noronha</a>
+                        </span>
+                    
+                
+            </footer>
+        </div>
+    </article>
+
             
 
             <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
