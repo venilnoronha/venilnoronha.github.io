@@ -8,6 +8,25 @@
     
       
       <item>
+        <title>Envoy, gRPC, and Rate Limiting</title>
+        
+          <description>&lt;p&gt;&lt;a href=&quot;https://www.envoyproxy.io/&quot;&gt;Envoy&lt;/a&gt; is a lightweight service proxy designed for
+Cloud Native applications. It’s also one of the few proxies that support &lt;a href=&quot;https://grpc.io/&quot;&gt;gRPC&lt;/a&gt;,
+which is based on the H2 (&lt;a href=&quot;https://en.wikipedia.org/wiki/HTTP/2&quot;&gt;HTTP/2&lt;/a&gt;)
+protocol. gRPC is a high performance RPC (&lt;a href=&quot;https://en.wikipedia.org/wiki/Remote_procedure_call&quot;&gt;Remote Procedure Call&lt;/a&gt;)
+framework and it supports a plethora of environments.&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Sat, 27 Oct 2018 03:25:00 +0000</pubDate>
+        <link>
+        https://venilnoronha.io/envoy-grpc-and-rate-limiting</link>
+        <guid isPermaLink="true">https://venilnoronha.io/envoy-grpc-and-rate-limiting</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>Raw TCP Traffic Shaping with Istio 1.1.0</title>
         
           <description>&lt;p&gt;&lt;a href=&quot;https://istio.io/&quot;&gt;Istio&lt;/a&gt; provides sophisticated routing mechanics via concepts

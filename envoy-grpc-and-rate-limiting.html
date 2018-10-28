@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Document Settings -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Base Meta -->
+    <!-- dynamically fixing the title for tag/author pages -->
+
+
+
+    <title>Envoy, gRPC, and Rate Limiting</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Styles'n'Scripts -->
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.edited.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/syntax.css" />
+    <!-- highlight.js -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+    <style>.hljs { background: none; }</style>
+
+    <!-- This tag outputs SEO meta+structured data and other important settings -->
+    <meta name="description" content="Distributed systems, software design, and more..." />
+    <link rel="shortcut icon" href="https://venilnoronha.io/assets/images/favicon.png" type="image/png" />
+    <link rel="canonical" href="https://venilnoronha.io/envoy-grpc-and-rate-limiting" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+
+     <!--title below is coming from _includes/dynamic_title-->
+    <meta property="og:site_name" content="Venil Noronha" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Envoy, gRPC, and Rate Limiting" />
+    <meta property="og:description" content="Envoy is a lightweight service proxy designed for Cloud Native applications. It’s also one of the few proxies that support gRPC, which is based on the H2 (HTTP/2) protocol. gRPC is a high performance RPC (Remote Procedure Call) framework and it supports a plethora of environments. &nbsp;&nbsp; In this post," />
+    <meta property="og:url" content="https://venilnoronha.io/envoy-grpc-and-rate-limiting" />
+    <meta property="og:image" content="https://venilnoronha.io/assets/images/2018-10-27-envoy-grpc-and-rate-limiting/banner.jpg" />
+    <meta property="article:publisher" content="https://www.facebook.com/false" />
+    <meta property="article:author" content="https://www.facebook.com/false" />
+    <meta property="article:published_time" content="2018-10-26T20:25:00-07:00" />
+    <meta property="article:modified_time" content="2018-10-26T20:25:00-07:00" />
+    <meta property="article:tag" content="Distributed Systems" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Envoy, gRPC, and Rate Limiting" />
+    <meta name="twitter:description" content="Envoy is a lightweight service proxy designed for Cloud Native applications. It’s also one of the few proxies that support gRPC, which is based on the H2 (HTTP/2) protocol. gRPC is a high performance RPC (Remote Procedure Call) framework and it supports a plethora of environments. &nbsp;&nbsp; In this post," />
+    <meta name="twitter:url" content="https://venilnoronha.io/" />
+    <meta name="twitter:image" content="https://venilnoronha.io/assets/images/2018-10-27-envoy-grpc-and-rate-limiting/banner.jpg" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Venil Noronha" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="Distributed Systems" />
+    <meta name="twitter:site" content="@venilnoronha" />
+    <meta name="twitter:creator" content="@venilnoronha" />
+    <meta property="og:image:width" content="1400" />
+    <meta property="og:image:height" content="933" />
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Website",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Venil Noronha",
+        "logo": "https://venilnoronha.io/false"
+    },
+    "url": "https://venilnoronha.io/envoy-grpc-and-rate-limiting",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://venilnoronha.io/assets/images/2018-10-27-envoy-grpc-and-rate-limiting/banner.jpg",
+        "width": 2000,
+        "height": 666
+    },
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://venilnoronha.io/envoy-grpc-and-rate-limiting"
+    },
+    "description": "Envoy is a lightweight service proxy designed for Cloud Native applications. It’s also one of the few proxies that support gRPC, which is based on the H2 (HTTP/2) protocol. gRPC is a high performance RPC (Remote Procedure Call) framework and it supports a plethora of environments. &nbsp;&nbsp; In this post,"
+}
+    </script>
+
+    <!-- <script type="text/javascript" src="https://demo.ghost.io/public/ghost-sdk.min.js?v=724281a32e"></script>
+    <script type="text/javascript">
+    ghost.init({
+    	clientId: "ghost-frontend",
+    	clientSecret: "f84a07a72b17"
+    });
+    </script> -->
+
+    <meta name="generator" content="Jekyll 3.6.2" />
+    <link rel="alternate" type="application/rss+xml" title="Envoy, gRPC, and Rate Limiting" href="/feed.xml" />
+
+
+</head>
+<body class="post-template">
+
+    <div class="site-wrapper">
+        <!-- All the main content gets inserted here, index.hbs, post.hbs, etc -->
+        <!-- default -->
+
+<!-- The tag above means: insert everything in this file
+into the {body} of the default.hbs template -->
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+        
+            
+                <a class="site-nav-logo" href="https://venilnoronha.io/">Venil Noronha</a>
+            
+        
+        
+            <ul class="nav" role="menu">
+    <li class="nav-home" role="menuitem"><a href="/">Home</a></li>
+    <li class="nav-about" role="menuitem"><a href="/about/">About</a></li>
+    <li class="nav-feed" role="menuitem"><a href="https://venilnoronha.io/feed.xml">Feed</a></li>
+</ul>
+
+        
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+            
+                <a class="social-link" href="https://github.com/venilnoronha" target="_blank" rel="noopener"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M896 128q209 0 385.5 103t279.5 279.5 103 385.5q0 251-146.5 451.5t-378.5 277.5q-27 5-40-7t-13-30q0-3 .5-76.5t.5-134.5q0-97-52-142 57-6 102.5-18t94-39 81-66.5 53-105 20.5-150.5q0-119-79-206 37-91-8-204-28-9-81 11t-92 44l-38 24q-93-26-192-26t-192 26q-16-11-42.5-27t-83.5-38.5-85-13.5q-45 113-8 204-79 87-79 206 0 85 20.5 150t52.5 105 80.5 67 94 39 102.5 18q-39 36-49 103-21 10-45 15t-57 5-65.5-21.5-55.5-62.5q-19-32-48.5-52t-49.5-24l-20-3q-21 0-29 4.5t-5 11.5 9 14 13 12l7 5q22 10 43.5 38t31.5 51l10 23q13 38 44 61.5t67 30 69.5 7 55.5-3.5l23-4q0 38 .5 88.5t.5 54.5q0 18-13 30t-40 7q-232-77-378.5-277.5t-146.5-451.5q0-209 103-385.5t279.5-279.5 385.5-103zm-477 1103q3-7-7-12-10-3-13 2-3 7 7 12 9 6 13-2zm31 34q7-5-2-16-10-9-16-3-7 5 2 16 10 10 16 3zm30 45q9-7 0-19-8-13-17-6-9 5 0 18t17 7zm42 42q8-8-4-19-12-12-20-3-9 8 4 19 12 12 20 3zm57 25q3-11-13-16-15-4-19 7t13 15q15 6 19-6zm63 5q0-13-17-11-16 0-16 11 0 13 17 11 16 0 16-11zm58-10q-2-11-18-9-16 3-14 15t18 8 14-14z"/></svg>
+</a>
+            
+            
+            
+                <a class="social-link social-link-tw" href="https://twitter.com/venilnoronha" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+</a>
+            
+            
+                <a class="social-link" href="https://instagram.com/venilnoronha" target="_blank" rel="noopener"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1152 896q0-106-75-181t-181-75-181 75-75 181 75 181 181 75 181-75 75-181zm138 0q0 164-115 279t-279 115-279-115-115-279 115-279 279-115 279 115 115 279zm108-410q0 38-27 65t-65 27-65-27-27-65 27-65 65-27 65 27 27 65zm-502-220q-7 0-76.5-.5t-105.5 0-96.5 3-103 10-71.5 18.5q-50 20-88 58t-58 88q-11 29-18.5 71.5t-10 103-3 96.5 0 105.5.5 76.5-.5 76.5 0 105.5 3 96.5 10 103 18.5 71.5q20 50 58 88t88 58q29 11 71.5 18.5t103 10 96.5 3 105.5 0 76.5-.5 76.5.5 105.5 0 96.5-3 103-10 71.5-18.5q50-20 88-58t58-88q11-29 18.5-71.5t10-103 3-96.5 0-105.5-.5-76.5.5-76.5 0-105.5-3-96.5-10-103-18.5-71.5q-20-50-58-88t-88-58q-29-11-71.5-18.5t-103-10-96.5-3-105.5 0-76.5.5zm768 630q0 229-5 317-10 208-124 322t-322 124q-88 5-317 5t-317-5q-208-10-322-124t-124-322q-5-88-5-317t5-317q10-208 124-322t322-124q88-5 317-5t317 5q208 10 322 124t124 322q5 88 5 317z"/></svg>
+</a>
+            
+            
+                <a class="social-link" href="https://linkedin.com/in/venilnoronha" target="_blank" rel="noopener"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M365 1414h231v-694h-231v694zm246-908q-1-52-36-86t-93-34-94.5 34-36.5 86q0 51 35.5 85.5t92.5 34.5h1q59 0 95-34.5t36-85.5zm585 908h231v-398q0-154-73-233t-193-79q-136 0-209 117h2v-101h-231q3 66 0 694h231v-388q0-38 7-56 15-35 45-59.5t74-24.5q116 0 116 157v371zm468-998v960q0 119-84.5 203.5t-203.5 84.5h-960q-119 0-203.5-84.5t-84.5-203.5v-960q0-119 84.5-203.5t203.5-84.5h960q119 0 203.5 84.5t84.5 203.5z"/></svg>
+</a>
+            
+        </div>
+        
+    </div>
+</nav>
+
+    </div>
+</header>
+
+<!-- Everything inside the #post tags pulls data from the post -->
+<!-- #post -->
+
+<main id="site-main" class="site-main outer" role="main">
+    <div class="inner">
+
+        <article class="post-full post tag-distributed-systems ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime="27 October 2018">27 October 2018</time>
+                    
+                        <span class="date-divider">/</span>
+                        
+                            
+                               <a href='/tag/distributed-systems/'>DISTRIBUTED SYSTEMS</a>
+                            
+                        
+                    
+                </section>
+                <h1 class="post-full-title">Envoy, gRPC, and Rate Limiting</h1>
+            </header>
+
+            
+            <figure class="post-full-image" style="background-image: url(/assets/images/2018-10-27-envoy-grpc-and-rate-limiting/banner.jpg)">
+            </figure>
+            
+
+            <section class="post-full-content">
+                <div class="kg-card-markdown">
+                    <p><a href="https://www.envoyproxy.io/">Envoy</a> is a lightweight service proxy designed for
+Cloud Native applications. It’s also one of the few proxies that support <a href="https://grpc.io/">gRPC</a>,
+which is based on the H2 (<a href="https://en.wikipedia.org/wiki/HTTP/2">HTTP/2</a>)
+protocol. gRPC is a high performance RPC (<a href="https://en.wikipedia.org/wiki/Remote_procedure_call">Remote Procedure Call</a>)
+framework and it supports a plethora of environments.</p>
+
+<p style="text-align: center;">
+  <img src="assets/images/2018-10-27-envoy-grpc-and-rate-limiting/envoy-logo.png" alt="Envoy" style="width: 325px; display: inline-block;" />
+  &nbsp;&nbsp;
+  <img src="assets/images/2018-10-27-envoy-grpc-and-rate-limiting/grpc-logo.svg" alt="gRPC" style="width: 250px; display: inline-block;" />
+</p>
+
+<p>In this post, we’ll be building a <a href="https://grpc.io/docs/quickstart/cpp.html">Greeter application</a>
+in C++ using gRPC and <a href="https://developers.google.com/protocol-buffers/">Protocol Buffers</a>,
+building another gRPC application in <a href="https://golang.org/">Go</a> that implements
+Envoy’s <a href="https://github.com/envoyproxy/envoy/blob/71152b710e3543732464fca57c8f07b7395de68d/api/envoy/service/ratelimit/v2/rls.proto#L11-L15">RateLimitService</a>
+interface, and finally deploying Envoy as a proxy for the Greeter application
+while leveraging our Rate Limit service to create <a href="https://www.learnenvoy.io/articles/backpressure.html">backpressure</a>.</p>
+
+<h2 id="the-grpc-greeter-application">The gRPC Greeter Application</h2>
+
+<p>We start by <a href="https://grpc.io/docs/quickstart/cpp.html#install-grpc">installing gRPC</a>
+and <a href="https://grpc.io/docs/quickstart/cpp.html#install-protocol-buffers-v3">Protobuf</a>,
+and <a href="https://grpc.io/docs/quickstart/cpp.html#build-the-example">build the Greeter application</a>
+in C++. You can also build this application by picking one of the other
+languages <a href="https://grpc.io/docs/quickstart/">listed in the docs</a>; however, I’ll
+be using C++ for the purpose of this post.</p>
+
+<p>Below is a schematic for the Greeter application.</p>
+
+<p><img src="assets/images/2018-10-27-envoy-grpc-and-rate-limiting/greeter-architecture.svg" alt="Greeter Architecture" /></p>
+
+<p>Once we run the Greeter application, we should have the following output on the
+console.</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> ./greeter_server
+<span class="go">Server listening on 0.0.0.0:50051
+</span></code></pre></div></div>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> ./greeter_client
+<span class="go">Greeter received: Hello world
+</span></code></pre></div></div>
+
+<h2 id="upgrading-the-grpc-greeter-application">Upgrading The gRPC Greeter Application</h2>
+
+<p>Let’s now enhance the Greeter application to respond with a request count prefix
+instead of the static “Hello” prefix. To do so, simply update the
+<code class="highlighter-rouge">greeter_server.cc</code> implementation as shown below.</p>
+
+<div class="language-diff highlighter-rouge"><div class="highlight"><pre class="highlight"><code> // Logic and data behind the server's behavior.
+ class GreeterServiceImpl final : public Greeter::Service {
+<span class="gi">+  int counter = 0;
+</span>   Status SayHello(ServerContext* context, const HelloRequest* request,
+                   HelloReply* reply) override {
+<span class="gd">-    std::string prefix("Hello ");
+</span><span class="gi">+    std::string prefix(std::to_string(++counter) + " ");
+</span>     reply-&gt;set_message(prefix + request-&gt;name());
+     return Status::OK;
+   }
+</code></pre></div></div>
+
+<p>Once you re-build and execute <code class="highlighter-rouge">greeter_server</code>, you should see the following
+output when you send requests via the <code class="highlighter-rouge">greeter_client</code>.</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> <span class="k">for </span>i <span class="k">in</span> <span class="o">{</span>1..3<span class="o">}</span><span class="p">;</span> <span class="k">do</span> ./greeter_client<span class="p">;</span> sleep 1<span class="p">;</span> <span class="k">done</span>
+<span class="go">Greeter received: 1 world
+Greeter received: 2 world
+Greeter received: 3 world
+</span></code></pre></div></div>
+
+<h2 id="a-simple-rate-limit-service">A Simple Rate Limit Service</h2>
+
+<p>Next, we implement a simple Rate Limit service in Go by extending the Envoy’s
+<a href="https://github.com/envoyproxy/envoy/blob/71152b710e3543732464fca57c8f07b7395de68d/api/envoy/service/ratelimit/v2/rls.proto#L11-L15">RateLimitService</a>
+proto interface. To do so, we create a Go project named <code class="highlighter-rouge">rate-limit-service</code> and
+vendor Envoy’s <a href="https://github.com/envoyproxy/go-control-plane">go-control-plane</a>
+and its related dependencies. The <code class="highlighter-rouge">go-control-plane</code> project provides Go
+bindings for Envoy protos. We also create <code class="highlighter-rouge">cmd/server/main.go</code> and
+<code class="highlighter-rouge">cmd/client/main.go</code> for implementing the Rate Limit service later.</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> mkdir <span class="nt">-p</span> <span class="nv">$GOPATH</span>/src/github.com/venilnoronha/rate-limit-service/
+<span class="gp">$</span> <span class="nb">cd</span> <span class="nv">$GOPATH</span>/src/github.com/venilnoronha/rate-limit-service/
+<span class="gp">$</span> mkdir <span class="nt">-p</span> cmd/server/ <span class="o">&amp;&amp;</span> touch cmd/server/main.go
+<span class="gp">$</span> mkdir cmd/client/ <span class="o">&amp;&amp;</span> touch cmd/client/main.go
+</code></pre></div></div>
+
+<p>Once you’ve vendored all dependencies, you should land up with a project
+structure like below. Note that I’ve only highlighted the packages relevant for
+this experiment.</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="go">── rate-limit-service
+   ├── cmd
+   │   ├── client
+   │   │   └── main.go
+   │   └── server
+   │       └── main.go
+   └── vendor
+       ├── github.com
+       │   ├── envoyproxy
+       │   │   ├── data-plane-api
+       │   │   └── go-control-plane
+       │   ├── gogo
+       │   │   ├── googleapis
+       │   │   └── protobuf
+       │   └── lyft
+       │       └── protoc-gen-validate
+       └── google.golang.org
+           ├── genproto
+           └── grpc
+</span></code></pre></div></div>
+
+<h3 id="the-rate-limit-service-server">The Rate Limit Service Server</h3>
+
+<p>We now create a simple gRPC Rate Limit server which limits every second request.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span><span class="x"> </span><span class="n">main</span><span class="x">
+
+</span><span class="k">import</span><span class="x"> </span><span class="p">(</span><span class="x">
+        </span><span class="s">"log"</span><span class="x">
+        </span><span class="s">"net"</span><span class="x">
+        </span><span class="s">"golang.org/x/net/context"</span><span class="x">
+	</span><span class="s">"google.golang.org/grpc"</span><span class="x">
+	</span><span class="s">"google.golang.org/grpc/reflection"</span><span class="x">
+	</span><span class="n">rls</span><span class="x"> </span><span class="s">"github.com/envoyproxy/go-control-plane/envoy/service/ratelimit/v2"</span><span class="x">
+</span><span class="p">)</span><span class="x">
+
+</span><span class="c">// server is used to implement rls.RateLimitService</span><span class="x">
+</span><span class="k">type</span><span class="x"> </span><span class="n">server</span><span class="x"> </span><span class="k">struct</span><span class="p">{</span><span class="x">
+	</span><span class="c">// limit specifies if the next request is to be rate limited</span><span class="x">
+	</span><span class="n">limit</span><span class="x"> </span><span class="kt">bool</span><span class="x">
+</span><span class="p">}</span><span class="x">
+
+</span><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">s</span><span class="x"> </span><span class="o">*</span><span class="n">server</span><span class="p">)</span><span class="x"> </span><span class="n">ShouldRateLimit</span><span class="p">(</span><span class="n">ctx</span><span class="x"> </span><span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span><span class="x">
+		</span><span class="n">request</span><span class="x"> </span><span class="o">*</span><span class="n">rls</span><span class="o">.</span><span class="n">RateLimitRequest</span><span class="p">)</span><span class="x"> </span><span class="p">(</span><span class="o">*</span><span class="n">rls</span><span class="o">.</span><span class="n">RateLimitResponse</span><span class="p">,</span><span class="x"> </span><span class="kt">error</span><span class="p">)</span><span class="x"> </span><span class="p">{</span><span class="x">
+	</span><span class="n">log</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"request: %v</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="x"> </span><span class="n">request</span><span class="p">)</span><span class="x">
+
+	</span><span class="c">// logic to rate limit every second request</span><span class="x">
+	</span><span class="k">var</span><span class="x"> </span><span class="n">overallCode</span><span class="x"> </span><span class="n">rls</span><span class="o">.</span><span class="n">RateLimitResponse_Code</span><span class="x">
+	</span><span class="k">if</span><span class="x"> </span><span class="n">s</span><span class="o">.</span><span class="n">limit</span><span class="x"> </span><span class="p">{</span><span class="x">
+		</span><span class="n">overallCode</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">rls</span><span class="o">.</span><span class="n">RateLimitResponse_OVER_LIMIT</span><span class="x">
+		</span><span class="n">s</span><span class="o">.</span><span class="n">limit</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="no">false</span><span class="x">
+	</span><span class="p">}</span><span class="x"> </span><span class="k">else</span><span class="x"> </span><span class="p">{</span><span class="x">
+		</span><span class="n">overallCode</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">rls</span><span class="o">.</span><span class="n">RateLimitResponse_OK</span><span class="x">
+		</span><span class="n">s</span><span class="o">.</span><span class="n">limit</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="no">true</span><span class="x">
+	</span><span class="p">}</span><span class="x">
+
+	</span><span class="n">response</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="o">&amp;</span><span class="n">rls</span><span class="o">.</span><span class="n">RateLimitResponse</span><span class="p">{</span><span class="n">OverallCode</span><span class="o">:</span><span class="x"> </span><span class="n">overallCode</span><span class="p">}</span><span class="x">
+	</span><span class="n">log</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"response: %v</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="x"> </span><span class="n">response</span><span class="p">)</span><span class="x">
+        </span><span class="k">return</span><span class="x"> </span><span class="n">response</span><span class="p">,</span><span class="x"> </span><span class="no">nil</span><span class="x">
+</span><span class="p">}</span><span class="x">
+
+</span><span class="k">func</span><span class="x"> </span><span class="n">main</span><span class="p">()</span><span class="x"> </span><span class="p">{</span><span class="x">
+	</span><span class="c">// create a TCP listener on port 50052</span><span class="x">
+        </span><span class="n">lis</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">net</span><span class="o">.</span><span class="n">Listen</span><span class="p">(</span><span class="s">"tcp"</span><span class="p">,</span><span class="x"> </span><span class="s">":50052"</span><span class="p">)</span><span class="x">
+        </span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
+                </span><span class="n">log</span><span class="o">.</span><span class="n">Fatalf</span><span class="p">(</span><span class="s">"failed to listen: %v"</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="p">)</span><span class="x">
+        </span><span class="p">}</span><span class="x">
+	</span><span class="n">log</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"listening on %s"</span><span class="p">,</span><span class="x"> </span><span class="n">lis</span><span class="o">.</span><span class="n">Addr</span><span class="p">())</span><span class="x">
+
+	</span><span class="c">// create a gRPC server and register the RateLimitService server</span><span class="x">
+        </span><span class="n">s</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">grpc</span><span class="o">.</span><span class="n">NewServer</span><span class="p">()</span><span class="x">
+	</span><span class="n">rls</span><span class="o">.</span><span class="n">RegisterRateLimitServiceServer</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="x"> </span><span class="o">&amp;</span><span class="n">server</span><span class="p">{</span><span class="n">limit</span><span class="o">:</span><span class="x"> </span><span class="no">false</span><span class="p">})</span><span class="x">
+        </span><span class="n">reflection</span><span class="o">.</span><span class="n">Register</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="x">
+        </span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">s</span><span class="o">.</span><span class="n">Serve</span><span class="p">(</span><span class="n">lis</span><span class="p">);</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
+                </span><span class="n">log</span><span class="o">.</span><span class="n">Fatalf</span><span class="p">(</span><span class="s">"failed to serve: %v"</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="p">)</span><span class="x">
+        </span><span class="p">}</span><span class="x">
+</span><span class="p">}</span><span class="x">
+</span></code></pre></div></div>
+
+<p>Let’s now start the <code class="highlighter-rouge">RateLimitService</code> server as shown below.</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> go run cmd/server/main.go
+<span class="go">2018/10/27 00:35:28 listening on [::]:50052
+</span></code></pre></div></div>
+
+<h3 id="the-rate-limit-service-client">The Rate Limit Service Client</h3>
+
+<p>We similarly create a <code class="highlighter-rouge">RateLimitService</code> client to validate the server’s
+behavior.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span><span class="x"> </span><span class="n">main</span><span class="x">
+
+</span><span class="k">import</span><span class="x"> </span><span class="p">(</span><span class="x">
+        </span><span class="s">"log"</span><span class="x">
+	</span><span class="s">"time"</span><span class="x">
+        </span><span class="s">"golang.org/x/net/context"</span><span class="x">
+        </span><span class="s">"google.golang.org/grpc"</span><span class="x">
+	</span><span class="n">rls</span><span class="x"> </span><span class="s">"github.com/envoyproxy/go-control-plane/envoy/service/ratelimit/v2"</span><span class="x">
+</span><span class="p">)</span><span class="x">
+
+</span><span class="k">func</span><span class="x"> </span><span class="n">main</span><span class="p">()</span><span class="x"> </span><span class="p">{</span><span class="x">
+        </span><span class="c">// Set up a connection to the server</span><span class="x">
+        </span><span class="n">conn</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">grpc</span><span class="o">.</span><span class="n">Dial</span><span class="p">(</span><span class="s">"localhost:50052"</span><span class="p">,</span><span class="x"> </span><span class="n">grpc</span><span class="o">.</span><span class="n">WithInsecure</span><span class="p">())</span><span class="x">
+        </span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
+                </span><span class="n">log</span><span class="o">.</span><span class="n">Fatalf</span><span class="p">(</span><span class="s">"could not connect: %v"</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="p">)</span><span class="x">
+        </span><span class="p">}</span><span class="x">
+        </span><span class="k">defer</span><span class="x"> </span><span class="n">conn</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span><span class="x">
+        </span><span class="n">c</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">rls</span><span class="o">.</span><span class="n">NewRateLimitServiceClient</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span><span class="x">
+
+        </span><span class="c">// Send a request to the server</span><span class="x">
+        </span><span class="n">ctx</span><span class="p">,</span><span class="x"> </span><span class="n">cancel</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">context</span><span class="o">.</span><span class="n">WithTimeout</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">Background</span><span class="p">(),</span><span class="x"> </span><span class="n">time</span><span class="o">.</span><span class="n">Second</span><span class="p">)</span><span class="x">
+        </span><span class="k">defer</span><span class="x"> </span><span class="n">cancel</span><span class="p">()</span><span class="x">
+	</span><span class="n">r</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">c</span><span class="o">.</span><span class="n">ShouldRateLimit</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span><span class="x"> </span><span class="o">&amp;</span><span class="n">rls</span><span class="o">.</span><span class="n">RateLimitRequest</span><span class="p">{</span><span class="n">Domain</span><span class="o">:</span><span class="x"> </span><span class="s">"envoy"</span><span class="p">})</span><span class="x">
+        </span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
+                </span><span class="n">log</span><span class="o">.</span><span class="n">Fatalf</span><span class="p">(</span><span class="s">"could not call service: %v"</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="p">)</span><span class="x">
+        </span><span class="p">}</span><span class="x">
+        </span><span class="n">log</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"response: %v"</span><span class="p">,</span><span class="x"> </span><span class="n">r</span><span class="p">)</span><span class="x">
+</span><span class="p">}</span><span class="x">
+</span></code></pre></div></div>
+
+<p>Let’s now test out the server/client interaction by firing up the client.</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> <span class="k">for </span>i <span class="k">in</span> <span class="o">{</span>1..4<span class="o">}</span><span class="p">;</span> <span class="k">do </span>go run cmd/client/main.go<span class="p">;</span> sleep 1<span class="p">;</span> <span class="k">done</span>
+<span class="go">2018/10/27 17:32:23 response: overall_code:OK
+2018/10/27 17:32:25 response: overall_code:OVER_LIMIT
+2018/10/27 17:32:26 response: overall_code:OK
+2018/10/27 17:32:28 response: overall_code:OVER_LIMIT
+</span></code></pre></div></div>
+
+<p>You should see a corresponding log on the server.</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="go">2018/10/27 17:32:23 request: domain:"envoy"
+2018/10/27 17:32:23 response: overall_code:OK
+2018/10/27 17:32:25 request: domain:"envoy"
+2018/10/27 17:32:25 response: overall_code:OVER_LIMIT
+2018/10/27 17:32:26 request: domain:"envoy"
+2018/10/27 17:32:26 response: overall_code:OK
+2018/10/27 17:32:28 request: domain:"envoy"
+2018/10/27 17:32:28 response: overall_code:OVER_LIMIT
+</span></code></pre></div></div>
+
+<h2 id="the-envoy-proxy">The Envoy Proxy</h2>
+
+<p>It’s now time to bring in the Envoy proxy which will route calls from the
+Greeter client to the Greeter server while testing the rate with our Rate Limit
+service implementation. Below is a diagram depicting our final deployment.</p>
+
+<p><img src="assets/images/2018-10-27-envoy-grpc-and-rate-limiting/deployment-architecture.svg" alt="Deployment Architecture" /></p>
+
+<h3 id="proxy-configuration">Proxy Configuration</h3>
+
+<p>We use the following Envoy configuration for registering both the Greeter and
+the RateLimitService servers and enabling Rate Limit checks. Note that the
+locally deployed services are referred via the <code class="highlighter-rouge">docker.for.mac.localhost</code>
+address as we’ll later deploy Envoy on <a href="https://docs.docker.com/docker-for-mac/">Docker for Mac</a>.</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">static_resources</span><span class="pi">:</span>
+  <span class="na">listeners</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">address</span><span class="pi">:</span>
+      <span class="na">socket_address</span><span class="pi">:</span>
+        <span class="na">address</span><span class="pi">:</span> <span class="s">0.0.0.0</span>
+        <span class="na">port_value</span><span class="pi">:</span> <span class="s">9211</span> <span class="c1"># expose proxy on port 9211</span>
+    <span class="na">filter_chains</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">filters</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">envoy.http_connection_manager</span>
+        <span class="na">config</span><span class="pi">:</span>
+          <span class="na">codec_type</span><span class="pi">:</span> <span class="s">auto</span>
+          <span class="na">stat_prefix</span><span class="pi">:</span> <span class="s">ingress_http</span>
+          <span class="na">access_log</span><span class="pi">:</span> <span class="c1"># configure logging</span>
+            <span class="na">name</span><span class="pi">:</span> <span class="s">envoy.file_access_log</span>
+            <span class="na">config</span><span class="pi">:</span>
+              <span class="na">path</span><span class="pi">:</span> <span class="s">/dev/stdout</span>
+          <span class="na">route_config</span><span class="pi">:</span>
+            <span class="na">name</span><span class="pi">:</span> <span class="s">greeter_route</span> <span class="c1"># configure the greeter service routes</span>
+            <span class="na">virtual_hosts</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">service</span>
+              <span class="na">domains</span><span class="pi">:</span>
+              <span class="pi">-</span> <span class="s2">"</span><span class="s">*"</span>
+              <span class="na">routes</span><span class="pi">:</span>
+              <span class="pi">-</span> <span class="na">match</span><span class="pi">:</span>
+                  <span class="na">prefix</span><span class="pi">:</span> <span class="s2">"</span><span class="s">/"</span>
+                  <span class="na">grpc</span><span class="pi">:</span> <span class="pi">{}</span>
+                <span class="na">route</span><span class="pi">:</span>
+                  <span class="na">cluster</span><span class="pi">:</span> <span class="s">greeter_service</span>
+              <span class="na">rate_limits</span><span class="pi">:</span> <span class="c1"># enable rate limit checks for the greeter service</span>
+                <span class="na">actions</span><span class="pi">:</span>
+                <span class="pi">-</span> <span class="na">destination_cluster</span><span class="pi">:</span> <span class="pi">{}</span>
+          <span class="na">http_filters</span><span class="pi">:</span>
+          <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">envoy.rate_limit</span> <span class="c1"># enable the Rate Limit filter</span>
+            <span class="na">config</span><span class="pi">:</span>
+              <span class="na">domain</span><span class="pi">:</span> <span class="s">envoy</span>
+          <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">envoy.router</span> <span class="c1"># enable the Router filter</span>
+            <span class="na">config</span><span class="pi">:</span> <span class="pi">{}</span>
+  <span class="na">clusters</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">greeter_service</span> <span class="c1"># register the Greeter server</span>
+    <span class="na">connect_timeout</span><span class="pi">:</span> <span class="s">1s</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">strict_dns</span>
+    <span class="na">lb_policy</span><span class="pi">:</span> <span class="s">round_robin</span>
+    <span class="na">http2_protocol_options</span><span class="pi">:</span> <span class="pi">{}</span> <span class="c1"># enable H2 protocol</span>
+    <span class="na">hosts</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">socket_address</span><span class="pi">:</span>
+        <span class="na">address</span><span class="pi">:</span> <span class="s">docker.for.mac.localhost</span>
+        <span class="na">port_value</span><span class="pi">:</span> <span class="s">50051</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">rate_limit_service</span> <span class="c1"># register the RateLimitService server</span>
+    <span class="na">connect_timeout</span><span class="pi">:</span> <span class="s">1s</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">strict_dns</span>
+    <span class="na">lb_policy</span><span class="pi">:</span> <span class="s">round_robin</span>
+    <span class="na">http2_protocol_options</span><span class="pi">:</span> <span class="pi">{}</span> <span class="c1"># enable H2 protocol</span>
+    <span class="na">hosts</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">socket_address</span><span class="pi">:</span>
+        <span class="na">address</span><span class="pi">:</span> <span class="s">docker.for.mac.localhost</span>
+        <span class="na">port_value</span><span class="pi">:</span> <span class="s">50052</span>
+<span class="na">rate_limit_service</span><span class="pi">:</span> <span class="c1"># define the global rate limit service</span>
+  <span class="na">use_data_plane_proto</span><span class="pi">:</span> <span class="no">true</span>
+  <span class="na">grpc_service</span><span class="pi">:</span>
+    <span class="na">envoy_grpc</span><span class="pi">:</span>
+      <span class="na">cluster_name</span><span class="pi">:</span> <span class="s">rate_limit_service</span>
+</code></pre></div></div>
+
+<h3 id="deploying-the-envoy-proxy">Deploying The Envoy Proxy</h3>
+
+<p>To deploy the Envoy proxy, we copy the above configuration to a file named
+<code class="highlighter-rouge">envoy.yaml</code>. Then, we can build a Docker image with the following <code class="highlighter-rouge">Dockerfile</code>.</p>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> envoyproxy/envoy:latest</span>
+<span class="k">COPY</span><span class="s"> envoy.yaml /etc/envoy/envoy.yaml</span>
+</code></pre></div></div>
+
+<p>To build the image, run the following command.</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> docker build <span class="nt">-t</span> envoy:grpc <span class="nb">.</span>
+<span class="go">Sending build context to Docker daemon  74.75kB
+Step 1/2 : FROM envoyproxy/envoy:latest
+</span><span class="gp"> ---&gt;</span> 51fc619e4dc5
+<span class="go">Step 2/2 : COPY envoy.yaml /etc/envoy/envoy.yaml
+</span><span class="gp"> ---&gt;</span> c766ba3d7d09
+<span class="go">Successfully built c766ba3d7d09
+Successfully tagged envoy:grpc
+</span></code></pre></div></div>
+
+<p>We can then run the proxy, like so:</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> docker run <span class="nt">-p</span> 9211:9211 envoy:grpc
+<span class="c">...
+</span><span class="go">[2018-10-28 02:59:20.469][000008][info][main] [source/server/server.cc:456] starting main dispatch loop
+[2018-10-28 02:59:20.553][000008][info][upstream] [source/common/upstream/cluster_manager_impl.cc:135] cm init: all clusters initialized
+[2018-10-28 02:59:20.554][000008][info][main] [source/server/server.cc:425] all clusters initialized. initializing init manager
+[2018-10-28 02:59:20.554][000008][info][config] [source/server/listener_manager_impl.cc:908] all dependencies initialized. starting workers
+</span></code></pre></div></div>
+
+<h3 id="updating-the-greeter-client">Updating The Greeter Client</h3>
+
+<p>Since we now want to route our Greeter client calls via Envoy, we update the
+server port from <code class="highlighter-rouge">50051</code> to <code class="highlighter-rouge">9211</code> in its implementation and rebuild it.</p>
+
+<div class="language-diff highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   GreeterClient greeter(grpc::CreateChannel(
+<span class="gd">-      "localhost:50051", grpc::InsecureChannelCredentials()));
+</span><span class="gi">+      "localhost:9211", grpc::InsecureChannelCredentials()));
+</span>   std::string user("world");
+   std::string reply = greeter.SayHello(user);
+</code></pre></div></div>
+
+<h2 id="the-final-test">The Final Test</h2>
+
+<p>At this point we have the Greeter server, the RateLimitService server and an
+instance of Envoy proxy running. It’s now time to validate the complete
+deployment. To do so, we can simply send a few Greeter requests via the updated
+Greeter client as shown below.</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> <span class="k">for </span>i <span class="k">in</span> <span class="o">{</span>1..10<span class="o">}</span><span class="p">;</span> <span class="k">do</span> ./greeter_client<span class="p">;</span> sleep 1<span class="p">;</span> <span class="k">done</span>
+<span class="go">Greeter received: 4 world
+14:
+Greeter received: RPC failed
+Greeter received: 5 world
+14:
+Greeter received: RPC failed
+Greeter received: 6 world
+14:
+Greeter received: RPC failed
+Greeter received: 7 world
+14:
+Greeter received: RPC failed
+Greeter received: 8 world
+14:
+Greeter received: RPC failed
+</span></code></pre></div></div>
+
+<p>As you observe, alternate requests fail with a gRPC status code of <code class="highlighter-rouge">14</code> i.e.
+<code class="highlighter-rouge">RPC failed</code>, while 5 out of the 10 requests are successful. This shows that
+the Rate Limit service is limiting every second request as designed, and Envoy
+rightly terminates such requests on its end.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>This post should give you a high level idea of how you can use Envoy as a proxy
+for your own applications, and should also help you understand how Envoy’s Rate
+Limit filter works with the gRPC protocol.</p>
+
+<hr />
+
+<p>Thoughts are much appreciated. :)</p>
+
+<p><strong>Disclaimer:</strong> My postings are my own and don’t necessarily represent VMware’s positions, strategies or opinions.</p>
+
+                </div>
+            </section>
+
+            <!-- Email subscribe form at the bottom of the page -->
+            
+
+            <footer class="post-full-footer">
+                <!-- Everything inside the #author tags pulls data from the author -->
+                <!-- #author-->
+                
+                    
+                        <section class="author-card">
+                            
+                                <img class="author-profile-image" src="/assets/images/venilnoronha.jpg" alt="venilnoronha" />
+                            
+                            <section class="author-card-content">
+                                <h4 class="author-card-name"><a href="/author/venilnoronha">Venil Noronha</a></h4>
+                                
+                                    <p>Open Source Enthusiast</p>
+                                
+                            </section>
+                        </section>
+                        <div class="post-full-footer-right">
+                            <a class="author-card-button" href="/author/venilnoronha">Read More</a>
+                        </div>
+                    
+                
+                <!-- /author  -->
+            </footer>
+
+            <!-- If you use Disqus comments, just uncomment this block.
+            The only thing you need to change is "test-apkdzgmqhj" - which
+            should be replaced with your own Disqus site-id. -->
+            
+                <section class="post-full-comments">
+                    <div id="disqus_thread"></div>
+                    <script>
+                        var disqus_config = function () {
+                            this.page.url = 'https://venilnoronha.io/envoy-grpc-and-rate-limiting';
+                            this.page.identifier = 'Envoy, gRPC, and Rate Limiting';
+                        };
+                        (function() {
+                            var d = document, s = d.createElement('script');
+                            s.src = 'https://venilnoronha-io.disqus.com/embed.js';
+                            s.setAttribute('data-timestamp', +new Date());
+                            (d.head || d.body).appendChild(s);
+                        })();
+                    </script>
+                </section>
+            
+
+        </article>
+
+    </div>
+</main>
+
+<!-- Links to Previous/Next posts -->
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+            
+                
+                
+                
+                
+                    <article class="read-next-card"
+                        
+                            style="background-image: url(/assets/images/blog-cover.jpg)"
+                        
+                    >
+                        <header class="read-next-card-header">
+                            <small class="read-next-card-header-sitetitle">&mdash; Venil Noronha &mdash;</small>
+                            
+                                <h3 class="read-next-card-header-title"><a href="/tag/distributed-systems/">Distributed systems</a></h3>
+                            
+                        </header>
+                        <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
+</div>
+                        <div class="read-next-card-content">
+                            <ul>
+                                
+                                
+                                  
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/raw-tcp-traffic-shaping-with-istio-1.1.0">Raw TCP Traffic Shaping with Istio 1.1.0</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/set-sail-a-production-ready-istio-adapter">Set sail a production-ready Istio Adapter</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/a-step-by-step-guide-to-mtls-in-go">A step by step guide to mTLS in Go</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                            </ul>
+                        </div>
+                        <footer class="read-next-card-footer">
+                            <a href="/tag/distributed-systems/">
+                                
+                                    See all 7 posts  →
+                                
+                            </a>
+                        </footer>
+                    </article>
+                
+            
+
+            <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
+            
+
+            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+    <article class="post-card post-template">
+        
+            <a class="post-card-image-link" href="/raw-tcp-traffic-shaping-with-istio-1.1.0">
+                <div class="post-card-image" style="background-image: url(/assets/images/2018-10-19-raw-tcp-traffic-shaping-with-istio-1.1.0/banner.jpg)"></div>
+            </a>
+        
+        <div class="post-card-content">
+            <a class="post-card-content-link" href="/raw-tcp-traffic-shaping-with-istio-1.1.0">
+                <header class="post-card-header">
+                    
+                        
+                            
+                                <span class="post-card-tags">Distributed systems</span>
+                            
+                        
+                    
+
+                    <h2 class="post-card-title">Raw TCP Traffic Shaping with Istio 1.1.0</h2>
+                </header>
+                <section class="post-card-excerpt">
+                    <p>Istio provides sophisticated routing mechanics via concepts like VirtualService, DestinationRule, Gateway, etc. Istio 1.0 enabled HTTP traffic shifting via weighted route definitions. I was able to contribute a similar feature for TCP/TLS services</p>
+                </section>
+            </a>
+            <footer class="post-card-meta">
+                
+                    
+                        
+                        <img class="author-profile-image" src="/assets/images/venilnoronha.jpg" alt="Venil Noronha" />
+                        
+                        <span class="post-card-author">
+                            <a href="/author/venilnoronha/">Venil Noronha</a>
+                        </span>
+                    
+                
+            </footer>
+        </div>
+    </article>
+
+            
+
+        </div>
+    </div>
+</aside>
+
+<!-- Floating header which appears on-scroll, included from includes/floating-header.hbs -->
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="https://venilnoronha.io/">
+            
+                <img src="/assets/images/favicon.png" alt="Venil Noronha icon" />
+            
+            <span>Venil Noronha</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">&mdash;</span>
+    <div class="floating-header-title">Envoy, gRPC, and Rate Limiting</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
+</svg>
+</div>
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Envoy%2C+gRPC%2C+and+Rate+Limiting&amp;url=https://venilnoronha.io/envoy-grpc-and-rate-limiting"
+            onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+
+        </a>
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://venilnoronha.io/envoy-grpc-and-rate-limiting"
+            onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
+
+        </a>
+    </div>
+    <progress class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+<!-- /post -->
+
+<!-- The #contentFor helper here will send everything inside it up to the matching #block helper found in default.hbs -->
+
+
+        <!-- Previous/next page links - displayed on every page -->
+        
+
+        <!-- The footer at the very bottom of the screen -->
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="https://venilnoronha.io/">Venil Noronha</a> &copy; 2018</section>
+                <section class="poweredby">Proudly published with <a href="https://jekyllrb.com/">Jekyll</a> &
+                    <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> using
+                    <a href="https://github.com/jekyller/jasper2" target="_blank" rel="noopener">Jasper2</a></section>
+                <nav class="site-footer-nav">
+                    <a href="https://github.com/venilnoronha" target="_blank" rel="noopener">GitHub</a>
+                    
+                    <a href="https://twitter.com/venilnoronha" target="_blank" rel="noopener">Twitter</a>
+                    <a href="https://instagram.com/venilnoronha" target="_blank" rel="noopener">Instagram</a>
+                    <a href="https://linkedin.com/in/venilnoronha" target="_blank" rel="noopener">LinkedIn</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- The big email subscribe modal content -->
+    
+
+    <!-- highlight.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.10.0/components/prism-abap.min.js"></script>
+    <script>$(document).ready(function() {
+      $('pre code').each(function(i, block) {
+        hljs.highlightBlock(block);
+      });
+    });</script>
+
+    <!-- jQuery + Fitvids, which makes all video embeds responsive -->
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="https://demo.ghost.io/assets/js/jquery.fitvids.js?v=724281a32e"></script>
+
+
+    <!-- Paginator increased to "infinit" in _config.yml -->
+    <!-- if paginator.posts  -->
+    <!-- <script>
+        var maxPages = parseInt('');
+    </script>
+    <script src="/assets/js/infinitescroll.js"></script> -->
+    <!-- /endif -->
+
+    
+
+
+    <!-- Add Google Analytics  -->
+    <!-- Google Analytics Tracking code -->
+ <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-109280867-1', 'auto');
+  ga('send', 'pageview');
+
+ </script>
+
+
+    <!-- The #block helper will pull in data from the #contentFor other template files. In this case, there's some JavaScript which we only want to use in post.hbs, but it needs to be included down here, after jQuery has already loaded. -->
+    
+        <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+});
+</script>
+
+    
+
+    <!-- Ghost outputs important scripts and data with this tag - it should always be the very last thing before the closing body tag -->
+    <!-- ghost_foot -->
+
+</body>
+</html>
