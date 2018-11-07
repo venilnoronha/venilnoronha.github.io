@@ -71,7 +71,13 @@ into the {body} of the default.hbs template -->
                                 <img class="author-profile-image" src="{{ site.baseurl }}{{ author[1].picture }}" alt="{{ page.author }}" />
                             {% endif %}
                             <section class="author-card-content">
-                                <h4 class="author-card-name"><a href="{{ site.baseurl }}author/{{ page.author }}">{{ author[1].name }}</a></h4>
+                                <h4 class="author-card-name">
+                                    {% if author[1].username == site.default_author %}
+                                        <a href="{{ site.baseurl }}about/">{{ author[1].name }}</a>
+                                    {% else %}
+                                        <a href="{{ site.baseurl }}author/{{ page.author }}">{{ author[1].name }}</a>
+                                    {% endif %}
+                                </h4>
                                 {% if author[1].bio %}
                                     <p>{{ author[1].bio }}</p>
                                 {% else %}
