@@ -178,7 +178,6 @@ metadata:
   name: tcp-echo-server
   labels:
     app: tcp-echo-server
-    istio: ingressgateway # use istio default controller
 spec:
   selector:
     app: tcp-echo-server
