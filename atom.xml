@@ -8,6 +8,25 @@
     
       
       <item>
+        <title>Seamless Cloud-Native Apps with gRPC-Web and Istio</title>
+        
+          <description>&lt;p&gt;&lt;a href=&quot;https://github.com/grpc/grpc-web&quot;&gt;gRPC-Web&lt;/a&gt; enables web applications to access
+&lt;a href=&quot;https://grpc.io/&quot;&gt;gRPC&lt;/a&gt; backends via a proxy like &lt;a href=&quot;https://www.envoyproxy.io/&quot;&gt;Envoy&lt;/a&gt;.
+Envoy serves as the default proxy for &lt;a href=&quot;https://istio.io/&quot;&gt;Istio&lt;/a&gt;, and, so, we
+can leverage Istio’s &lt;a href=&quot;https://istio.io/docs/reference/config/istio.networking.v1alpha3/#EnvoyFilter&quot;&gt;EnvoyFilter&lt;/a&gt;
+construct to create seamless, well connected, Cloud-Native web applications.&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Sat, 10 Nov 2018 15:48:00 +0000</pubDate>
+        <link>
+        https://venilnoronha.io/seamless-cloud-native-apps-with-grpc-web-and-istio</link>
+        <guid isPermaLink="true">https://venilnoronha.io/seamless-cloud-native-apps-with-grpc-web-and-istio</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>Envoy, gRPC, and Rate Limiting</title>
         
           <description>&lt;p&gt;&lt;a href=&quot;https://www.envoyproxy.io/&quot;&gt;Envoy&lt;/a&gt; is a lightweight service proxy designed for
