@@ -8,7 +8,11 @@ class: page-template
 subclass: 'post page'
 ---
 
+**Open Source 101** &nbsp;
+  [talk](https://opensource101.com/talk-service-mesh-in-a-nutshell/)
+
 **Service Mesh Day 2019** &nbsp;
+  [talk](https://servicemeshday.com/schedule/)
 
 **VMware {code} Meetup** &nbsp;
   [talk](https://www.meetup.com/VMware-code/events/259161925/) \|
