@@ -26,8 +26,8 @@ and [Envoy Proxy](https://github.com/envoyproxy). I've also donated one of my
 projects, [Spring Cloud Config Server MongoDB](https://github.com/spring-cloud-incubator/spring-cloud-config-server-mongodb),
 to Pivotal's Spring Cloud Incubator.
 
-I'm very passionate about Distributed Systems, Cloud Computing, Microservices,
-Scalability, Fault Tolerance, High Availability and Software Architecture. I'm
-also greatly enthusiastic about Open Source Software, so if you have a cool idea
-and are looking for someone to collaborate with, feel free to hit me up on hello
-AT venilnoronha DOT io.
+I'm very passionate about Service Mesh, Distributed Systems, Cloud Computing,
+Microservices, Scalability, Fault Tolerance, High Availability and Software
+Architecture. I'm also greatly enthusiastic about Open Source Software, so if
+you have a cool idea and are looking for someone to collaborate with, feel free
+to hit me up on hello AT venilnoronha DOT io.
