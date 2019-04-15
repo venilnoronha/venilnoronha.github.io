@@ -13,7 +13,8 @@ subclass: 'post page'
   [talk](https://opensource101.com/talk-service-mesh-in-a-nutshell/)
 
 **Service Mesh Day 2019** &nbsp;
-  [talk](https://servicemeshday.com/schedule/)
+  [talk](https://servicemeshday.com/schedule/) \|
+  [video](https://www.youtube.com/watch?v=e2o_VQyfrbA)
 
 **VMware {code} Meetup** &nbsp;
   [talk](https://www.meetup.com/VMware-code/events/259161925/) \|
@@ -21,8 +22,7 @@ subclass: 'post page'
 
 **gRPC Conf 2019** &nbsp;
   [talk](https://grpconf19.sched.com/event/L70z/seamless-cloud-native-apps-with-grpc-web-and-istio-venil-noronha-vmware) \|
-  [deck](https://static.sched.com/hosted_files/grpconf19/d9/Seamless%20Cloud-Native%20Apps%20with%20gRPC-Web%20and%20Istio.pdf) \|
-  [video]()
+  [deck](https://static.sched.com/hosted_files/grpconf19/d9/Seamless%20Cloud-Native%20Apps%20with%20gRPC-Web%20and%20Istio.pdf)
 
 <br />
 <p style="text-align: right; font-size: 10pt;">
