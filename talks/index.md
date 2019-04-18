@@ -10,7 +10,8 @@ subclass: 'post page'
 ---
 
 **Open Source 101** &nbsp;
-  [talk](https://opensource101.com/talk-service-mesh-in-a-nutshell/)
+  [talk](https://opensource101.com/talk-service-mesh-in-a-nutshell/) \|
+  [deck](Service%20Mesh%20in%20a%20Nutshell%20-%20Open%20Source%20101.pdf)
 
 **Service Mesh Day 2019** &nbsp;
   [talk](https://servicemeshday.com/schedule/) \|
