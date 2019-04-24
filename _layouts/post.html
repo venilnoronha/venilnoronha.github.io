@@ -83,6 +83,13 @@ into the {body} of the default.hbs template -->
                                 {% else %}
                                     <p>Read <a href="{{ site.baseurl }}author/{{ page.author }}">more posts</a> by this author.</p>
                                 {% endif %}
+                                <p style="margin-top: 2px;">
+                                    {% if site.github %}<a href="https://github.com/{{ site.github }}" target="_blank" rel="noopener">GitHub</a>{% endif %} |
+                                    {% if site.facebook %}<a href="https://facebook.com/{{ site.facebook }}" target="_blank" rel="noopener">Facebook</a>{% endif %}
+                                    {% if site.twitter %}<a href="https://twitter.com/{{ site.twitter }}" target="_blank" rel="noopener">Twitter</a>{% endif %} |
+                                    {% if site.instagram %}<a href="https://instagram.com/{{ site.instagram }}" target="_blank" rel="noopener">Instagram</a>{% endif %} |
+                                    {% if site.linkedin %}<a href="https://linkedin.com/in/{{ site.linkedin }}" target="_blank" rel="noopener">LinkedIn</a>{% endif %}
+                                </p>
                             </section>
                         </section>
                         <div class="post-full-footer-right">

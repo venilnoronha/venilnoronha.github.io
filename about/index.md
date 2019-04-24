@@ -9,6 +9,15 @@ subclass: 'post page'
 ---
 <img class="author-profile-image" src="/assets/images/venilnoronha.jpg" alt="Venil Noronha" style="width: 300px; height: 300px;" />
 
+<h4 style="text-align: center;">Venil Noronha</h4>
+<p style="text-align: center;">
+    {% if site.github %}<a href="https://github.com/{{ site.github }}" target="_blank" rel="noopener">GitHub</a>{% endif %} |
+    {% if site.facebook %}<a href="https://facebook.com/{{ site.facebook }}" target="_blank" rel="noopener">Facebook</a>{% endif %}
+    {% if site.twitter %}<a href="https://twitter.com/{{ site.twitter }}" target="_blank" rel="noopener">Twitter</a>{% endif %} |
+    {% if site.instagram %}<a href="https://instagram.com/{{ site.instagram }}" target="_blank" rel="noopener">Instagram</a>{% endif %} |
+    {% if site.linkedin %}<a href="https://linkedin.com/in/{{ site.linkedin }}" target="_blank" rel="noopener">LinkedIn</a>{% endif %}
+</p>
+
 I'm a Software Developer with over 4 years of industry experience in building
 cloud products. I currently work with the Open Source Technology Center at
 VMware, Inc. where I primarily contribute upstream to projects like
