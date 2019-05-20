@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Document Settings -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Base Meta -->
+    <!-- dynamically fixing the title for tag/author pages -->
+
+
+
+    <title>Hand-crafting a Sidecar Proxy and Demystifying Istio</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Styles'n'Scripts -->
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.edited.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/syntax.css" />
+    <!-- highlight.js -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+    <style>.hljs { background: none; }</style>
+
+    <!-- This tag outputs SEO meta+structured data and other important settings -->
+    <meta name="description" content="Service mesh, distributed systems, software design, and more..." />
+    <link rel="shortcut icon" href="https://venilnoronha.io/assets/images/favicon.png" type="image/png" />
+    <link rel="canonical" href="https://venilnoronha.io/hand-crafting-a-sidecar-proxy-and-demystifying-istio" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+
+     <!--title below is coming from _includes/dynamic_title-->
+    <meta property="og:site_name" content="Venil Noronha" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Hand-crafting a Sidecar Proxy and Demystifying Istio" />
+    <meta property="og:description" content="The sidecar proxy pattern is an important concept that lets Istio provide routing, metrics, security, and other features to services running in a service mesh. In this post I’ll explain key techniques that power Istio and I’ll also show you a way to build a simple HTTP traffic-sniffing sidecar proxy." />
+    <meta property="og:url" content="https://venilnoronha.io/hand-crafting-a-sidecar-proxy-and-demystifying-istio" />
+    <meta property="og:image" content="https://venilnoronha.io/assets/images/2019-03-10-hand-crafting-a-sidecar-proxy-and-demystifying-istio/banner.jpg" />
+    <meta property="article:publisher" content="https://www.facebook.com/false" />
+    <meta property="article:author" content="https://www.facebook.com/false" />
+    <meta property="article:published_time" content="2019-03-10T12:37:00-07:00" />
+    <meta property="article:modified_time" content="2019-03-10T12:37:00-07:00" />
+    <meta property="article:tag" content="Distributed Systems" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Hand-crafting a Sidecar Proxy and Demystifying Istio" />
+    <meta name="twitter:description" content="The sidecar proxy pattern is an important concept that lets Istio provide routing, metrics, security, and other features to services running in a service mesh. In this post I’ll explain key techniques that power Istio and I’ll also show you a way to build a simple HTTP traffic-sniffing sidecar proxy." />
+    <meta name="twitter:url" content="https://venilnoronha.io/" />
+    <meta name="twitter:image" content="https://venilnoronha.io/assets/images/2019-03-10-hand-crafting-a-sidecar-proxy-and-demystifying-istio/banner.jpg" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Venil Noronha" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="Distributed Systems" />
+    <meta name="twitter:site" content="@venilnoronha" />
+    <meta name="twitter:creator" content="@venilnoronha" />
+    <meta property="og:image:width" content="1400" />
+    <meta property="og:image:height" content="933" />
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Website",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Venil Noronha",
+        "logo": "https://venilnoronha.io/false"
+    },
+    "url": "https://venilnoronha.io/hand-crafting-a-sidecar-proxy-and-demystifying-istio",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://venilnoronha.io/assets/images/2019-03-10-hand-crafting-a-sidecar-proxy-and-demystifying-istio/banner.jpg",
+        "width": 2000,
+        "height": 666
+    },
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://venilnoronha.io/hand-crafting-a-sidecar-proxy-and-demystifying-istio"
+    },
+    "description": "The sidecar proxy pattern is an important concept that lets Istio provide routing, metrics, security, and other features to services running in a service mesh. In this post I’ll explain key techniques that power Istio and I’ll also show you a way to build a simple HTTP traffic-sniffing sidecar proxy."
+}
+    </script>
+
+    <!-- <script type="text/javascript" src="https://demo.ghost.io/public/ghost-sdk.min.js?v=724281a32e"></script>
+    <script type="text/javascript">
+    ghost.init({
+    	clientId: "ghost-frontend",
+    	clientSecret: "f84a07a72b17"
+    });
+    </script> -->
+
+    <meta name="generator" content="Jekyll 3.6.2" />
+    <link rel="alternate" type="application/rss+xml" title="Hand-crafting a Sidecar Proxy and Demystifying Istio" href="/feed.xml" />
+
+
+</head>
+<body class="post-template">
+
+    <div class="site-wrapper">
+        <!-- All the main content gets inserted here, index.hbs, post.hbs, etc -->
+        <!-- default -->
+
+<!-- The tag above means: insert everything in this file
+into the {body} of the default.hbs template -->
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+        
+            
+                <a class="site-nav-logo" href="https://venilnoronha.io/">Venil Noronha</a>
+            
+        
+        
+            <ul class="nav" role="menu">
+    <li class="nav-home" role="menuitem"><a href="/">Home</a></li>
+    <li class="nav-talks" role="menuitem"><a href="/talks/">Talks</a></li>
+    <li class="nav-about" role="menuitem"><a href="/about/">About</a></li>
+    <li class="nav-feed" role="menuitem"><a href="https://venilnoronha.io/feed.xml">Feed</a></li>
+</ul>
+
+        
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+            
+                <a class="social-link" href="https://github.com/venilnoronha" target="_blank" rel="noopener"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M896 128q209 0 385.5 103t279.5 279.5 103 385.5q0 251-146.5 451.5t-378.5 277.5q-27 5-40-7t-13-30q0-3 .5-76.5t.5-134.5q0-97-52-142 57-6 102.5-18t94-39 81-66.5 53-105 20.5-150.5q0-119-79-206 37-91-8-204-28-9-81 11t-92 44l-38 24q-93-26-192-26t-192 26q-16-11-42.5-27t-83.5-38.5-85-13.5q-45 113-8 204-79 87-79 206 0 85 20.5 150t52.5 105 80.5 67 94 39 102.5 18q-39 36-49 103-21 10-45 15t-57 5-65.5-21.5-55.5-62.5q-19-32-48.5-52t-49.5-24l-20-3q-21 0-29 4.5t-5 11.5 9 14 13 12l7 5q22 10 43.5 38t31.5 51l10 23q13 38 44 61.5t67 30 69.5 7 55.5-3.5l23-4q0 38 .5 88.5t.5 54.5q0 18-13 30t-40 7q-232-77-378.5-277.5t-146.5-451.5q0-209 103-385.5t279.5-279.5 385.5-103zm-477 1103q3-7-7-12-10-3-13 2-3 7 7 12 9 6 13-2zm31 34q7-5-2-16-10-9-16-3-7 5 2 16 10 10 16 3zm30 45q9-7 0-19-8-13-17-6-9 5 0 18t17 7zm42 42q8-8-4-19-12-12-20-3-9 8 4 19 12 12 20 3zm57 25q3-11-13-16-15-4-19 7t13 15q15 6 19-6zm63 5q0-13-17-11-16 0-16 11 0 13 17 11 16 0 16-11zm58-10q-2-11-18-9-16 3-14 15t18 8 14-14z"/></svg>
+</a>
+            
+            
+            
+                <a class="social-link social-link-tw" href="https://twitter.com/venilnoronha" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+</a>
+            
+            
+                <a class="social-link" href="https://instagram.com/venilnoronha" target="_blank" rel="noopener"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1152 896q0-106-75-181t-181-75-181 75-75 181 75 181 181 75 181-75 75-181zm138 0q0 164-115 279t-279 115-279-115-115-279 115-279 279-115 279 115 115 279zm108-410q0 38-27 65t-65 27-65-27-27-65 27-65 65-27 65 27 27 65zm-502-220q-7 0-76.5-.5t-105.5 0-96.5 3-103 10-71.5 18.5q-50 20-88 58t-58 88q-11 29-18.5 71.5t-10 103-3 96.5 0 105.5.5 76.5-.5 76.5 0 105.5 3 96.5 10 103 18.5 71.5q20 50 58 88t88 58q29 11 71.5 18.5t103 10 96.5 3 105.5 0 76.5-.5 76.5.5 105.5 0 96.5-3 103-10 71.5-18.5q50-20 88-58t58-88q11-29 18.5-71.5t10-103 3-96.5 0-105.5-.5-76.5.5-76.5 0-105.5-3-96.5-10-103-18.5-71.5q-20-50-58-88t-88-58q-29-11-71.5-18.5t-103-10-96.5-3-105.5 0-76.5.5zm768 630q0 229-5 317-10 208-124 322t-322 124q-88 5-317 5t-317-5q-208-10-322-124t-124-322q-5-88-5-317t5-317q10-208 124-322t322-124q88-5 317-5t317 5q208 10 322 124t124 322q5 88 5 317z"/></svg>
+</a>
+            
+            
+                <a class="social-link" href="https://linkedin.com/in/venilnoronha" target="_blank" rel="noopener"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M365 1414h231v-694h-231v694zm246-908q-1-52-36-86t-93-34-94.5 34-36.5 86q0 51 35.5 85.5t92.5 34.5h1q59 0 95-34.5t36-85.5zm585 908h231v-398q0-154-73-233t-193-79q-136 0-209 117h2v-101h-231q3 66 0 694h231v-388q0-38 7-56 15-35 45-59.5t74-24.5q116 0 116 157v371zm468-998v960q0 119-84.5 203.5t-203.5 84.5h-960q-119 0-203.5-84.5t-84.5-203.5v-960q0-119 84.5-203.5t203.5-84.5h960q119 0 203.5 84.5t84.5 203.5z"/></svg>
+</a>
+            
+        </div>
+        
+    </div>
+</nav>
+
+    </div>
+</header>
+
+<!-- Everything inside the #post tags pulls data from the post -->
+<!-- #post -->
+
+<main id="site-main" class="site-main outer" role="main">
+    <div class="inner">
+
+        <article class="post-full post tag-distributed-systems ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime="10 March 2019">10 March 2019</time>
+                    
+                        <span class="date-divider">/</span>
+                        
+                            
+                               <a href='/tag/distributed-systems/'>DISTRIBUTED SYSTEMS</a>
+                            
+                        
+                    
+                </section>
+                <h1 class="post-full-title">Hand-crafting a Sidecar Proxy and Demystifying Istio</h1>
+            </header>
+
+            
+            <figure class="post-full-image" style="background-image: url(/assets/images/2019-03-10-hand-crafting-a-sidecar-proxy-and-demystifying-istio/banner.jpg)">
+            </figure>
+            
+
+            <section class="post-full-content">
+                <div class="kg-card-markdown">
+                    <p>The sidecar proxy pattern is an important concept that lets <a href="https://istio.io/">Istio</a>
+provide routing, metrics, security, and other features to services running in
+a <a href="https://en.wikipedia.org/wiki/Microservices#Service_Mesh">service mesh</a>. In
+this post I’ll explain key techniques that power Istio and I’ll also show you a
+way to build a simple HTTP traffic-sniffing sidecar proxy.</p>
+
+<p style="text-align: center;">
+  <img src="assets/images/2019-03-10-hand-crafting-a-sidecar-proxy-and-demystifying-istio/istio-logo.svg" alt="Istio" style="width: 200px; display: inline-block;" />
+</p>
+
+<h2 id="introduction">Introduction</h2>
+
+<p>Service mesh implementations generally rely on a sidecar proxy that lets them
+control, observe, and secure applications. The sidecar proxy is a reverse proxy
+and all traffic flows through it before reaching the destination service.  The
+proxy analyzes this traffic and produces useful statistics, and provides
+flexible routing capabilities. The proxy can also secure application traffic
+using <a href="https://venilnoronha.io/a-step-by-step-guide-to-mtls-in-go">mTLS</a>.</p>
+
+<p style="text-align: center;">
+  <img src="assets/images/2019-03-10-hand-crafting-a-sidecar-proxy-and-demystifying-istio/sidecar-proxy.png" alt="Sidecar Proxy" style="width: 60%; display: inline-block;" />
+</p>
+
+<p>In this post, we’ll build a simple sidecar proxy that can sniff HTTP traffic
+and produce statistics such as request size, response status, etc. We’ll then
+deploy a HTTP service in a <a href="https://kubernetes.io/">Kubernetes</a> Pod, configure
+the sidecar proxy, and examine the generated statistics.</p>
+
+<h2 id="building-an-http-traffic-sniffing-proxy">Building an HTTP Traffic-Sniffing Proxy</h2>
+
+<p>Istio relies on <a href="https://www.envoyproxy.io/">Envoy</a> for proxying network
+traffic. The Envoy proxy is packaged as a container and deployed beside the
+service container in a single Pod. In this post, we’ll be building a miniscule
+proxy in Golang that can sniff HTTP traffic.</p>
+
+<p>Our proxy needs to listen on a TCP port for incoming HTTP requests and then
+forward those to a destination address. Since, in our case, both the proxy and
+the service reside in the same container, the destination host can be addressed
+via the loopback IP address (i.e. <code class="highlighter-rouge">127.0.0.1</code>); however, we still need a port
+number to identify the destination service.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">const</span><span class="x"> </span><span class="p">(</span><span class="x">
+        </span><span class="n">proxyPort</span><span class="x">   </span><span class="o">=</span><span class="x"> </span><span class="m">8000</span><span class="x">
+        </span><span class="n">servicePort</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="m">80</span><span class="x">
+</span><span class="p">)</span><span class="x">
+</span></code></pre></div></div>
+
+<p>We can now define the base for the proxy. The proxy will listen to requests on
+<code class="highlighter-rouge">proxyPort</code> and forward requests to the <code class="highlighter-rouge">servicePort</code>. The proxy will finally
+print statistics after servicing each request.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// Create a structure to define the proxy functionality.</span><span class="x">
+</span><span class="k">type</span><span class="x"> </span><span class="n">Proxy</span><span class="x"> </span><span class="k">struct</span><span class="p">{}</span><span class="x">
+
+</span><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">p</span><span class="x"> </span><span class="o">*</span><span class="n">Proxy</span><span class="p">)</span><span class="x"> </span><span class="n">ServeHTTP</span><span class="p">(</span><span class="n">w</span><span class="x"> </span><span class="n">http</span><span class="o">.</span><span class="n">ResponseWriter</span><span class="p">,</span><span class="x"> </span><span class="n">req</span><span class="x"> </span><span class="o">*</span><span class="n">http</span><span class="o">.</span><span class="n">Request</span><span class="p">)</span><span class="x"> </span><span class="p">{</span><span class="x">
+	</span><span class="c">// Forward the HTTP request to the destination service.</span><span class="x">
+        </span><span class="n">res</span><span class="p">,</span><span class="x"> </span><span class="n">duration</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">p</span><span class="o">.</span><span class="n">forwardRequest</span><span class="p">(</span><span class="n">req</span><span class="p">)</span><span class="x">
+
+	</span><span class="c">// Notify the client if there was an error while forwarding the request.</span><span class="x">
+        </span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
+                </span><span class="n">http</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span><span class="n">w</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="o">.</span><span class="n">Error</span><span class="p">(),</span><span class="x"> </span><span class="n">http</span><span class="o">.</span><span class="n">StatusBadGateway</span><span class="p">)</span><span class="x">
+                </span><span class="k">return</span><span class="x">
+        </span><span class="p">}</span><span class="x">
+
+	</span><span class="c">// If the request was forwarded successfully, write the response back to</span><span class="x">
+	</span><span class="c">// the client.</span><span class="x">
+        </span><span class="n">p</span><span class="o">.</span><span class="n">writeResponse</span><span class="p">(</span><span class="n">w</span><span class="p">,</span><span class="x"> </span><span class="n">res</span><span class="p">)</span><span class="x">
+
+	</span><span class="c">// Print request and response statistics.</span><span class="x">
+        </span><span class="n">p</span><span class="o">.</span><span class="n">printStats</span><span class="p">(</span><span class="n">req</span><span class="p">,</span><span class="x"> </span><span class="n">res</span><span class="p">,</span><span class="x"> </span><span class="n">duration</span><span class="p">)</span><span class="x">
+</span><span class="p">}</span><span class="x">
+
+</span><span class="k">func</span><span class="x"> </span><span class="n">main</span><span class="p">()</span><span class="x"> </span><span class="p">{</span><span class="x">
+	</span><span class="c">// Listen on the predefined proxy port.</span><span class="x">
+        </span><span class="n">http</span><span class="o">.</span><span class="n">ListenAndServe</span><span class="p">(</span><span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">":%d"</span><span class="p">,</span><span class="x"> </span><span class="n">proxyPort</span><span class="p">),</span><span class="x"> </span><span class="o">&amp;</span><span class="n">Proxy</span><span class="p">{})</span><span class="x">
+</span><span class="p">}</span><span class="x">
+</span></code></pre></div></div>
+
+<p>The most important part for a proxy is its capability to forward requests. Let’s
+first define this functionality in our proxy implementation.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">p</span><span class="x"> </span><span class="o">*</span><span class="n">Proxy</span><span class="p">)</span><span class="x"> </span><span class="n">forwardRequest</span><span class="p">(</span><span class="n">req</span><span class="x"> </span><span class="o">*</span><span class="n">http</span><span class="o">.</span><span class="n">Request</span><span class="p">)</span><span class="x"> </span><span class="p">(</span><span class="o">*</span><span class="n">http</span><span class="o">.</span><span class="n">Response</span><span class="p">,</span><span class="x"> </span><span class="n">time</span><span class="o">.</span><span class="n">Duration</span><span class="p">,</span><span class="x"> </span><span class="kt">error</span><span class="p">)</span><span class="x"> </span><span class="p">{</span><span class="x">
+	</span><span class="c">// Prepare the destination endpoint to forward the request to.</span><span class="x">
+        </span><span class="n">proxyUrl</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"http://127.0.0.1:%d%s"</span><span class="p">,</span><span class="x"> </span><span class="n">servicePort</span><span class="p">,</span><span class="x"> </span><span class="n">req</span><span class="o">.</span><span class="n">RequestURI</span><span class="p">)</span><span class="x">
+
+	</span><span class="c">// Print the original URL and the proxied request URL.</span><span class="x">
+        </span><span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"Original URL: http://%s:%d%s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="x"> </span><span class="n">req</span><span class="o">.</span><span class="n">Host</span><span class="p">,</span><span class="x"> </span><span class="n">servicePort</span><span class="p">,</span><span class="x"> </span><span class="n">req</span><span class="o">.</span><span class="n">RequestURI</span><span class="p">)</span><span class="x">
+        </span><span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"Proxy URL: %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="x"> </span><span class="n">proxyUrl</span><span class="p">)</span><span class="x">
+
+	</span><span class="c">// Create an HTTP client and a proxy request based on the original request.</span><span class="x">
+        </span><span class="n">httpClient</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">http</span><span class="o">.</span><span class="n">Client</span><span class="p">{}</span><span class="x">
+        </span><span class="n">proxyReq</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">http</span><span class="o">.</span><span class="n">NewRequest</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">Method</span><span class="p">,</span><span class="x"> </span><span class="n">proxyUrl</span><span class="p">,</span><span class="x"> </span><span class="n">req</span><span class="o">.</span><span class="n">Body</span><span class="p">)</span><span class="x">
+
+	</span><span class="c">// Capture the duration while making a request to the destination service.</span><span class="x">
+        </span><span class="n">start</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">time</span><span class="o">.</span><span class="n">Now</span><span class="p">()</span><span class="x">
+        </span><span class="n">res</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">httpClient</span><span class="o">.</span><span class="n">Do</span><span class="p">(</span><span class="n">proxyReq</span><span class="p">)</span><span class="x">
+        </span><span class="n">duration</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">time</span><span class="o">.</span><span class="n">Since</span><span class="p">(</span><span class="n">start</span><span class="p">)</span><span class="x">
+
+	</span><span class="c">// Return the response, the request duration, and the error.</span><span class="x">
+        </span><span class="k">return</span><span class="x"> </span><span class="n">res</span><span class="p">,</span><span class="x"> </span><span class="n">duration</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x">
+</span><span class="p">}</span><span class="x">
+</span></code></pre></div></div>
+
+<p>Now that we have the response from the proxied request, let’s define the logic
+to write it back to the client.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">p</span><span class="x"> </span><span class="o">*</span><span class="n">Proxy</span><span class="p">)</span><span class="x"> </span><span class="n">writeResponse</span><span class="p">(</span><span class="n">w</span><span class="x"> </span><span class="n">http</span><span class="o">.</span><span class="n">ResponseWriter</span><span class="p">,</span><span class="x"> </span><span class="n">res</span><span class="x"> </span><span class="o">*</span><span class="n">http</span><span class="o">.</span><span class="n">Response</span><span class="p">)</span><span class="x"> </span><span class="p">{</span><span class="x">
+	</span><span class="c">// Copy all the header values from the response.</span><span class="x">
+        </span><span class="k">for</span><span class="x"> </span><span class="n">name</span><span class="p">,</span><span class="x"> </span><span class="n">values</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="k">range</span><span class="x"> </span><span class="n">res</span><span class="o">.</span><span class="n">Header</span><span class="x"> </span><span class="p">{</span><span class="x">
+                </span><span class="n">w</span><span class="o">.</span><span class="n">Header</span><span class="p">()[</span><span class="n">name</span><span class="p">]</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">values</span><span class="x">
+        </span><span class="p">}</span><span class="x">
+
+	</span><span class="c">// Set a special header to notify that the proxy actually serviced the request.</span><span class="x">
+        </span><span class="n">w</span><span class="o">.</span><span class="n">Header</span><span class="p">()</span><span class="o">.</span><span class="n">Set</span><span class="p">(</span><span class="s">"Server"</span><span class="p">,</span><span class="x"> </span><span class="s">"amazing-proxy"</span><span class="p">)</span><span class="x">
+
+	</span><span class="c">// Set the status code returned by the destination service.</span><span class="x">
+        </span><span class="n">w</span><span class="o">.</span><span class="n">WriteHeader</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">StatusCode</span><span class="p">)</span><span class="x">
+
+	</span><span class="c">// Copy the contents from the response body.</span><span class="x">
+        </span><span class="n">io</span><span class="o">.</span><span class="n">Copy</span><span class="p">(</span><span class="n">w</span><span class="p">,</span><span class="x"> </span><span class="n">res</span><span class="o">.</span><span class="n">Body</span><span class="p">)</span><span class="x">
+
+	</span><span class="c">// Finish the request.</span><span class="x">
+        </span><span class="n">res</span><span class="o">.</span><span class="n">Body</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span><span class="x">
+</span><span class="p">}</span><span class="x">
+</span></code></pre></div></div>
+
+<p>The final part for the proxy is to print statistics. Let’s go ahead and
+implement that.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">p</span><span class="x"> </span><span class="o">*</span><span class="n">Proxy</span><span class="p">)</span><span class="x"> </span><span class="n">printStats</span><span class="p">(</span><span class="n">req</span><span class="x"> </span><span class="o">*</span><span class="n">http</span><span class="o">.</span><span class="n">Request</span><span class="p">,</span><span class="x"> </span><span class="n">res</span><span class="x"> </span><span class="o">*</span><span class="n">http</span><span class="o">.</span><span class="n">Response</span><span class="p">,</span><span class="x"> </span><span class="n">duration</span><span class="x"> </span><span class="n">time</span><span class="o">.</span><span class="n">Duration</span><span class="p">)</span><span class="x"> </span><span class="p">{</span><span class="x">
+        </span><span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"Request Duration: %v</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="x"> </span><span class="n">duration</span><span class="p">)</span><span class="x">
+        </span><span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"Request Size: %d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="x"> </span><span class="n">req</span><span class="o">.</span><span class="n">ContentLength</span><span class="p">)</span><span class="x">
+        </span><span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"Response Size: %d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="x"> </span><span class="n">res</span><span class="o">.</span><span class="n">ContentLength</span><span class="p">)</span><span class="x">
+        </span><span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"Response Status: %d</span><span class="se">\n\n</span><span class="s">"</span><span class="p">,</span><span class="x"> </span><span class="n">res</span><span class="o">.</span><span class="n">StatusCode</span><span class="p">)</span><span class="x">
+</span><span class="p">}</span><span class="x">
+</span></code></pre></div></div>
+
+<p>We have now built a fully functional HTTP traffic-sniffing proxy.</p>
+
+<h2 id="build-a-container-image-for-the-proxy">Build a Container Image for the Proxy</h2>
+
+<p>Istio packages Envoy and runs it as a container beside the service container.
+Let’s build a proxy container image that runs the above Go code to replicate
+Istio’s behavior.</p>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Use the Go v1.12 image for the base.</span>
+<span class="k">FROM</span><span class="s"> golang:1.12</span>
+
+<span class="c"># Copy the proxy code to the container.</span>
+<span class="k">COPY</span><span class="s"> main.go .</span>
+
+<span class="c"># Run the proxy on container startup.</span>
+<span class="k">ENTRYPOINT</span><span class="s"> [ "go" ]</span>
+<span class="k">CMD</span><span class="s"> [ "run", "main.go" ]</span>
+
+<span class="c"># Expose the proxy port.</span>
+<span class="k">EXPOSE</span><span class="s"> 8000</span>
+</code></pre></div></div>
+
+<p>To build the proxy container image, we can simply issue the following Docker
+command.</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> docker build <span class="nt">-t</span> venilnoronha/amazing-proxy:latest <span class="nt">-f</span> Dockerfile <span class="nb">.</span>
+</code></pre></div></div>
+
+<h2 id="setting-up-the-pod-network">Setting up the Pod Network</h2>
+
+<p>We need to set up the Pod network to ensure that the sidecar proxy receives all
+application traffic so that it can analyze and forward it to the required
+destination. One way to achieve that is to ask the user to configure all the
+client services to point to the proxy port while the proxy points to the service
+port. This complicates the user experience. A better and a more transparent way
+to achieve this is by using the <a href="https://en.wikipedia.org/wiki/Netfilter">Netfilter/iptables</a>
+component from the Linux kernel.</p>
+
+<h3 id="kubernetes-networking-101">Kubernetes Networking 101</h3>
+
+<p>To understand it better, let’s list the network interfaces exposed by Kubernetes
+to a Pod.</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> kubectl run <span class="nt">-i</span> <span class="nt">--rm</span> <span class="nt">--restart</span><span class="o">=</span>Never busybox <span class="nt">--image</span><span class="o">=</span>busybox <span class="nt">--</span> sh <span class="nt">-c</span> <span class="s2">"ip addr"</span>
+<span class="go">
+</span><span class="gp">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt;</span> mtu 65536 qdisc noqueue qlen 1000
+<span class="go">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+
+</span><span class="gp">174: eth0@if175: &lt;BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN&gt;</span> mtu 1500 qdisc noqueue
+<span class="go">    link/ether 02:42:ac:11:00:05 brd ff:ff:ff:ff:ff:ff
+    inet 172.17.0.5/16 brd 172.17.255.255 scope global eth0
+       valid_lft forever preferred_lft forever
+</span></code></pre></div></div>
+
+<p>As you observe, a Pod gets access to at least 2 network interfaces i.e. <code class="highlighter-rouge">lo</code> and
+<code class="highlighter-rouge">eth0</code>. Interface <code class="highlighter-rouge">lo</code> stands for loopback and <code class="highlighter-rouge">eth0</code> for ethernet.  A thing to
+note here is that these are virtual and not real interfaces.</p>
+
+<h3 id="port-mapping-with-iptables">Port Mapping With iptables</h3>
+
+<p>A simplest use for <code class="highlighter-rouge">iptables</code> is to map one port to another. We can leverage
+this to transparently route traffic to our proxy. Istio uses this exact concept
+to set up its Pod networking.</p>
+
+<p style="text-align: center;">
+  <img src="assets/images/2019-03-10-hand-crafting-a-sidecar-proxy-and-demystifying-istio/pod-networking.png" alt="Sidecar Proxy" style="width: 80%; display: inline-block;" />
+</p>
+
+<p>The idea here is map the service port (<code class="highlighter-rouge">80</code>) on the <code class="highlighter-rouge">eth0</code> interface to the
+proxy port (<code class="highlighter-rouge">8000</code>). This will ensure that the traffic from outside the
+container is routed to the proxy whenever it tries to access the service via
+port <code class="highlighter-rouge">80</code>. We let the <code class="highlighter-rouge">lo</code> interface to route Pod-internal traffic directly to
+the destination service i.e. without the hop to the proxy as shown in the above
+diagram.</p>
+
+<h3 id="the-init-container">The Init Container</h3>
+
+<p>Kubernetes let’s you run <em>init containers</em> prior to running regular <em>containers</em>
+in a Pod. Istio uses an init container to set up the Pod networking in order to
+set up the necessary <code class="highlighter-rouge">iptables</code> rules. Let’s do the same to route Pod-external
+traffic to the proxy.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+
+<span class="c"># Forward TCP traffic on port 80 to port 8000 on the eth0 interface.</span>
+iptables <span class="nt">-t</span> nat <span class="nt">-A</span> PREROUTING <span class="nt">-p</span> tcp <span class="nt">-i</span> eth0 <span class="nt">--dport</span> 80 <span class="nt">-j</span> REDIRECT <span class="nt">--to-port</span> 8000
+
+<span class="c"># List all iptables rules.</span>
+iptables <span class="nt">-t</span> nat <span class="nt">--list</span>
+</code></pre></div></div>
+
+<p>We can now create a Docker container with this initialization script.</p>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Use the latest Ubuntu image for the base.</span>
+<span class="k">FROM</span><span class="s"> ubuntu:latest</span>
+
+<span class="c"># Install the iptables command.</span>
+<span class="k">RUN </span>apt-get update <span class="o">&amp;&amp;</span> <span class="se">\
+</span>    apt-get install <span class="nt">-y</span> iptables
+
+<span class="c"># Copy the initialization script into the container.</span>
+<span class="k">COPY</span><span class="s"> init.sh /usr/local/bin/</span>
+
+<span class="c"># Mark the initialization script as executable.</span>
+<span class="k">RUN </span>chmod +x /usr/local/bin/init.sh
+
+<span class="c"># Start the initialization script on container startup.</span>
+<span class="k">ENTRYPOINT</span><span class="s"> ["init.sh"]</span>
+</code></pre></div></div>
+
+<p>To build the Docker image, we execute the following command.</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> docker build <span class="nt">-t</span> venilnoronha/init-networking:latest <span class="nt">-f</span> Dockerfile <span class="nb">.</span>
+</code></pre></div></div>
+
+<h2 id="the-demo">The Demo</h2>
+
+<p>We’ve built a proxy and an init container to set up Pod networking. It’s now
+time to put this to a test. For this, we’ll be using the <a href="http://httpbin.org/">httpbin</a>
+container as the service.</p>
+
+<h3 id="the-deployment">The Deployment</h3>
+
+<p>Istio automatically injects the init container as well as the proxy. However,
+for our experiment, we can manually craft the Pod yaml.</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Pod</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">httpbin-pod</span>
+  <span class="na">labels</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">httpbin</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">initContainers</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">init-networking</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">venilnoronha/init-networking</span>
+    <span class="na">securityContext</span><span class="pi">:</span>
+      <span class="na">capabilities</span><span class="pi">:</span>
+        <span class="na">add</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s">NET_ADMIN</span>
+      <span class="na">privileged</span><span class="pi">:</span> <span class="no">true</span>
+  <span class="na">containers</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">service</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">kennethreitz/httpbin</span>
+    <span class="na">ports</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="s">80</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">proxy</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">venilnoronha/amazing-proxy</span>
+    <span class="na">ports</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="s">8000</span>
+</code></pre></div></div>
+
+<p>We’ve set up the init container with <code class="highlighter-rouge">root</code> privileges and have configured the
+<code class="highlighter-rouge">proxy</code> and the <code class="highlighter-rouge">service</code> as regular containers. To deploy this on a Kubernetes
+cluster, we can issue the following command.</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> kubectl apply <span class="nt">-f</span> httpbin.yaml
+</code></pre></div></div>
+
+<h3 id="the-test">The Test</h3>
+
+<p>To test the deployment, let’s first identify the <code class="highlighter-rouge">ClusterIP</code> for the Pod. To do
+so, we can execute the following command.</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> kubectl get pods <span class="nt">-o</span> wide
+<span class="go">NAME          READY     STATUS    RESTARTS   AGE       IP           NODE
+httpbin-pod   2/2       Running   0          21h       172.17.0.4   minikube
+</span></code></pre></div></div>
+
+<p>We now need to generate traffic from outside the Pod. For this purpose, I’ll
+be using the <code class="highlighter-rouge">busybox</code> container to issue HTTP requests via <code class="highlighter-rouge">curl</code>.</p>
+
+<p>Let’s first send a GET request to the httpbin service.</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> kubectl run <span class="nt">-i</span> <span class="nt">--rm</span> <span class="nt">--restart</span><span class="o">=</span>Never busybox <span class="nt">--image</span><span class="o">=</span>odise/busybox-curl <span class="se">\</span>
+          <span class="nt">--</span> sh <span class="nt">-c</span> <span class="s2">"curl -i 172.17.0.4:80/get?query=param"</span>
+<span class="go">
+HTTP/1.1 200 OK
+Content-Length: 237
+Content-Type: application/json
+Server: amazing-proxy
+</span></code></pre></div></div>
+
+<p>Let’s now send a POST request.</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> kubectl run <span class="nt">-i</span> <span class="nt">--rm</span> <span class="nt">--restart</span><span class="o">=</span>Never busybox <span class="nt">--image</span><span class="o">=</span>odise/busybox-curl <span class="se">\</span>
+          <span class="nt">--</span> sh <span class="nt">-c</span> <span class="s2">"curl -i -X POST -d 'body=parameters' 172.17.0.4:80/post"</span>
+<span class="go">
+HTTP/1.1 200 OK
+Content-Length: 317
+Content-Type: application/json
+Server: amazing-proxy
+</span></code></pre></div></div>
+
+<p>Let’s finally send a GET request to the <code class="highlighter-rouge">/status</code> endpoint.</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> kubectl run <span class="nt">-i</span> <span class="nt">--rm</span> <span class="nt">--restart</span><span class="o">=</span>Never busybox <span class="nt">--image</span><span class="o">=</span>odise/busybox-curl <span class="se">\</span>
+          <span class="nt">--</span> sh <span class="nt">-c</span> <span class="s2">"curl -i http://172.17.0.4:80/status/429"</span>
+<span class="go">
+HTTP/1.1 429 Too Many Requests
+Content-Length: 0
+</span><span class="gp">Content-Type: text/html;</span> <span class="nv">charset</span><span class="o">=</span>utf-8
+<span class="go">Server: amazing-proxy
+</span></code></pre></div></div>
+
+<p>Note that we send the request to port <code class="highlighter-rouge">80</code> i.e. the service port and not the
+proxy port. The <code class="highlighter-rouge">iptables</code> rules ensure that this gets routed to the proxy first
+which then forwards the request to the service. Also, we see the extra header
+<code class="highlighter-rouge">Server: amazing-proxy</code> which we had added in our proxy implementation.</p>
+
+<h3 id="proxy-statistics">Proxy Statistics</h3>
+
+<p>Let’s now peek into the statistics produced by the proxy. To do so, we can run
+the following command.</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> kubectl logs httpbin-pod <span class="nt">--container</span><span class="o">=</span><span class="s2">"proxy"</span>
+<span class="go">
+Original URL: http://172.17.0.4:80/get?query=param
+Proxy URL: http://127.0.0.1:80/get?query=param
+Request Duration: 1.979348ms
+Request Size: 0
+Response Size: 237
+Response Status: 200
+
+Original URL: http://172.17.0.4:80/post
+Proxy URL: http://127.0.0.1:80/post
+Request Duration: 2.026861ms
+Request Size: 15
+Response Size: 317
+Response Status: 200
+
+Original URL: http://172.17.0.4:80/status/429
+Proxy URL: http://127.0.0.1:80/status/429
+Request Duration: 1.191793ms
+Request Size: 0
+Response Size: 0
+Response Status: 429
+</span></code></pre></div></div>
+
+<p>As you observe, we do see that the results from the proxy match to the requests
+we generated.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>We implemented a simple HTTP traffic-sniffing proxy, which we wired in a
+Kubernetes Pod using the init container. We also looked at how <code class="highlighter-rouge">iptables</code> can
+provide flexible networking in order to provide a great user experience when
+dealing with proxies. Above all, we’ve learnt some key concepts that form Istio
+to what it is today.</p>
+
+<hr />
+
+<p>If you’d like me to write about a particular topic in the service mesh domain,
+then feel free to reach out to me.</p>
+
+<p><strong>Disclaimer:</strong> My postings are my own and don’t necessarily represent VMware’s positions, strategies or opinions.</p>
+
+                </div>
+            </section>
+
+            <!-- Email subscribe form at the bottom of the page -->
+            
+
+            <footer class="post-full-footer">
+                <!-- Everything inside the #author tags pulls data from the author -->
+                <!-- #author-->
+                
+                    
+                        <section class="author-card">
+                            
+                                <img class="author-profile-image" src="/assets/images/venilnoronha.jpg" alt="venilnoronha" />
+                            
+                            <section class="author-card-content">
+                                <h4 class="author-card-name">
+                                    
+                                        <a href="/about/">Venil Noronha</a>
+                                    
+                                </h4>
+                                
+                                    <p>Open Source Enthusiast</p>
+                                
+                                <p style="margin-top: 2px;">
+                                    <a href="https://github.com/venilnoronha" target="_blank" rel="noopener">GitHub</a> |
+                                    
+                                    <a href="https://twitter.com/venilnoronha" target="_blank" rel="noopener">Twitter</a> |
+                                    <a href="https://instagram.com/venilnoronha" target="_blank" rel="noopener">Instagram</a> |
+                                    <a href="https://linkedin.com/in/venilnoronha" target="_blank" rel="noopener">LinkedIn</a>
+                                </p>
+                            </section>
+                        </section>
+                        <div class="post-full-footer-right">
+                            <a class="author-card-button" href="/author/venilnoronha">Read More</a>
+                        </div>
+                    
+                
+                <!-- /author  -->
+            </footer>
+
+            <!-- If you use Disqus comments, just uncomment this block.
+            The only thing you need to change is "test-apkdzgmqhj" - which
+            should be replaced with your own Disqus site-id. -->
+            
+                <section class="post-full-comments">
+                    <div id="disqus_thread"></div>
+                    <script>
+                        var disqus_config = function () {
+                            this.page.url = 'https://venilnoronha.io/hand-crafting-a-sidecar-proxy-and-demystifying-istio';
+                            this.page.identifier = 'Hand-crafting a Sidecar Proxy and Demystifying Istio';
+                        };
+                        (function() {
+                            var d = document, s = d.createElement('script');
+                            s.src = 'https://venilnoronha-io.disqus.com/embed.js';
+                            s.setAttribute('data-timestamp', +new Date());
+                            (d.head || d.body).appendChild(s);
+                        })();
+                    </script>
+                </section>
+            
+
+        </article>
+
+    </div>
+</main>
+
+<!-- Links to Previous/Next posts -->
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+            
+                
+                
+                
+                
+                    <article class="read-next-card"
+                        
+                            style="background-image: url(/assets/images/blog-cover.jpg)"
+                        
+                    >
+                        <header class="read-next-card-header">
+                            <small class="read-next-card-header-sitetitle">&mdash; Venil Noronha &mdash;</small>
+                            
+                                <h3 class="read-next-card-header-title"><a href="/tag/distributed-systems/">Distributed systems</a></h3>
+                            
+                        </header>
+                        <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
+</div>
+                        <div class="read-next-card-content">
+                            <ul>
+                                
+                                
+                                  
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/seamless-cloud-native-apps-with-grpc-web-and-istio">Seamless Cloud-Native Apps with gRPC-Web and Istio</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/envoy-grpc-and-rate-limiting">Envoy, gRPC, and Rate Limiting</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/raw-tcp-traffic-shaping-with-istio-1.1.0">Raw TCP Traffic Shaping with Istio 1.1.0</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                            </ul>
+                        </div>
+                        <footer class="read-next-card-footer">
+                            <a href="/tag/distributed-systems/">
+                                
+                                    See all 9 posts  →
+                                
+                            </a>
+                        </footer>
+                    </article>
+                
+            
+
+            <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
+            
+
+            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+    <article class="post-card post-template">
+        
+            <a class="post-card-image-link" href="/seamless-cloud-native-apps-with-grpc-web-and-istio">
+                <div class="post-card-image" style="background-image: url(/assets/images/2018-11-10-seamless-cloud-native-apps-with-grpc-web-and-istio/banner.jpg)"></div>
+            </a>
+        
+        <div class="post-card-content">
+            <a class="post-card-content-link" href="/seamless-cloud-native-apps-with-grpc-web-and-istio">
+                <header class="post-card-header">
+                    
+                        
+                            
+                                <span class="post-card-tags">Distributed systems</span>
+                            
+                        
+                    
+
+                    <h2 class="post-card-title">Seamless Cloud-Native Apps with gRPC-Web and Istio</h2>
+                </header>
+                <section class="post-card-excerpt">
+                    <p>gRPC-Web enables web applications to access gRPC backends via a proxy like Envoy. Envoy serves as the default proxy for Istio, and, so, we can leverage Istio’s EnvoyFilter construct to create seamless, well</p>
+                </section>
+            </a>
+            <footer class="post-card-meta">
+                
+                    
+                        
+                        <img class="author-profile-image" src="/assets/images/venilnoronha.jpg" alt="Venil Noronha" />
+                        
+                        <span class="post-card-author">
+                            
+                                <a href="/about/">Venil Noronha</a>
+                            
+                        </span>
+                    
+                
+            </footer>
+        </div>
+    </article>
+
+            
+
+        </div>
+    </div>
+</aside>
+
+<!-- Floating header which appears on-scroll, included from includes/floating-header.hbs -->
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="https://venilnoronha.io/">
+            
+                <img src="/assets/images/favicon.png" alt="Venil Noronha icon" />
+            
+            <span>Venil Noronha</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">&mdash;</span>
+    <div class="floating-header-title">Hand-crafting a Sidecar Proxy and Demystifying Istio</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
+</svg>
+</div>
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Hand-crafting+a+Sidecar+Proxy+and+Demystifying+Istio&amp;url=https://venilnoronha.io/hand-crafting-a-sidecar-proxy-and-demystifying-istio"
+            onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+
+        </a>
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://venilnoronha.io/hand-crafting-a-sidecar-proxy-and-demystifying-istio"
+            onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
+
+        </a>
+    </div>
+    <progress class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+<!-- /post -->
+
+<!-- The #contentFor helper here will send everything inside it up to the matching #block helper found in default.hbs -->
+
+
+        <!-- Previous/next page links - displayed on every page -->
+        
+
+        <!-- The footer at the very bottom of the screen -->
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="https://venilnoronha.io/">Venil Noronha</a> &copy; 2019</section>
+                <section class="poweredby">Proudly published with <a href="https://jekyllrb.com/">Jekyll</a> &
+                    <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> using
+                    <a href="https://github.com/jekyller/jasper2" target="_blank" rel="noopener">Jasper2</a></section>
+                <nav class="site-footer-nav">
+                    <a href="https://github.com/venilnoronha" target="_blank" rel="noopener">GitHub</a>
+                    
+                    <a href="https://twitter.com/venilnoronha" target="_blank" rel="noopener">Twitter</a>
+                    <a href="https://instagram.com/venilnoronha" target="_blank" rel="noopener">Instagram</a>
+                    <a href="https://linkedin.com/in/venilnoronha" target="_blank" rel="noopener">LinkedIn</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- The big email subscribe modal content -->
+    
+
+    <!-- highlight.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.10.0/components/prism-abap.min.js"></script>
+    <script>$(document).ready(function() {
+      $('pre code').each(function(i, block) {
+        hljs.highlightBlock(block);
+      });
+    });</script>
+
+    <!-- jQuery + Fitvids, which makes all video embeds responsive -->
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="https://demo.ghost.io/assets/js/jquery.fitvids.js?v=724281a32e"></script>
+
+
+    <!-- Paginator increased to "infinit" in _config.yml -->
+    <!-- if paginator.posts  -->
+    <!-- <script>
+        var maxPages = parseInt('');
+    </script>
+    <script src="/assets/js/infinitescroll.js"></script> -->
+    <!-- /endif -->
+
+    
+
+
+    <!-- Add Google Analytics  -->
+    <!-- Google Analytics Tracking code -->
+ <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-109280867-1', 'auto');
+  ga('send', 'pageview');
+
+ </script>
+
+
+    <!-- The #block helper will pull in data from the #contentFor other template files. In this case, there's some JavaScript which we only want to use in post.hbs, but it needs to be included down here, after jQuery has already loaded. -->
+    
+        <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+});
+</script>
+
+    
+
+    <!-- Ghost outputs important scripts and data with this tag - it should always be the very last thing before the closing body tag -->
+    <!-- ghost_foot -->
+
+</body>
+</html>

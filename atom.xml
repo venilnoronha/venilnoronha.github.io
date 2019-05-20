@@ -8,7 +8,7 @@
     
       
       <item>
-        <title>Hand-crafting a Sidecar Proxy like Istio</title>
+        <title>Hand-crafting a Sidecar Proxy and Demystifying Istio</title>
         
           <description>&lt;p&gt;The sidecar proxy pattern is an important concept that lets &lt;a href=&quot;https://istio.io/&quot;&gt;Istio&lt;/a&gt;
 provide routing, metrics, security, and other features to services running in
@@ -20,8 +20,8 @@ way to build a simple HTTP traffic-sniffing sidecar proxy.&lt;/p&gt;
         
         <pubDate>Sun, 10 Mar 2019 19:37:00 +0000</pubDate>
         <link>
-        https://venilnoronha.io/hand-crafting-a-sidecar-proxy-like-istio</link>
-        <guid isPermaLink="true">https://venilnoronha.io/hand-crafting-a-sidecar-proxy-like-istio</guid>
+        https://venilnoronha.io/hand-crafting-a-sidecar-proxy-and-demystifying-istio</link>
+        <guid isPermaLink="true">https://venilnoronha.io/hand-crafting-a-sidecar-proxy-and-demystifying-istio</guid>
       </item>
       
     
