@@ -1,9 +1,9 @@
 ---
 layout: post
 current: post
-cover: assets/images/2019-03-10-hand-crafting-a-sidecar-proxy-like-istio/banner.jpg
+cover: assets/images/2019-03-10-hand-crafting-a-sidecar-proxy-and-demystifying-istio/banner.jpg
 navigation: True
-title: Hand-crafting a Sidecar Proxy like Istio
+title: Hand-crafting a Sidecar Proxy and Demystifying Istio
 date: 2019-03-10 19:37:00
 tags: [Distributed Systems]
 class: post-template
@@ -18,7 +18,7 @@ this post I'll explain key techniques that power Istio and I'll also show you a
 way to build a simple HTTP traffic-sniffing sidecar proxy.
 
 <p style="text-align: center;">
-  <img src="assets/images/2019-03-10-hand-crafting-a-sidecar-proxy-like-istio/istio-logo.svg" alt="Istio" style="width: 200px; display: inline-block;" />
+  <img src="assets/images/2019-03-10-hand-crafting-a-sidecar-proxy-and-demystifying-istio/istio-logo.svg" alt="Istio" style="width: 200px; display: inline-block;" />
 </p>
 
 ## Introduction
@@ -31,7 +31,7 @@ flexible routing capabilities. The proxy can also secure application traffic
 using [mTLS](https://venilnoronha.io/a-step-by-step-guide-to-mtls-in-go).
 
 <p style="text-align: center;">
-  <img src="assets/images/2019-03-10-hand-crafting-a-sidecar-proxy-like-istio/sidecar-proxy.png" alt="Sidecar Proxy" style="width: 60%; display: inline-block;" />
+  <img src="assets/images/2019-03-10-hand-crafting-a-sidecar-proxy-and-demystifying-istio/sidecar-proxy.png" alt="Sidecar Proxy" style="width: 60%; display: inline-block;" />
 </p>
 
 In this post, we'll build a simple sidecar proxy that can sniff HTTP traffic
@@ -223,7 +223,7 @@ this to transparently route traffic to our proxy. Istio uses this exact concept
 to set up its Pod networking.
 
 <p style="text-align: center;">
-  <img src="assets/images/2019-03-10-hand-crafting-a-sidecar-proxy-like-istio/pod-networking.png" alt="Sidecar Proxy" style="width: 80%; display: inline-block;" />
+  <img src="assets/images/2019-03-10-hand-crafting-a-sidecar-proxy-and-demystifying-istio/pod-networking.png" alt="Sidecar Proxy" style="width: 80%; display: inline-block;" />
 </p>
 
 The idea here is map the service port (`80`) on the `eth0` interface to the
