@@ -8,6 +8,25 @@
     
       
       <item>
+        <title>How to Write Envoy Filters Like a Ninja!</title>
+        
+          <description>&lt;p&gt;&lt;a href=&quot;https://envoyproxy.io&quot;&gt;Envoy&lt;/a&gt; is a programmable L3/L4 and L7 proxy that powers
+today’s service mesh solutions including &lt;a href=&quot;https://istio.io&quot;&gt;Istio&lt;/a&gt;, &lt;a href=&quot;https://aws.amazon.com/app-mesh/&quot;&gt;AWS App
+Mesh&lt;/a&gt;, &lt;a href=&quot;https://www.consul.io/docs/connect/index.html&quot;&gt;Consul Connect&lt;/a&gt;,
+etc. At Envoy’s core lie several filters that provide a rich set of features for
+observing, securing, and routing network traffic to microservices.&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Tue, 28 May 2019 10:40:00 +0000</pubDate>
+        <link>
+        https://venilnoronha.io/how-to-write-envoy-filters-like-a-ninja</link>
+        <guid isPermaLink="true">https://venilnoronha.io/how-to-write-envoy-filters-like-a-ninja</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>Hand-crafting a Sidecar Proxy and Demystifying Istio</title>
         
           <description>&lt;p&gt;The sidecar proxy pattern is an important concept that lets &lt;a href=&quot;https://istio.io/&quot;&gt;Istio&lt;/a&gt;

@@ -11,7 +11,7 @@
 
 
 
-    <title>How we built a simple Game Lobby Manager using Go and Unity</title>
+    <title>How to Write Envoy Filters Like a Ninja!</title>
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Styles'n'Scripts -->
@@ -25,26 +25,26 @@
     <!-- This tag outputs SEO meta+structured data and other important settings -->
     <meta name="description" content="Service mesh, distributed systems, software design, and more..." />
     <link rel="shortcut icon" href="https://venilnoronha.io/assets/images/favicon.png" type="image/png" />
-    <link rel="canonical" href="https://venilnoronha.io/how-we-built-a-simple-game-lobby-manager-using-go-and-unity" />
+    <link rel="canonical" href="https://venilnoronha.io/how-to-write-envoy-filters-like-a-ninja" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
 
      <!--title below is coming from _includes/dynamic_title-->
     <meta property="og:site_name" content="Venil Noronha" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="How we built a simple Game Lobby Manager using Go and Unity" />
-    <meta property="og:description" content="Lobby managers are one of the most critical components of today’s online gaming infrastructure. In this post, I elaborate my experience of building a simple lobby manager using Golang and Unity. Introduction It’s 2017, and today’s Game Engines are highly sophisticated in terms of supporting network-integrated games. One of my" />
-    <meta property="og:url" content="https://venilnoronha.io/how-we-built-a-simple-game-lobby-manager-using-go-and-unity" />
-    <meta property="og:image" content="https://venilnoronha.io/assets/images/2017-11-28-how-we-built-a-simple-game-lobby-manager-using-go-and-unity/banner.jpg" />
+    <meta property="og:title" content="How to Write Envoy Filters Like a Ninja!" />
+    <meta property="og:description" content="Envoy is a programmable L3/L4 and L7 proxy that powers today’s service mesh solutions including Istio, AWS App Mesh, Consul Connect, etc. At Envoy’s core lie several filters that provide a rich set of features for observing, securing, and routing network traffic to microservices. In these set of posts, we’ll" />
+    <meta property="og:url" content="https://venilnoronha.io/how-to-write-envoy-filters-like-a-ninja" />
+    <meta property="og:image" content="https://venilnoronha.io/assets/images/2019-05-28-how-to-write-envoy-filters-like-a-ninja/banner.jpg" />
     <meta property="article:publisher" content="https://www.facebook.com/false" />
     <meta property="article:author" content="https://www.facebook.com/false" />
-    <meta property="article:published_time" content="2017-11-28T08:51:00-08:00" />
-    <meta property="article:modified_time" content="2017-11-28T08:51:00-08:00" />
+    <meta property="article:published_time" content="2019-05-28T03:40:00-07:00" />
+    <meta property="article:modified_time" content="2019-05-28T03:40:00-07:00" />
     <meta property="article:tag" content="Distributed Systems" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="How we built a simple Game Lobby Manager using Go and Unity" />
-    <meta name="twitter:description" content="Lobby managers are one of the most critical components of today’s online gaming infrastructure. In this post, I elaborate my experience of building a simple lobby manager using Golang and Unity. Introduction It’s 2017, and today’s Game Engines are highly sophisticated in terms of supporting network-integrated games. One of my" />
+    <meta name="twitter:title" content="How to Write Envoy Filters Like a Ninja!" />
+    <meta name="twitter:description" content="Envoy is a programmable L3/L4 and L7 proxy that powers today’s service mesh solutions including Istio, AWS App Mesh, Consul Connect, etc. At Envoy’s core lie several filters that provide a rich set of features for observing, securing, and routing network traffic to microservices. In these set of posts, we’ll" />
     <meta name="twitter:url" content="https://venilnoronha.io/" />
-    <meta name="twitter:image" content="https://venilnoronha.io/assets/images/2017-11-28-how-we-built-a-simple-game-lobby-manager-using-go-and-unity/banner.jpg" />
+    <meta name="twitter:image" content="https://venilnoronha.io/assets/images/2019-05-28-how-to-write-envoy-filters-like-a-ninja/banner.jpg" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Venil Noronha" />
     <meta name="twitter:label2" content="Filed under" />
@@ -63,18 +63,18 @@
         "name": "Venil Noronha",
         "logo": "https://venilnoronha.io/false"
     },
-    "url": "https://venilnoronha.io/how-we-built-a-simple-game-lobby-manager-using-go-and-unity",
+    "url": "https://venilnoronha.io/how-to-write-envoy-filters-like-a-ninja",
     "image": {
         "@type": "ImageObject",
-        "url": "https://venilnoronha.io/assets/images/2017-11-28-how-we-built-a-simple-game-lobby-manager-using-go-and-unity/banner.jpg",
+        "url": "https://venilnoronha.io/assets/images/2019-05-28-how-to-write-envoy-filters-like-a-ninja/banner.jpg",
         "width": 2000,
         "height": 666
     },
     "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://venilnoronha.io/how-we-built-a-simple-game-lobby-manager-using-go-and-unity"
+        "@id": "https://venilnoronha.io/how-to-write-envoy-filters-like-a-ninja"
     },
-    "description": "Lobby managers are one of the most critical components of today’s online gaming infrastructure. In this post, I elaborate my experience of building a simple lobby manager using Golang and Unity. Introduction It’s 2017, and today’s Game Engines are highly sophisticated in terms of supporting network-integrated games. One of my"
+    "description": "Envoy is a programmable L3/L4 and L7 proxy that powers today’s service mesh solutions including Istio, AWS App Mesh, Consul Connect, etc. At Envoy’s core lie several filters that provide a rich set of features for observing, securing, and routing network traffic to microservices. In these set of posts, we’ll"
 }
     </script>
 
@@ -87,7 +87,7 @@
     </script> -->
 
     <meta name="generator" content="Jekyll 3.6.2" />
-    <link rel="alternate" type="application/rss+xml" title="How we built a simple Game Lobby Manager using Go and Unity" href="/feed.xml" />
+    <link rel="alternate" type="application/rss+xml" title="How to Write Envoy Filters Like a Ninja!" href="/feed.xml" />
 
 
 </head>
@@ -156,7 +156,7 @@ into the {body} of the default.hbs template -->
 
             <header class="post-full-header">
                 <section class="post-full-meta">
-                    <time class="post-full-meta-date" datetime="28 November 2017">28 November 2017</time>
+                    <time class="post-full-meta-date" datetime="28 May 2019">28 May 2019</time>
                     
                         <span class="date-divider">/</span>
                         
@@ -166,130 +166,35 @@ into the {body} of the default.hbs template -->
                         
                     
                 </section>
-                <h1 class="post-full-title">How we built a simple Game Lobby Manager using Go and Unity</h1>
+                <h1 class="post-full-title">How to Write Envoy Filters Like a Ninja!</h1>
             </header>
 
             
-            <figure class="post-full-image" style="background-image: url(/assets/images/2017-11-28-how-we-built-a-simple-game-lobby-manager-using-go-and-unity/banner.jpg)">
+            <figure class="post-full-image" style="background-image: url(/assets/images/2019-05-28-how-to-write-envoy-filters-like-a-ninja/banner.jpg)">
             </figure>
             
 
             <section class="post-full-content">
                 <div class="kg-card-markdown">
-                    <p>Lobby managers are one of the most critical components of today’s online gaming infrastructure. In this post, I elaborate my experience of building a simple lobby manager using Golang and Unity.</p>
+                    <p><a href="https://envoyproxy.io">Envoy</a> is a programmable L3/L4 and L7 proxy that powers
+today’s service mesh solutions including <a href="https://istio.io">Istio</a>, <a href="https://aws.amazon.com/app-mesh/">AWS App
+Mesh</a>, <a href="https://www.consul.io/docs/connect/index.html">Consul Connect</a>,
+etc. At Envoy’s core lie several filters that provide a rich set of features for
+observing, securing, and routing network traffic to microservices.</p>
 
-<h2 id="introduction">Introduction</h2>
+<p style="text-align: center;">
+  <img src="assets/images/2019-05-28-how-to-write-envoy-filters-like-a-ninja/envoy-logo.png" alt="Envoy" style="width: 500px; display: inline-block;" />
+</p>
 
-<p>It’s 2017, and today’s Game Engines are highly sophisticated in terms of supporting network-integrated games. One of my favorite Game Engines is <a href="https://unity3d.com">Unity 3D</a>. Unity has a built-in HLAPI (High Level API) for building networked games, and this incredible API does all the heavy-lifting for the developer. Underlying this API is a brilliant architecture that leverages Distributed System algorithms, and that’s a field in Computer Science that I dearly love. I wanted to get under the hood, and it couldn’t have been better than learning from <a href="http://gamepipe.usc.edu/Zyda/index.html">Dr. Mike Zyda</a>, the scholar himself! Prof. Zyda teaches the Networked Games class at the University of Southern California, and that’s how I got this amazing opportunity to explore networking for games.</p>
+<p>In these set of posts, we’ll have a look at the basics of Envoy filters and
+learn how to extend Envoy by implementing custom filters to create useful
+features!</p>
 
-<p><a href="https://theoozeisloose.github.io">The Ooze Is Loose</a> is what we, a team of 4, call our game. It’s primarily an FPS (First Person Shooter) game with a unique slime-monster theme (feel free to check out the trailer on our website). We, as a team, wanted to get into the very nitty-gritty of Unity’s networking, and therefore we custom-built the game’s networking architecture leveraging Unity’s LLAPI (Low Level API). It was also very exciting to see the game’s architecture take shape through the course of the semester. At one point, we also decided to build our own lobby manager, and in this post I’ll be describing exactly that.</p>
-
-<h2 id="the-architecture">The Architecture</h2>
-
-<p><img src="assets/images/2017-11-28-how-we-built-a-simple-game-lobby-manager-using-go-and-unity/architecture.jpg" alt="The Architecture" /></p>
-
-<p>The architecture has 4 main components, the functionality of which is described below.</p>
-
-<ul>
-  <li>The <strong>Load Balancer</strong> is the primary component responsible for managing lobbies. The Load Balancer exposes a REST API which is consumed by the Client and the Headless Server.</li>
-  <li>The <strong>Client</strong> here represents a single instance of the game.</li>
-  <li>The <strong>Headless Server</strong> represents a single instance of the game that’s running in the headless mode on the server.</li>
-  <li>The <strong>Load Balancer Informer</strong> is an inner component of the Headless Server, and its responsibility is to periodically communicate the game status to the Headless Server.</li>
-</ul>
-
-<h2 id="the-working">The Working</h2>
-
-<h4 id="joining-a-lobby">Joining a Lobby</h4>
-
-<p>When a user starts the game process (Client), it sends an HTTP <code class="highlighter-rouge">GET /lobby</code> request to Load Balancer. As a response, the Load Balancer returns it a list of lobbies, which it then renders on the screen for the user to choose from. The lobby data structure looks as follows:</p>
-
-<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// Lobby represents a lobby.</span><span class="x">
-</span><span class="k">type</span><span class="x"> </span><span class="n">Lobby</span><span class="x"> </span><span class="k">struct</span><span class="x"> </span><span class="p">{</span><span class="x">
-
-	</span><span class="c">// Name tells the lobby name.</span><span class="x">
-	</span><span class="n">Name</span><span class="x"> </span><span class="kt">string</span><span class="x"> </span><span class="s">`json:"name"`</span><span class="x">
-
-	</span><span class="c">// MaxPlayers tells the maximum players that can join the lobby.</span><span class="x">
-	</span><span class="n">MaxPlayers</span><span class="x"> </span><span class="kt">int</span><span class="x"> </span><span class="s">`json:"maxPlayers"`</span><span class="x">
-
-	</span><span class="c">// NumPlayers tells the number of players currently connected to the lobby.</span><span class="x">
-	</span><span class="n">NumPlayers</span><span class="x"> </span><span class="kt">int</span><span class="x"> </span><span class="s">`json:"numPlayers"`</span><span class="x">
-
-	</span><span class="c">// Host tells the address of the server hosting the lobby.</span><span class="x">
-	</span><span class="n">Host</span><span class="x"> </span><span class="kt">string</span><span class="x"> </span><span class="s">`json:"host"`</span><span class="x">
-
-	</span><span class="c">// Port tells the port on which the server is hosting the lobby.</span><span class="x">
-	</span><span class="n">Port</span><span class="x"> </span><span class="kt">int</span><span class="x"> </span><span class="s">`json:"port"`</span><span class="x">
-
-</span><span class="p">}</span><span class="x">
-</span></code></pre></div></div>
-
-<p>The response looks like the following:</p>
-
-<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">[{</span><span class="w">
-	</span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Epic Game"</span><span class="p">,</span><span class="w">
-	</span><span class="s2">"maxPlayers"</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w">
-	</span><span class="s2">"numPlayers"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
-	</span><span class="s2">"host"</span><span class="p">:</span><span class="w"> </span><span class="s2">"pylon1.usc.edu"</span><span class="p">,</span><span class="w">
-	</span><span class="s2">"port"</span><span class="p">:</span><span class="w"> </span><span class="mi">8888</span><span class="w">
-</span><span class="p">}]</span><span class="w">
-</span></code></pre></div></div>
-
-<p>Each lobby is a separate (Headless Server) process on the server, which means that it has its own port. The example above shows a lobby named <code class="highlighter-rouge">Epic Game</code> which supports 8 playes at the peak and currently has no players. It is deployed on <code class="highlighter-rouge">pylon1.usc.edu</code> and is listening to packets on UDP port <code class="highlighter-rouge">8888</code>. Once a user chooses to join a lobby, the Client makes a <code class="highlighter-rouge">NetworkTransport.Connect(..)</code> call to initiate the message flow between the Headless Server and the Client.</p>
-
-<h4 id="creating-a-lobby">Creating a Lobby</h4>
-
-<p>But, how does one create a lobby? It’s as simple as sending an HTTP <code class="highlighter-rouge">POST /lobby</code> request with the lobby name to the Load Balancer, and magically a new lobby is made available within a few milliseconds.</p>
-
-<p>Well, how does that happen? When the Load Balancer receives a POST request, it begins a scan to identify the next unused port (using a logic similar to the Linux FDT) and spawns a Headless Server process while supplying it an argument like <code class="highlighter-rouge">-port=8889</code>. The Headless Server process then starts accepting messages on the specified port.</p>
-
-<p>The process spawning code looks similar to this:</p>
-
-<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cmd</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">exec</span><span class="o">.</span><span class="n">Command</span><span class="p">(</span><span class="s">"TOIL.x86_64"</span><span class="p">,</span><span class="x"> </span><span class="s">"-batchmode"</span><span class="p">,</span><span class="x"> </span><span class="s">"-nographics"</span><span class="p">,</span><span class="x"> </span><span class="s">"-port="</span><span class="o">+</span><span class="n">portStr</span><span class="p">)</span><span class="x">
-</span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">cmd</span><span class="o">.</span><span class="n">Start</span><span class="p">()</span><span class="x">
-</span></code></pre></div></div>
-<h4 id="shutting-down-a-lobby">Shutting Down a Lobby</h4>
-
-<p>Shutting down a lobby is a non-trivial process. The reason is that the Load Balancer must be well aware of the number of players currently in the lobby, and it should reap a Headless Server instance only when it’s sure that no more players are in the game. This may sound trivial, but notice that initially there are 0 players in the game, and, in that case, the Load Balancer must be smart enough to not reap the Headless Server.</p>
-
-<p>To solve the lobby shutdown problem, we put together the following algorithm. The algorithm primarily relies on the Load Balancer Informer for status updates.</p>
-
-<ol>
-  <li>The Load Balancer Informer periodically sends an HTTP <code class="highlighter-rouge">PUT /lobby</code> request along with information about the Headless Server’s <code class="highlighter-rouge">port</code> and number of players connected to it.</li>
-  <li>The Load Balancer updates its in-memory lobby cache with the information it receives from the Load Balancer Informer.</li>
-  <li>A <code class="highlighter-rouge">reaper</code> <a href="https://gobyexample.com/goroutines">goroutine</a> periodically checks this cache and identifies processes that are ready to be reaped.</li>
-  <li>The reaper goroutine then sends a <code class="highlighter-rouge">SIGKILL</code> signal and safely terminates the Headless Server process.</li>
-</ol>
-
-<p>Very briefly, the reaping logic looks like the following.</p>
-
-<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span><span class="x"> </span><span class="n">lobby</span><span class="o">.</span><span class="n">NumPlayers</span><span class="x"> </span><span class="o">==</span><span class="x"> </span><span class="m">0</span><span class="x"> </span><span class="o">&amp;&amp;</span><span class="x"> </span><span class="n">lobby</span><span class="o">.</span><span class="n">HadSomePlayers</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">syscall</span><span class="o">.</span><span class="n">Kill</span><span class="p">(</span><span class="n">lobby</span><span class="o">.</span><span class="n">Pid</span><span class="p">,</span><span class="x"> </span><span class="n">syscall</span><span class="o">.</span><span class="n">SIGKILL</span><span class="p">)</span><span class="x">
-	</span><span class="c">// error handling and logging</span><span class="x">
-</span><span class="p">}</span><span class="x">
-</span></code></pre></div></div>
-
-<p>As you can see, the Load Balancer also tracks whether the lobby ever had any players i.e. it would consider reaping a process only if the lobby had at least a single player at some point. This algorithm is not completely fool-proof as there can be lobbies that lie unused endlessly, if no one every joins them. I’ve described such concerns/improvements in the next section.</p>
-
-<h2 id="future-work">Future Work</h2>
-
-<p>This simple lobby manager worked, as one could say, simply! There are some (or may be many) improvements that would be needed in order to make this robust. Here are 3 things that I think are the most important to make our lobby manager robust and scalable.</p>
-
-<ol>
-  <li>Lobbies should be reaped even if no one ever joins them. This could be easily done by setting a pre-determined timeout for the Client to join after creating a lobby.</li>
-  <li>The Load Balancer REST API is currently open i.e. has no authentication/authorization built around, and that is really a must have.</li>
-  <li>The Load Balancer currently runs as a single process, and therefore is prone to SPoFs (Single Point of Failures). It would be great if we could scale the Load Balancer horizontally. That way, we should also be able to spawn Headless Server processes in a cluster of nodes, each running an instance of the Load Balancer.</li>
-</ol>
-
-<h2 id="screencast">Screencast</h2>
-
-<p>Here’s a screencast where I’m narrating the Load Balancer’s working along with a live demonstration.</p>
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/b5ELw65R5_Q?rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen=""></iframe>
+<h5 id="part-1---introduction"><a href="https://medium.com/@venilnoronha/how-to-write-envoy-filters-like-a-ninja-part-1-d166e5abec09?source=friends_link&amp;sk=4a62447b92c5889d2b57cc6ca9e5ccac">Part 1 - Introduction</a></h5>
 
 <hr />
 
-<p>Well, I hope that this article was informative, a little at least.. I’m just beginning to write :) If you like this project, please give it a <a href="https://github.com/theoozeisloose/load_balancer">star</a> on GitHub. You can also leave your thoughts below. Thanks!</p>
+<p><strong>Disclaimer:</strong> My postings are my own and don’t necessarily represent VMware’s positions, strategies or opinions.</p>
 
                 </div>
             </section>
@@ -340,8 +245,8 @@ into the {body} of the default.hbs template -->
                     <div id="disqus_thread"></div>
                     <script>
                         var disqus_config = function () {
-                            this.page.url = 'https://venilnoronha.io/how-we-built-a-simple-game-lobby-manager-using-go-and-unity';
-                            this.page.identifier = 'How we built a simple Game Lobby Manager using Go and Unity';
+                            this.page.url = 'https://venilnoronha.io/how-to-write-envoy-filters-like-a-ninja';
+                            this.page.identifier = 'How to Write Envoy Filters Like a Ninja!';
                         };
                         (function() {
                             var d = document, s = d.createElement('script');
@@ -386,11 +291,6 @@ into the {body} of the default.hbs template -->
                                 
                                   
                                     
-                                        
-                                        
-                                            <li><a href="/how-to-write-envoy-filters-like-a-ninja">How to Write Envoy Filters Like a Ninja!</a></li>
-                                        
-                                    
                                   
                                 
                                   
@@ -415,12 +315,7 @@ into the {body} of the default.hbs template -->
                                     
                                         
                                         
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
+                                            <li><a href="/envoy-grpc-and-rate-limiting">Envoy, gRPC, and Rate Limiting</a></li>
                                         
                                     
                                   
@@ -447,6 +342,16 @@ into the {body} of the default.hbs template -->
                                   
                                 
                                   
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
                                     
                                   
                                 
@@ -472,60 +377,18 @@ into the {body} of the default.hbs template -->
 
             <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
             
-                
-    <article class="post-card post-template">
-        
-            <a class="post-card-image-link" href="/designing-asynchronous-functions-with-go">
-                <div class="post-card-image" style="background-image: url(/assets/images/2018-04-02-designing-asynchronous-functions-with-go/banner.jpg)"></div>
-            </a>
-        
-        <div class="post-card-content">
-            <a class="post-card-content-link" href="/designing-asynchronous-functions-with-go">
-                <header class="post-card-header">
-                    
-                        
-                            
-                                <span class="post-card-tags">Distributed systems</span>
-                            
-                        
-                    
-
-                    <h2 class="post-card-title">Designing Asynchronous Functions with Go</h2>
-                </header>
-                <section class="post-card-excerpt">
-                    <p>Who doesn't love fully controllable asynchronous APIs? This post is about crafting asynchronous functions using Golang's [Context](https://godoc.org/context), [Channels](https://gobyexample.com/channels), and [Goroutines](https://gobyexample.com/goroutines). ## Introduction For the purpose of this post, let's consider a user who</p>
-                </section>
-            </a>
-            <footer class="post-card-meta">
-                
-                    
-                        
-                        <img class="author-profile-image" src="/assets/images/venilnoronha.jpg" alt="Venil Noronha" />
-                        
-                        <span class="post-card-author">
-                            
-                                <a href="/about/">Venil Noronha</a>
-                            
-                        </span>
-                    
-                
-            </footer>
-        </div>
-    </article>
-
-            
 
             <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
             
                 
     <article class="post-card post-template">
         
-            <a class="post-card-image-link" href="/kick-start-your-own-spring-cloud-config-server-with-mongodb">
-                <div class="post-card-image" style="background-image: url(/assets/images/2017-11-04-kick-start-your-own-spring-cloud-config-server-with-mongodb/banner.jpg)"></div>
+            <a class="post-card-image-link" href="/hand-crafting-a-sidecar-proxy-and-demystifying-istio">
+                <div class="post-card-image" style="background-image: url(/assets/images/2019-03-10-hand-crafting-a-sidecar-proxy-and-demystifying-istio/banner.jpg)"></div>
             </a>
         
         <div class="post-card-content">
-            <a class="post-card-content-link" href="/kick-start-your-own-spring-cloud-config-server-with-mongodb">
+            <a class="post-card-content-link" href="/hand-crafting-a-sidecar-proxy-and-demystifying-istio">
                 <header class="post-card-header">
                     
                         
@@ -535,10 +398,10 @@ into the {body} of the default.hbs template -->
                         
                     
 
-                    <h2 class="post-card-title">Kick start your own Spring Cloud Config Server with MongoDB</h2>
+                    <h2 class="post-card-title">Hand-crafting a Sidecar Proxy and Demystifying Istio</h2>
                 </header>
                 <section class="post-card-excerpt">
-                    <p>Spring Cloud Config Server MongoDB enables the seamless integration of the regular Spring Cloud Config Server with MongoDB to manage external properties for applications across all environments. A Simple Config Server Bootstrapping a</p>
+                    <p>The sidecar proxy pattern is an important concept that lets Istio provide routing, metrics, security, and other features to services running in a service mesh. In this post I’ll explain key techniques that</p>
                 </section>
             </a>
             <footer class="post-card-meta">
@@ -575,18 +438,18 @@ into the {body} of the default.hbs template -->
         </a>
     </div>
     <span class="floating-header-divider">&mdash;</span>
-    <div class="floating-header-title">How we built a simple Game Lobby Manager using Go and Unity</div>
+    <div class="floating-header-title">How to Write Envoy Filters Like a Ninja!</div>
     <div class="floating-header-share">
         <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
 </svg>
 </div>
-        <a class="floating-header-share-tw" href="https://twitter.com/share?text=How+we+built+a+simple+Game+Lobby+Manager+using+Go+and+Unity&amp;url=https://venilnoronha.io/how-we-built-a-simple-game-lobby-manager-using-go-and-unity"
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=How+to+Write+Envoy+Filters+Like+a+Ninja%21&amp;url=https://venilnoronha.io/how-to-write-envoy-filters-like-a-ninja"
             onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
 
         </a>
-        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://venilnoronha.io/how-we-built-a-simple-game-lobby-manager-using-go-and-unity"
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://venilnoronha.io/how-to-write-envoy-filters-like-a-ninja"
             onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
 
