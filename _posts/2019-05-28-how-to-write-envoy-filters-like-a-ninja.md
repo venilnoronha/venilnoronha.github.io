@@ -25,7 +25,7 @@ In these set of posts, we’ll have a look at the basics of Envoy filters and
 learn how to extend Envoy by implementing custom filters to create useful
 features!
 
-##### [Part 1 - Introduction](https://medium.com/@venilnoronha/how-to-write-envoy-filters-like-a-ninja-part-1-d166e5abec09?source=friends_link&sk=4a62447b92c5889d2b57cc6ca9e5ccac)
+##### [Part 1 - Introduction](https://blog.envoyproxy.io/how-to-write-envoy-filters-like-a-ninja-part-1-d166e5abec09?sk=4a62447b92c5889d2b57cc6ca9e5ccac)
 
 -----
 
