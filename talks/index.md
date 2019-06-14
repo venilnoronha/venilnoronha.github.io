@@ -9,20 +9,31 @@ class: page-template
 subclass: 'post page'
 ---
 
-**Open Source 101** &nbsp;
+**Oct 2019 | All Things Open** &nbsp;
+  [talk](#) \|
+  [deck](#)
+
+**Aug 2019 | VMworld US** &nbsp;
+  [talk](#)
+
+**Aug 2019 | Open Source Summit North America** &nbsp;
+  [talk](#) \|
+  [deck](#)
+
+**Apr 2019 | Open Source 101** &nbsp;
   [talk](https://opensource101.com/talk-service-mesh-in-a-nutshell/) \|
   [deck](decks/Service%20Mesh%20in%20a%20Nutshell%20-%20Open%20Source%20101.pdf)
 
-**Service Mesh Day 2019** &nbsp;
+**Mar 2019 | Service Mesh Day** &nbsp;
   [talk](https://servicemeshday.com/schedule/) \|
   [deck](decks/Seamless%20Cloud-Native%20Apps%20with%20gRPC-Web%20and%20Istio%20-%20Service%20Mesh%20Day%202019.pdf) \|
   [video](https://www.youtube.com/watch?v=e2o_VQyfrbA)
 
-**VMware {code} Meetup** &nbsp;
+**Mar 2019 | VMware {code} Meetup** &nbsp;
   [talk](https://www.meetup.com/VMware-code/events/259161925/) \|
   [video](https://www.facebook.com/vmwarecode/videos/265196224359529/)
 
-**gRPC Conf 2019** &nbsp;
+**Mar 2019 | gRPC Conf** &nbsp;
   [talk](https://grpconf19.sched.com/event/L70z/seamless-cloud-native-apps-with-grpc-web-and-istio-venil-noronha-vmware) \|
   [deck](https://static.sched.com/hosted_files/grpconf19/d9/Seamless%20Cloud-Native%20Apps%20with%20gRPC-Web%20and%20Istio.pdf)
 
