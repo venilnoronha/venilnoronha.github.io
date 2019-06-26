@@ -14,10 +14,10 @@ subclass: 'post page'
   [deck](#)
 
 **Aug 2019 | VMworld US** &nbsp;
-  [talk](#)
+  [talk](https://my.vmworld.com/widget/vmware/vmworld19us/us19catalog?search.modernapps=155131370075700264Ci&search=%22Venil%20Noronha%22)
 
 **Aug 2019 | Open Source Summit North America** &nbsp;
-  [talk](#) \|
+  [talk](https://ossna19.sched.com/event/RWEf/service-mesh-in-a-nutshell-venil-noronha-vmware) \|
   [deck](#)
 
 **Apr 2019 | Open Source 101** &nbsp;
