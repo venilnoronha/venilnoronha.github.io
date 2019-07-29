@@ -18,11 +18,11 @@ subclass: 'post page'
 
 **Aug 2019 | Open Source Summit North America** &nbsp;
   [talk](https://ossna19.sched.com/event/RWEf/service-mesh-in-a-nutshell-venil-noronha-vmware) \|
-  [deck](#)
+  [deck](decks/Service%20Mesh%20in%20a%20Nutshell%20-%20Open%20Source%20Summit%20NA%202019.pdf)
 
 **Apr 2019 | Open Source 101** &nbsp;
   [talk](https://opensource101.com/talk-service-mesh-in-a-nutshell/) \|
-  [deck](decks/Service%20Mesh%20in%20a%20Nutshell%20-%20Open%20Source%20101.pdf)
+  [deck](decks/Service%20Mesh%20in%20a%20Nutshell%20-%20Open%20Source%20101%202019.pdf)
 
 **Mar 2019 | Service Mesh Day** &nbsp;
   [talk](https://servicemeshday.com/schedule/) \|
@@ -35,7 +35,7 @@ subclass: 'post page'
 
 **Mar 2019 | gRPC Conf** &nbsp;
   [talk](https://grpconf19.sched.com/event/L70z/seamless-cloud-native-apps-with-grpc-web-and-istio-venil-noronha-vmware) \|
-  [deck](https://static.sched.com/hosted_files/grpconf19/d9/Seamless%20Cloud-Native%20Apps%20with%20gRPC-Web%20and%20Istio.pdf)
+  [deck](decks/Seamless%20Cloud-Native%20Apps%20with%20gRPC-Web%20and%20Istio%20-%20gRPC%20Conf%202019.pdf)
 
 <br />
 <p style="text-align: right; font-size: 10pt;">
