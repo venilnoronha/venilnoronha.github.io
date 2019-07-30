@@ -10,7 +10,7 @@ subclass: 'post page'
 ---
 
 **Oct 2019 | All Things Open** &nbsp;
-  [talk](#) \|
+  [talk](https://allthingsopen.org/talk/seamless-cloud-native-apps-with-grpc-web-and-istio/) \|
   [deck](#)
 
 **Aug 2019 | VMworld US** &nbsp;
