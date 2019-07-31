@@ -27,7 +27,8 @@ subclass: 'post page'
 **Mar 2019 | Service Mesh Day** &nbsp;
   [talk](https://servicemeshday.com/schedule/) \|
   [deck](decks/Seamless%20Cloud-Native%20Apps%20with%20gRPC-Web%20and%20Istio%20-%20Service%20Mesh%20Day%202019.pdf) \|
-  [video](https://www.youtube.com/watch?v=e2o_VQyfrbA)
+  [video](https://www.youtube.com/watch?v=e2o_VQyfrbA) \|
+  [transcript](https://www.tetrate.io/blog/smd_venil_noronha_from_vmware/)
 
 **Mar 2019 | VMware {code} Meetup** &nbsp;
   [talk](https://www.meetup.com/VMware-code/events/259161925/) \|
