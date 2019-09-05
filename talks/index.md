@@ -9,6 +9,10 @@ class: page-template
 subclass: 'post page'
 ---
 
+**Nov 2019 | KubeCon + CloudNativeCon North America** &nbsp;
+  [talk](https://kccncna19.sched.com/event/UacZ/rethinking-the-k8s-dns-for-the-modern-enterprise-deepa-kalani-venil-noronha-vmware) \|
+  [deck](#)
+
 **Oct 2019 | All Things Open** &nbsp;
   [talk](https://allthingsopen.org/talk/seamless-cloud-native-apps-with-grpc-web-and-istio/) \|
   [deck](#)
