@@ -15,7 +15,7 @@ subclass: 'post page'
 
 **Oct 2019 | All Things Open** &nbsp;
   [talk](https://allthingsopen.org/talk/seamless-cloud-native-apps-with-grpc-web-and-istio/) \|
-  [deck](#)
+  [deck](decks/Seamless%20Cloud-Native%20Apps%20with%20gRPC-Web%20and%20Istio%20-%20All%20Things%20Open%202019.pdf)
 
 **Aug 2019 | VMworld US** &nbsp;
   [talk](https://my.vmworld.com/widget/vmware/vmworld19us/us19catalog?search.modernapps=155131370075700264Ci&search=%22Venil%20Noronha%22) \|
