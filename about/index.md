@@ -18,22 +18,23 @@ subclass: 'post page'
     {% if site.linkedin %}<a href="https://linkedin.com/in/{{ site.linkedin }}" target="_blank" rel="noopener">LinkedIn</a>{% endif %}
 </p>
 
-I'm a software craftsman with over 5 years of industry experience in building
-cloud software. I currently work with the Open Source Technology Center at
-VMware, Inc. where I primarily contribute upstream to projects like
-[Istio](https://github.com/istio/istio) and [Envoy Proxy](https://github.com/envoyproxy/envoy).
-Previously, I doubly interned with VMware, Inc. and developed products for a
-Microsoft-backed Big Data startup in Bombay (Mumbai) named [Germin8](https://germin8.com).
+I'm a software engineer with over 5 years of industry experience in building
+cloud software. I currently work with the [NSX Service Mesh](https://pages.cloud.vmware.com/vmware-nsx-service-mesh)
+product team at [VMware, Inc.](https://www.vmware.com) I also contribute
+upstream to projects like [Istio](https://github.com/istio/istio) and [Envoy proxy](https://github.com/envoyproxy/envoy).
+Previously, I worked with the Open Source Technology Center at VMware after
+doing a couple of internships with VMware's Storage and Availability business
+unit. I also developed SaaS products for a Microsoft-backed Big Data startup in
+Bombay (Mumbai) named [Germin8](https://germin8.com).
 
 I hold a master's degree in Computer Science from the University of Southern
 California, and a bachelor's degree in Information Technology from the
 University of Mumbai. I love contributing to open source projects in my free
-time, and, so far, I've contributed to 25+ projects (like Istio, Envoy Proxy,
+time, and, so far, I've contributed to 25+ projects (like Istio, Envoy proxy,
 gRPC, Golang, Kubernetes, Spring Boot, Spring Cloud, Spring Kafka, RabbitMQ,
 etc.) on [GitHub](https://github.com/venilnoronha). I maintain a few subprojects
-on [Istio](https://github.com/istio) and [Envoy Proxy](https://github.com/envoyproxy),
-and I'm a member of [Kubernetes](https://github.com/kubernetes). I've also
-donated one of my projects, [Spring Cloud Config Server MongoDB](https://github.com/spring-cloud-incubator/spring-cloud-config-server-mongodb),
+under Istio and Envoy proxy, and I'm a member of the [Kubernetes](https://github.com/kubernetes)
+project. I've also donated one of my projects, [Spring Cloud Config Server MongoDB](https://github.com/spring-cloud-incubator/spring-cloud-config-server-mongodb),
 to Pivotal's Spring Cloud Incubator.
 
 I'm very passionate about Service Mesh, Distributed Systems, Cloud Computing,
