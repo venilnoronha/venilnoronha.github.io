@@ -11,7 +11,7 @@ subclass: 'post page'
 
 **Nov 2019 | KubeCon + CloudNativeCon North America** &nbsp;
   [talk](https://kccncna19.sched.com/event/UacZ/rethinking-the-k8s-dns-for-the-modern-enterprise-deepa-kalani-venil-noronha-vmware) \|
-  [deck](#)
+  [deck](decks/Rethinking%20the%20K8s%20DNS%20for%20the%20Modern%20Enterprise%20-%20KubeCon%20NA%202019.pdf)
 
 **Oct 2019 | All Things Open** &nbsp;
   [talk](https://allthingsopen.org/talk/seamless-cloud-native-apps-with-grpc-web-and-istio/) \|
