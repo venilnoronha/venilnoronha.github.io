@@ -10,7 +10,7 @@ subclass: 'post page'
 ---
 
 **Mar 2020 | SCALE 18x** &nbsp;
-  [talk](#) \|
+  [talk](https://www.socallinuxexpo.org/scale/18x/presentations/beyond-single-mesh-discovery-identity-and-federation) \|
   [deck](#)
 
 **Nov 2019 | KubeCon + CloudNativeCon North America** &nbsp;
