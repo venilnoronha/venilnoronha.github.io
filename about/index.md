@@ -18,8 +18,8 @@ subclass: 'post page'
     {% if site.linkedin %}<a href="https://linkedin.com/in/{{ site.linkedin }}" target="_blank" rel="noopener">LinkedIn</a>{% endif %}
 </p>
 
-I'm a software engineer with over 5 years of industry experience in building
-cloud software. I currently work with the [NSX Service Mesh](https://pages.cloud.vmware.com/vmware-nsx-service-mesh)
+I'm a software engineer with over 6 years of industry experience in building
+cloud software. I currently work with the [Tanzu Service Mesh](https://pages.cloud.vmware.com/vmware-nsx-service-mesh)
 product team at [VMware, Inc.](https://www.vmware.com) I also contribute
 upstream to projects like [Istio](https://github.com/istio/istio) and [Envoy proxy](https://github.com/envoyproxy/envoy).
 Previously, I worked with the Open Source Technology Center at VMware after

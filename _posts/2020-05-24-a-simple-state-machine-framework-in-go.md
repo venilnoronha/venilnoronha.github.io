@@ -31,7 +31,7 @@ state to another.
 ## Light Switch Example
 
 <p style="text-align: center;">
-  <img src="assets/images/2020-05-24-a-simple-state-machine-framework-in-go/light-switch-fsm.png" alt="Light Switch FSM" style="display: inline-block;" />
+  <img src="assets/images/2020-05-24-a-simple-state-machine-framework-in-go/light-switch-fsm.png" alt="Light Switch FSM" style="width: 60%; display: inline-block;" />
 </p>
 
 Let's take a simple example of the light switch state machine that's shown above. The machine starts
