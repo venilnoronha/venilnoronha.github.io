@@ -4,7 +4,7 @@ current: post
 cover: assets/images/2020-05-24-a-simple-state-machine-framework-in-go/banner.jpg
 navigation: True
 title: A Simple State Machine Framework in Go
-date: 2019-05-28 10:40:00
+date: 2020-05-24 23:51:00
 tags: [Distributed Systems]
 class: post-template
 subclass: 'post tag-distributed-systems'
