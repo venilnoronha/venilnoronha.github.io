@@ -8,6 +8,24 @@
     
       
       <item>
+        <title>A Simple State Machine Framework in Go</title>
+        
+          <description>&lt;p&gt;The concept of &lt;a href=&quot;https://en.wikipedia.org/wiki/Finite-state_machine&quot;&gt;State Machines&lt;/a&gt; is not new, and
+they form the core of a lot of systems that we come across daily, for example, elevators and traffic
+lights. State machines make it a lot easy to understand and implement multi-faceted systems where
+inputs can be asynchronous and are triggered by multiple sources.&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Tue, 28 May 2019 10:40:00 +0000</pubDate>
+        <link>
+        https://venilnoronha.io/a-simple-state-machine-framework-in-go</link>
+        <guid isPermaLink="true">https://venilnoronha.io/a-simple-state-machine-framework-in-go</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>How to Write Envoy Filters Like a Ninja!</title>
         
           <description>&lt;p&gt;&lt;a href=&quot;https://envoyproxy.io&quot;&gt;Envoy&lt;/a&gt; is a programmable L3/L4 and L7 proxy that powers
