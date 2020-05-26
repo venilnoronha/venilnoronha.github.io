@@ -48,7 +48,7 @@ Here is the framework in Go in under 100 lines of code.
 
 ```golang
 // ErrEventRejected is the error returned when the state machine cannot process
-// an error in the state that it is in.
+// an event in the state that it is in.
 var ErrEventRejected = errors.New("event rejected")
 
 const (
