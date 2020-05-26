@@ -212,7 +212,7 @@ true when the <i>switch-on</i> event is triggered when the system is in the <i>o
 <p>Here is the framework in Go in under 100 lines of code.</p>
 
 <div class="language-golang highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// ErrEventRejected is the error returned when the state machine cannot process</span><span class="x">
-</span><span class="c">// an error in the state that it is in.</span><span class="x">
+</span><span class="c">// an event in the state that it is in.</span><span class="x">
 </span><span class="k">var</span><span class="x"> </span><span class="n">ErrEventRejected</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">errors</span><span class="o">.</span><span class="n">New</span><span class="p">(</span><span class="s">"event rejected"</span><span class="p">)</span><span class="x">
 
 </span><span class="k">const</span><span class="x"> </span><span class="p">(</span><span class="x">
