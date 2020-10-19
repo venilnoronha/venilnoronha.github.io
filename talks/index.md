@@ -9,6 +9,9 @@ class: page-template
 subclass: 'post page'
 ---
 
+**Nov 2020 | ServiceMeshCon** &nbsp;
+  [talk](https://smcna20.sched.com/event/fJI4/service-mesh-security-in-a-nutshell-venil-noronha-manish-chugtu-vmware-inc)
+
 **Nov 2019 | KubeCon + CloudNativeCon North America** &nbsp;
   [talk](https://kccncna19.sched.com/event/UacZ/rethinking-the-k8s-dns-for-the-modern-enterprise-deepa-kalani-venil-noronha-vmware) \|
   [deck](decks/Rethinking%20the%20K8s%20DNS%20for%20the%20Modern%20Enterprise%20-%20KubeCon%20NA%202019.pdf) \|
