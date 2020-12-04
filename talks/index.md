@@ -11,7 +11,8 @@ subclass: 'post page'
 
 **Nov 2020 | ServiceMeshCon** &nbsp;
   [talk](https://smcna20.sched.com/event/fJI4/service-mesh-security-in-a-nutshell-venil-noronha-manish-chugtu-vmware-inc) \|
-  [deck](decks/Service%20Mesh%20Security%20in%20a%20Nutshell%20-%20ServiceMeshCon%20NA%202020.pdf)
+  [deck](decks/Service%20Mesh%20Security%20in%20a%20Nutshell%20-%20ServiceMeshCon%20NA%202020.pdf) \|
+  [video](https://www.youtube.com/watch?v=liu51fCC3N4)
 
 **Nov 2019 | KubeCon + CloudNativeCon North America** &nbsp;
   [talk](https://kccncna19.sched.com/event/UacZ/rethinking-the-k8s-dns-for-the-modern-enterprise-deepa-kalani-venil-noronha-vmware) \|
