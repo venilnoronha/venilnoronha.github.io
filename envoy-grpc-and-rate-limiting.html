@@ -156,7 +156,7 @@ into the {body} of the default.hbs template -->
 
             <header class="post-full-header">
                 <section class="post-full-meta">
-                    <time class="post-full-meta-date" datetime="27 October 2018">27 October 2018</time>
+                    <time class="post-full-meta-date" datetime="26 October 2018">26 October 2018</time>
                     
                         <span class="date-divider">/</span>
                         
@@ -211,11 +211,11 @@ be using C++ for the purpose of this post.</p>
 <p>Once we run the Greeter application, we should have the following output on the
 console.</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> ./greeter_server
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>./greeter_server
 <span class="go">Server listening on 0.0.0.0:50051
 </span></code></pre></div></div>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> ./greeter_client
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>./greeter_client
 <span class="go">Greeter received: Hello world
 </span></code></pre></div></div>
 
@@ -223,7 +223,7 @@ console.</p>
 
 <p>Let’s now enhance the Greeter application to respond with a request count prefix
 instead of the static “Hello” prefix. To do so, simply update the
-<code class="highlighter-rouge">greeter_server.cc</code> implementation as shown below.</p>
+<code class="language-plaintext highlighter-rouge">greeter_server.cc</code> implementation as shown below.</p>
 
 <div class="language-diff highlighter-rouge"><div class="highlight"><pre class="highlight"><code> // Logic and data behind the server's behavior.
  class GreeterServiceImpl final : public Greeter::Service {
@@ -237,10 +237,10 @@ instead of the static “Hello” prefix. To do so, simply update the
    }
 </code></pre></div></div>
 
-<p>Once you re-build and execute <code class="highlighter-rouge">greeter_server</code>, you should see the following
-output when you send requests via the <code class="highlighter-rouge">greeter_client</code>.</p>
+<p>Once you re-build and execute <code class="language-plaintext highlighter-rouge">greeter_server</code>, you should see the following
+output when you send requests via the <code class="language-plaintext highlighter-rouge">greeter_client</code>.</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> <span class="k">for </span>i <span class="k">in</span> <span class="o">{</span>1..3<span class="o">}</span><span class="p">;</span> <span class="k">do</span> ./greeter_client<span class="p">;</span> sleep 1<span class="p">;</span> <span class="k">done</span>
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span><span class="k">for </span>i <span class="k">in</span> <span class="o">{</span>1..3<span class="o">}</span><span class="p">;</span> <span class="k">do</span> ./greeter_client<span class="p">;</span> <span class="nb">sleep </span>1<span class="p">;</span> <span class="k">done</span>
 <span class="go">Greeter received: 1 world
 Greeter received: 2 world
 Greeter received: 3 world
@@ -250,16 +250,16 @@ Greeter received: 3 world
 
 <p>Next, we implement a simple Rate Limit service in Go by extending the Envoy’s
 <a href="https://github.com/envoyproxy/envoy/blob/71152b710e3543732464fca57c8f07b7395de68d/api/envoy/service/ratelimit/v2/rls.proto#L11-L15">RateLimitService</a>
-proto interface. To do so, we create a Go project named <code class="highlighter-rouge">rate-limit-service</code> and
+proto interface. To do so, we create a Go project named <code class="language-plaintext highlighter-rouge">rate-limit-service</code> and
 vendor Envoy’s <a href="https://github.com/envoyproxy/go-control-plane">go-control-plane</a>
-and its related dependencies. The <code class="highlighter-rouge">go-control-plane</code> project provides Go
-bindings for Envoy protos. We also create <code class="highlighter-rouge">cmd/server/main.go</code> and
-<code class="highlighter-rouge">cmd/client/main.go</code> for implementing the Rate Limit service later.</p>
+and its related dependencies. The <code class="language-plaintext highlighter-rouge">go-control-plane</code> project provides Go
+bindings for Envoy protos. We also create <code class="language-plaintext highlighter-rouge">cmd/server/main.go</code> and
+<code class="language-plaintext highlighter-rouge">cmd/client/main.go</code> for implementing the Rate Limit service later.</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> mkdir <span class="nt">-p</span> <span class="nv">$GOPATH</span>/src/github.com/venilnoronha/rate-limit-service/
-<span class="gp">$</span> <span class="nb">cd</span> <span class="nv">$GOPATH</span>/src/github.com/venilnoronha/rate-limit-service/
-<span class="gp">$</span> mkdir <span class="nt">-p</span> cmd/server/ <span class="o">&amp;&amp;</span> touch cmd/server/main.go
-<span class="gp">$</span> mkdir cmd/client/ <span class="o">&amp;&amp;</span> touch cmd/client/main.go
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span><span class="nb">mkdir</span> <span class="nt">-p</span> <span class="nv">$GOPATH</span>/src/github.com/venilnoronha/rate-limit-service/
+<span class="gp">$</span><span class="w"> </span><span class="nb">cd</span> <span class="nv">$GOPATH</span>/src/github.com/venilnoronha/rate-limit-service/
+<span class="gp">$</span><span class="w"> </span><span class="nb">mkdir</span> <span class="nt">-p</span> cmd/server/ <span class="o">&amp;&amp;</span> <span class="nb">touch </span>cmd/server/main.go
+<span class="gp">$</span><span class="w"> </span><span class="nb">mkdir </span>cmd/client/ <span class="o">&amp;&amp;</span> <span class="nb">touch </span>cmd/client/main.go
 </code></pre></div></div>
 
 <p>Once you’ve vendored all dependencies, you should land up with a project
@@ -291,104 +291,104 @@ this experiment.</p>
 
 <p>We now create a simple gRPC Rate Limit server which limits every second request.</p>
 
-<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span><span class="x"> </span><span class="n">main</span><span class="x">
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
 
-</span><span class="k">import</span><span class="x"> </span><span class="p">(</span><span class="x">
-        </span><span class="s">"log"</span><span class="x">
-        </span><span class="s">"net"</span><span class="x">
-        </span><span class="s">"golang.org/x/net/context"</span><span class="x">
-	</span><span class="s">"google.golang.org/grpc"</span><span class="x">
-	</span><span class="s">"google.golang.org/grpc/reflection"</span><span class="x">
-	</span><span class="n">rls</span><span class="x"> </span><span class="s">"github.com/envoyproxy/go-control-plane/envoy/service/ratelimit/v2"</span><span class="x">
-</span><span class="p">)</span><span class="x">
+<span class="k">import</span> <span class="p">(</span>
+        <span class="s">"log"</span>
+        <span class="s">"net"</span>
+        <span class="s">"golang.org/x/net/context"</span>
+	<span class="s">"google.golang.org/grpc"</span>
+	<span class="s">"google.golang.org/grpc/reflection"</span>
+	<span class="n">rls</span> <span class="s">"github.com/envoyproxy/go-control-plane/envoy/service/ratelimit/v2"</span>
+<span class="p">)</span>
 
-</span><span class="c">// server is used to implement rls.RateLimitService</span><span class="x">
-</span><span class="k">type</span><span class="x"> </span><span class="n">server</span><span class="x"> </span><span class="k">struct</span><span class="p">{</span><span class="x">
-	</span><span class="c">// limit specifies if the next request is to be rate limited</span><span class="x">
-	</span><span class="n">limit</span><span class="x"> </span><span class="kt">bool</span><span class="x">
-</span><span class="p">}</span><span class="x">
+<span class="c">// server is used to implement rls.RateLimitService</span>
+<span class="k">type</span> <span class="n">server</span> <span class="k">struct</span><span class="p">{</span>
+	<span class="c">// limit specifies if the next request is to be rate limited</span>
+	<span class="n">limit</span> <span class="kt">bool</span>
+<span class="p">}</span>
 
-</span><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">s</span><span class="x"> </span><span class="o">*</span><span class="n">server</span><span class="p">)</span><span class="x"> </span><span class="n">ShouldRateLimit</span><span class="p">(</span><span class="n">ctx</span><span class="x"> </span><span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span><span class="x">
-		</span><span class="n">request</span><span class="x"> </span><span class="o">*</span><span class="n">rls</span><span class="o">.</span><span class="n">RateLimitRequest</span><span class="p">)</span><span class="x"> </span><span class="p">(</span><span class="o">*</span><span class="n">rls</span><span class="o">.</span><span class="n">RateLimitResponse</span><span class="p">,</span><span class="x"> </span><span class="kt">error</span><span class="p">)</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="n">log</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"request: %v</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="x"> </span><span class="n">request</span><span class="p">)</span><span class="x">
+<span class="k">func</span> <span class="p">(</span><span class="n">s</span> <span class="o">*</span><span class="n">server</span><span class="p">)</span> <span class="n">ShouldRateLimit</span><span class="p">(</span><span class="n">ctx</span> <span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span>
+		<span class="n">request</span> <span class="o">*</span><span class="n">rls</span><span class="o">.</span><span class="n">RateLimitRequest</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="n">rls</span><span class="o">.</span><span class="n">RateLimitResponse</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">log</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"request: %v</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">request</span><span class="p">)</span>
 
-	</span><span class="c">// logic to rate limit every second request</span><span class="x">
-	</span><span class="k">var</span><span class="x"> </span><span class="n">overallCode</span><span class="x"> </span><span class="n">rls</span><span class="o">.</span><span class="n">RateLimitResponse_Code</span><span class="x">
-	</span><span class="k">if</span><span class="x"> </span><span class="n">s</span><span class="o">.</span><span class="n">limit</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="n">overallCode</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">rls</span><span class="o">.</span><span class="n">RateLimitResponse_OVER_LIMIT</span><span class="x">
-		</span><span class="n">s</span><span class="o">.</span><span class="n">limit</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="no">false</span><span class="x">
-	</span><span class="p">}</span><span class="x"> </span><span class="k">else</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="n">overallCode</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">rls</span><span class="o">.</span><span class="n">RateLimitResponse_OK</span><span class="x">
-		</span><span class="n">s</span><span class="o">.</span><span class="n">limit</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="no">true</span><span class="x">
-	</span><span class="p">}</span><span class="x">
+	<span class="c">// logic to rate limit every second request</span>
+	<span class="k">var</span> <span class="n">overallCode</span> <span class="n">rls</span><span class="o">.</span><span class="n">RateLimitResponse_Code</span>
+	<span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">limit</span> <span class="p">{</span>
+		<span class="n">overallCode</span> <span class="o">=</span> <span class="n">rls</span><span class="o">.</span><span class="n">RateLimitResponse_OVER_LIMIT</span>
+		<span class="n">s</span><span class="o">.</span><span class="n">limit</span> <span class="o">=</span> <span class="no">false</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+		<span class="n">overallCode</span> <span class="o">=</span> <span class="n">rls</span><span class="o">.</span><span class="n">RateLimitResponse_OK</span>
+		<span class="n">s</span><span class="o">.</span><span class="n">limit</span> <span class="o">=</span> <span class="no">true</span>
+	<span class="p">}</span>
 
-	</span><span class="n">response</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="o">&amp;</span><span class="n">rls</span><span class="o">.</span><span class="n">RateLimitResponse</span><span class="p">{</span><span class="n">OverallCode</span><span class="o">:</span><span class="x"> </span><span class="n">overallCode</span><span class="p">}</span><span class="x">
-	</span><span class="n">log</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"response: %v</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="x"> </span><span class="n">response</span><span class="p">)</span><span class="x">
-        </span><span class="k">return</span><span class="x"> </span><span class="n">response</span><span class="p">,</span><span class="x"> </span><span class="no">nil</span><span class="x">
-</span><span class="p">}</span><span class="x">
+	<span class="n">response</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">rls</span><span class="o">.</span><span class="n">RateLimitResponse</span><span class="p">{</span><span class="n">OverallCode</span><span class="o">:</span> <span class="n">overallCode</span><span class="p">}</span>
+	<span class="n">log</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"response: %v</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span><span class="p">,</span> <span class="no">nil</span>
+<span class="p">}</span>
 
-</span><span class="k">func</span><span class="x"> </span><span class="n">main</span><span class="p">()</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="c">// create a TCP listener on port 50052</span><span class="x">
-        </span><span class="n">lis</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">net</span><span class="o">.</span><span class="n">Listen</span><span class="p">(</span><span class="s">"tcp"</span><span class="p">,</span><span class="x"> </span><span class="s">":50052"</span><span class="p">)</span><span class="x">
-        </span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
-                </span><span class="n">log</span><span class="o">.</span><span class="n">Fatalf</span><span class="p">(</span><span class="s">"failed to listen: %v"</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="p">)</span><span class="x">
-        </span><span class="p">}</span><span class="x">
-	</span><span class="n">log</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"listening on %s"</span><span class="p">,</span><span class="x"> </span><span class="n">lis</span><span class="o">.</span><span class="n">Addr</span><span class="p">())</span><span class="x">
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="c">// create a TCP listener on port 50052</span>
+        <span class="n">lis</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">net</span><span class="o">.</span><span class="n">Listen</span><span class="p">(</span><span class="s">"tcp"</span><span class="p">,</span> <span class="s">":50052"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">Fatalf</span><span class="p">(</span><span class="s">"failed to listen: %v"</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+        <span class="p">}</span>
+	<span class="n">log</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"listening on %s"</span><span class="p">,</span> <span class="n">lis</span><span class="o">.</span><span class="n">Addr</span><span class="p">())</span>
 
-	</span><span class="c">// create a gRPC server and register the RateLimitService server</span><span class="x">
-        </span><span class="n">s</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">grpc</span><span class="o">.</span><span class="n">NewServer</span><span class="p">()</span><span class="x">
-	</span><span class="n">rls</span><span class="o">.</span><span class="n">RegisterRateLimitServiceServer</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="x"> </span><span class="o">&amp;</span><span class="n">server</span><span class="p">{</span><span class="n">limit</span><span class="o">:</span><span class="x"> </span><span class="no">false</span><span class="p">})</span><span class="x">
-        </span><span class="n">reflection</span><span class="o">.</span><span class="n">Register</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="x">
-        </span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">s</span><span class="o">.</span><span class="n">Serve</span><span class="p">(</span><span class="n">lis</span><span class="p">);</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
-                </span><span class="n">log</span><span class="o">.</span><span class="n">Fatalf</span><span class="p">(</span><span class="s">"failed to serve: %v"</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="p">)</span><span class="x">
-        </span><span class="p">}</span><span class="x">
-</span><span class="p">}</span><span class="x">
-</span></code></pre></div></div>
+	<span class="c">// create a gRPC server and register the RateLimitService server</span>
+        <span class="n">s</span> <span class="o">:=</span> <span class="n">grpc</span><span class="o">.</span><span class="n">NewServer</span><span class="p">()</span>
+	<span class="n">rls</span><span class="o">.</span><span class="n">RegisterRateLimitServiceServer</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">server</span><span class="p">{</span><span class="n">limit</span><span class="o">:</span> <span class="no">false</span><span class="p">})</span>
+        <span class="n">reflection</span><span class="o">.</span><span class="n">Register</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">s</span><span class="o">.</span><span class="n">Serve</span><span class="p">(</span><span class="n">lis</span><span class="p">);</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">Fatalf</span><span class="p">(</span><span class="s">"failed to serve: %v"</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
-<p>Let’s now start the <code class="highlighter-rouge">RateLimitService</code> server as shown below.</p>
+<p>Let’s now start the <code class="language-plaintext highlighter-rouge">RateLimitService</code> server as shown below.</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> go run cmd/server/main.go
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>go run cmd/server/main.go
 <span class="go">2018/10/27 00:35:28 listening on [::]:50052
 </span></code></pre></div></div>
 
 <h3 id="the-rate-limit-service-client">The Rate Limit Service Client</h3>
 
-<p>We similarly create a <code class="highlighter-rouge">RateLimitService</code> client to validate the server’s
+<p>We similarly create a <code class="language-plaintext highlighter-rouge">RateLimitService</code> client to validate the server’s
 behavior.</p>
 
-<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span><span class="x"> </span><span class="n">main</span><span class="x">
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
 
-</span><span class="k">import</span><span class="x"> </span><span class="p">(</span><span class="x">
-        </span><span class="s">"log"</span><span class="x">
-	</span><span class="s">"time"</span><span class="x">
-        </span><span class="s">"golang.org/x/net/context"</span><span class="x">
-        </span><span class="s">"google.golang.org/grpc"</span><span class="x">
-	</span><span class="n">rls</span><span class="x"> </span><span class="s">"github.com/envoyproxy/go-control-plane/envoy/service/ratelimit/v2"</span><span class="x">
-</span><span class="p">)</span><span class="x">
+<span class="k">import</span> <span class="p">(</span>
+        <span class="s">"log"</span>
+	<span class="s">"time"</span>
+        <span class="s">"golang.org/x/net/context"</span>
+        <span class="s">"google.golang.org/grpc"</span>
+	<span class="n">rls</span> <span class="s">"github.com/envoyproxy/go-control-plane/envoy/service/ratelimit/v2"</span>
+<span class="p">)</span>
 
-</span><span class="k">func</span><span class="x"> </span><span class="n">main</span><span class="p">()</span><span class="x"> </span><span class="p">{</span><span class="x">
-        </span><span class="c">// Set up a connection to the server</span><span class="x">
-        </span><span class="n">conn</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">grpc</span><span class="o">.</span><span class="n">Dial</span><span class="p">(</span><span class="s">"localhost:50052"</span><span class="p">,</span><span class="x"> </span><span class="n">grpc</span><span class="o">.</span><span class="n">WithInsecure</span><span class="p">())</span><span class="x">
-        </span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
-                </span><span class="n">log</span><span class="o">.</span><span class="n">Fatalf</span><span class="p">(</span><span class="s">"could not connect: %v"</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="p">)</span><span class="x">
-        </span><span class="p">}</span><span class="x">
-        </span><span class="k">defer</span><span class="x"> </span><span class="n">conn</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span><span class="x">
-        </span><span class="n">c</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">rls</span><span class="o">.</span><span class="n">NewRateLimitServiceClient</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span><span class="x">
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c">// Set up a connection to the server</span>
+        <span class="n">conn</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">grpc</span><span class="o">.</span><span class="n">Dial</span><span class="p">(</span><span class="s">"localhost:50052"</span><span class="p">,</span> <span class="n">grpc</span><span class="o">.</span><span class="n">WithInsecure</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">Fatalf</span><span class="p">(</span><span class="s">"could not connect: %v"</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="k">defer</span> <span class="n">conn</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
+        <span class="n">c</span> <span class="o">:=</span> <span class="n">rls</span><span class="o">.</span><span class="n">NewRateLimitServiceClient</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
 
-        </span><span class="c">// Send a request to the server</span><span class="x">
-        </span><span class="n">ctx</span><span class="p">,</span><span class="x"> </span><span class="n">cancel</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">context</span><span class="o">.</span><span class="n">WithTimeout</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">Background</span><span class="p">(),</span><span class="x"> </span><span class="n">time</span><span class="o">.</span><span class="n">Second</span><span class="p">)</span><span class="x">
-        </span><span class="k">defer</span><span class="x"> </span><span class="n">cancel</span><span class="p">()</span><span class="x">
-	</span><span class="n">r</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">c</span><span class="o">.</span><span class="n">ShouldRateLimit</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span><span class="x"> </span><span class="o">&amp;</span><span class="n">rls</span><span class="o">.</span><span class="n">RateLimitRequest</span><span class="p">{</span><span class="n">Domain</span><span class="o">:</span><span class="x"> </span><span class="s">"envoy"</span><span class="p">})</span><span class="x">
-        </span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
-                </span><span class="n">log</span><span class="o">.</span><span class="n">Fatalf</span><span class="p">(</span><span class="s">"could not call service: %v"</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="p">)</span><span class="x">
-        </span><span class="p">}</span><span class="x">
-        </span><span class="n">log</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"response: %v"</span><span class="p">,</span><span class="x"> </span><span class="n">r</span><span class="p">)</span><span class="x">
-</span><span class="p">}</span><span class="x">
-</span></code></pre></div></div>
+        <span class="c">// Send a request to the server</span>
+        <span class="n">ctx</span><span class="p">,</span> <span class="n">cancel</span> <span class="o">:=</span> <span class="n">context</span><span class="o">.</span><span class="n">WithTimeout</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">Background</span><span class="p">(),</span> <span class="n">time</span><span class="o">.</span><span class="n">Second</span><span class="p">)</span>
+        <span class="k">defer</span> <span class="n">cancel</span><span class="p">()</span>
+	<span class="n">r</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">c</span><span class="o">.</span><span class="n">ShouldRateLimit</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">rls</span><span class="o">.</span><span class="n">RateLimitRequest</span><span class="p">{</span><span class="n">Domain</span><span class="o">:</span> <span class="s">"envoy"</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">Fatalf</span><span class="p">(</span><span class="s">"could not call service: %v"</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"response: %v"</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <p>Let’s now test out the server/client interaction by firing up the client.</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> <span class="k">for </span>i <span class="k">in</span> <span class="o">{</span>1..4<span class="o">}</span><span class="p">;</span> <span class="k">do </span>go run cmd/client/main.go<span class="p">;</span> sleep 1<span class="p">;</span> <span class="k">done</span>
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span><span class="k">for </span>i <span class="k">in</span> <span class="o">{</span>1..4<span class="o">}</span><span class="p">;</span> <span class="k">do </span>go run cmd/client/main.go<span class="p">;</span> <span class="nb">sleep </span>1<span class="p">;</span> <span class="k">done</span>
 <span class="go">2018/10/27 17:32:23 response: overall_code:OK
 2018/10/27 17:32:25 response: overall_code:OVER_LIMIT
 2018/10/27 17:32:26 response: overall_code:OK
@@ -419,7 +419,7 @@ service implementation. Below is a diagram depicting our final deployment.</p>
 
 <p>We use the following Envoy configuration for registering both the Greeter and
 the RateLimitService servers and enabling Rate Limit checks. Note that the
-locally deployed services are referred via the <code class="highlighter-rouge">docker.for.mac.localhost</code>
+locally deployed services are referred via the <code class="language-plaintext highlighter-rouge">docker.for.mac.localhost</code>
 address as we’ll later deploy Envoy on <a href="https://docs.docker.com/docker-for-mac/">Docker for Mac</a>.</p>
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">static_resources</span><span class="pi">:</span>
@@ -427,7 +427,7 @@ address as we’ll later deploy Envoy on <a href="https://docs.docker.com/docker
   <span class="pi">-</span> <span class="na">address</span><span class="pi">:</span>
       <span class="na">socket_address</span><span class="pi">:</span>
         <span class="na">address</span><span class="pi">:</span> <span class="s">0.0.0.0</span>
-        <span class="na">port_value</span><span class="pi">:</span> <span class="s">9211</span> <span class="c1"># expose proxy on port 9211</span>
+        <span class="na">port_value</span><span class="pi">:</span> <span class="m">9211</span> <span class="c1"># expose proxy on port 9211</span>
     <span class="na">filter_chains</span><span class="pi">:</span>
     <span class="pi">-</span> <span class="na">filters</span><span class="pi">:</span>
       <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">envoy.http_connection_manager</span>
@@ -468,7 +468,7 @@ address as we’ll later deploy Envoy on <a href="https://docs.docker.com/docker
     <span class="na">hosts</span><span class="pi">:</span>
     <span class="pi">-</span> <span class="na">socket_address</span><span class="pi">:</span>
         <span class="na">address</span><span class="pi">:</span> <span class="s">docker.for.mac.localhost</span>
-        <span class="na">port_value</span><span class="pi">:</span> <span class="s">50051</span>
+        <span class="na">port_value</span><span class="pi">:</span> <span class="m">50051</span>
   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">rate_limit_service</span> <span class="c1"># register the RateLimitService server</span>
     <span class="na">connect_timeout</span><span class="pi">:</span> <span class="s">1s</span>
     <span class="na">type</span><span class="pi">:</span> <span class="s">strict_dns</span>
@@ -477,7 +477,7 @@ address as we’ll later deploy Envoy on <a href="https://docs.docker.com/docker
     <span class="na">hosts</span><span class="pi">:</span>
     <span class="pi">-</span> <span class="na">socket_address</span><span class="pi">:</span>
         <span class="na">address</span><span class="pi">:</span> <span class="s">docker.for.mac.localhost</span>
-        <span class="na">port_value</span><span class="pi">:</span> <span class="s">50052</span>
+        <span class="na">port_value</span><span class="pi">:</span> <span class="m">50052</span>
 <span class="na">rate_limit_service</span><span class="pi">:</span> <span class="c1"># define the global rate limit service</span>
   <span class="na">use_data_plane_proto</span><span class="pi">:</span> <span class="no">true</span>
   <span class="na">grpc_service</span><span class="pi">:</span>
@@ -488,7 +488,7 @@ address as we’ll later deploy Envoy on <a href="https://docs.docker.com/docker
 <h3 id="deploying-the-envoy-proxy">Deploying The Envoy Proxy</h3>
 
 <p>To deploy the Envoy proxy, we copy the above configuration to a file named
-<code class="highlighter-rouge">envoy.yaml</code>. Then, we can build a Docker image with the following <code class="highlighter-rouge">Dockerfile</code>.</p>
+<code class="language-plaintext highlighter-rouge">envoy.yaml</code>. Then, we can build a Docker image with the following <code class="language-plaintext highlighter-rouge">Dockerfile</code>.</p>
 
 <div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> envoyproxy/envoy:latest</span>
 <span class="k">COPY</span><span class="s"> envoy.yaml /etc/envoy/envoy.yaml</span>
@@ -496,19 +496,19 @@ address as we’ll later deploy Envoy on <a href="https://docs.docker.com/docker
 
 <p>To build the image, run the following command.</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> docker build <span class="nt">-t</span> envoy:grpc <span class="nb">.</span>
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>docker build <span class="nt">-t</span> envoy:grpc <span class="nb">.</span>
 <span class="go">Sending build context to Docker daemon  74.75kB
 Step 1/2 : FROM envoyproxy/envoy:latest
-</span><span class="gp"> ---&gt;</span> 51fc619e4dc5
+</span><span class="gp"> ---&gt;</span><span class="w"> </span>51fc619e4dc5
 <span class="go">Step 2/2 : COPY envoy.yaml /etc/envoy/envoy.yaml
-</span><span class="gp"> ---&gt;</span> c766ba3d7d09
+</span><span class="gp"> ---&gt;</span><span class="w"> </span>c766ba3d7d09
 <span class="go">Successfully built c766ba3d7d09
 Successfully tagged envoy:grpc
 </span></code></pre></div></div>
 
 <p>We can then run the proxy, like so:</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> docker run <span class="nt">-p</span> 9211:9211 envoy:grpc
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>docker run <span class="nt">-p</span> 9211:9211 envoy:grpc
 <span class="c">...
 </span><span class="go">[2018-10-28 02:59:20.469][000008][info][main] [source/server/server.cc:456] starting main dispatch loop
 [2018-10-28 02:59:20.553][000008][info][upstream] [source/common/upstream/cluster_manager_impl.cc:135] cm init: all clusters initialized
@@ -519,7 +519,7 @@ Successfully tagged envoy:grpc
 <h3 id="updating-the-greeter-client">Updating The Greeter Client</h3>
 
 <p>Since we now want to route our Greeter client calls via Envoy, we update the
-server port from <code class="highlighter-rouge">50051</code> to <code class="highlighter-rouge">9211</code> in its implementation and rebuild it.</p>
+server port from <code class="language-plaintext highlighter-rouge">50051</code> to <code class="language-plaintext highlighter-rouge">9211</code> in its implementation and rebuild it.</p>
 
 <div class="language-diff highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   GreeterClient greeter(grpc::CreateChannel(
 <span class="gd">-      "localhost:50051", grpc::InsecureChannelCredentials()));
@@ -535,7 +535,7 @@ instance of Envoy proxy running. It’s now time to validate the complete
 deployment. To do so, we can simply send a few Greeter requests via the updated
 Greeter client as shown below.</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> <span class="k">for </span>i <span class="k">in</span> <span class="o">{</span>1..10<span class="o">}</span><span class="p">;</span> <span class="k">do</span> ./greeter_client<span class="p">;</span> sleep 1<span class="p">;</span> <span class="k">done</span>
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span><span class="k">for </span>i <span class="k">in</span> <span class="o">{</span>1..10<span class="o">}</span><span class="p">;</span> <span class="k">do</span> ./greeter_client<span class="p">;</span> <span class="nb">sleep </span>1<span class="p">;</span> <span class="k">done</span>
 <span class="go">Greeter received: 4 world
 14:
 Greeter received: RPC failed
@@ -553,8 +553,8 @@ Greeter received: 8 world
 Greeter received: RPC failed
 </span></code></pre></div></div>
 
-<p>As you observe, alternate requests fail with a gRPC status code of <code class="highlighter-rouge">14</code> i.e.
-<code class="highlighter-rouge">RPC failed</code>, while 5 out of the 10 requests are successful. This shows that
+<p>As you observe, alternate requests fail with a gRPC status code of <code class="language-plaintext highlighter-rouge">14</code> i.e.
+<code class="language-plaintext highlighter-rouge">RPC failed</code>, while 5 out of the 10 requests are successful. This shows that
 the Rate Limit service is limiting every second request as designed, and Envoy
 rightly terminates such requests on its end.</p>
 
@@ -667,6 +667,15 @@ Limit filter works with the gRPC protocol.</p>
                                     
                                         
                                         
+                                            <li><a href="/a-beginners-guide-to-authn-and-authz-with-istio">A Beginner's Guide to AuthN and AuthZ with Istio</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
                                             <li><a href="/a-simple-state-machine-framework-in-go">A Simple State Machine Framework in Go</a></li>
                                         
                                     
@@ -684,8 +693,6 @@ Limit filter works with the gRPC protocol.</p>
                                   
                                     
                                         
-                                        
-                                            <li><a href="/hand-crafting-a-sidecar-proxy-and-demystifying-istio">Hand-crafting a Sidecar Proxy and Demystifying Istio</a></li>
                                         
                                     
                                   
@@ -748,7 +755,7 @@ Limit filter works with the gRPC protocol.</p>
                         <footer class="read-next-card-footer">
                             <a href="/tag/distributed-systems/">
                                 
-                                    See all 11 posts  →
+                                    See all 12 posts  →
                                 
                             </a>
                         </footer>
@@ -897,7 +904,7 @@ Limit filter works with the gRPC protocol.</p>
         <!-- The footer at the very bottom of the screen -->
         <footer class="site-footer outer">
             <div class="site-footer-content inner">
-                <section class="copyright"><a href="https://venilnoronha.io/">Venil Noronha</a> &copy; 2020</section>
+                <section class="copyright"><a href="https://venilnoronha.io/">Venil Noronha</a> &copy; 2021</section>
                 <section class="poweredby">Proudly published with <a href="https://jekyllrb.com/">Jekyll</a> &
                     <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> using
                     <a href="https://github.com/jekyller/jasper2" target="_blank" rel="noopener">Jasper2</a></section>

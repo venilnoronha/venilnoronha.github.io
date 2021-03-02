@@ -201,53 +201,53 @@ into the {body} of the default.hbs template -->
 
 <h4 id="joining-a-lobby">Joining a Lobby</h4>
 
-<p>When a user starts the game process (Client), it sends an HTTP <code class="highlighter-rouge">GET /lobby</code> request to Load Balancer. As a response, the Load Balancer returns it a list of lobbies, which it then renders on the screen for the user to choose from. The lobby data structure looks as follows:</p>
+<p>When a user starts the game process (Client), it sends an HTTP <code class="language-plaintext highlighter-rouge">GET /lobby</code> request to Load Balancer. As a response, the Load Balancer returns it a list of lobbies, which it then renders on the screen for the user to choose from. The lobby data structure looks as follows:</p>
 
-<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// Lobby represents a lobby.</span><span class="x">
-</span><span class="k">type</span><span class="x"> </span><span class="n">Lobby</span><span class="x"> </span><span class="k">struct</span><span class="x"> </span><span class="p">{</span><span class="x">
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// Lobby represents a lobby.</span>
+<span class="k">type</span> <span class="n">Lobby</span> <span class="k">struct</span> <span class="p">{</span>
 
-	</span><span class="c">// Name tells the lobby name.</span><span class="x">
-	</span><span class="n">Name</span><span class="x"> </span><span class="kt">string</span><span class="x"> </span><span class="s">`json:"name"`</span><span class="x">
+	<span class="c">// Name tells the lobby name.</span>
+	<span class="n">Name</span> <span class="kt">string</span> <span class="s">`json:"name"`</span>
 
-	</span><span class="c">// MaxPlayers tells the maximum players that can join the lobby.</span><span class="x">
-	</span><span class="n">MaxPlayers</span><span class="x"> </span><span class="kt">int</span><span class="x"> </span><span class="s">`json:"maxPlayers"`</span><span class="x">
+	<span class="c">// MaxPlayers tells the maximum players that can join the lobby.</span>
+	<span class="n">MaxPlayers</span> <span class="kt">int</span> <span class="s">`json:"maxPlayers"`</span>
 
-	</span><span class="c">// NumPlayers tells the number of players currently connected to the lobby.</span><span class="x">
-	</span><span class="n">NumPlayers</span><span class="x"> </span><span class="kt">int</span><span class="x"> </span><span class="s">`json:"numPlayers"`</span><span class="x">
+	<span class="c">// NumPlayers tells the number of players currently connected to the lobby.</span>
+	<span class="n">NumPlayers</span> <span class="kt">int</span> <span class="s">`json:"numPlayers"`</span>
 
-	</span><span class="c">// Host tells the address of the server hosting the lobby.</span><span class="x">
-	</span><span class="n">Host</span><span class="x"> </span><span class="kt">string</span><span class="x"> </span><span class="s">`json:"host"`</span><span class="x">
+	<span class="c">// Host tells the address of the server hosting the lobby.</span>
+	<span class="n">Host</span> <span class="kt">string</span> <span class="s">`json:"host"`</span>
 
-	</span><span class="c">// Port tells the port on which the server is hosting the lobby.</span><span class="x">
-	</span><span class="n">Port</span><span class="x"> </span><span class="kt">int</span><span class="x"> </span><span class="s">`json:"port"`</span><span class="x">
+	<span class="c">// Port tells the port on which the server is hosting the lobby.</span>
+	<span class="n">Port</span> <span class="kt">int</span> <span class="s">`json:"port"`</span>
 
-</span><span class="p">}</span><span class="x">
-</span></code></pre></div></div>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <p>The response looks like the following:</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">[{</span><span class="w">
-	</span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Epic Game"</span><span class="p">,</span><span class="w">
-	</span><span class="s2">"maxPlayers"</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w">
-	</span><span class="s2">"numPlayers"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
-	</span><span class="s2">"host"</span><span class="p">:</span><span class="w"> </span><span class="s2">"pylon1.usc.edu"</span><span class="p">,</span><span class="w">
-	</span><span class="s2">"port"</span><span class="p">:</span><span class="w"> </span><span class="mi">8888</span><span class="w">
+	</span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Epic Game"</span><span class="p">,</span><span class="w">
+	</span><span class="nl">"maxPlayers"</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w">
+	</span><span class="nl">"numPlayers"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+	</span><span class="nl">"host"</span><span class="p">:</span><span class="w"> </span><span class="s2">"pylon1.usc.edu"</span><span class="p">,</span><span class="w">
+	</span><span class="nl">"port"</span><span class="p">:</span><span class="w"> </span><span class="mi">8888</span><span class="w">
 </span><span class="p">}]</span><span class="w">
 </span></code></pre></div></div>
 
-<p>Each lobby is a separate (Headless Server) process on the server, which means that it has its own port. The example above shows a lobby named <code class="highlighter-rouge">Epic Game</code> which supports 8 playes at the peak and currently has no players. It is deployed on <code class="highlighter-rouge">pylon1.usc.edu</code> and is listening to packets on UDP port <code class="highlighter-rouge">8888</code>. Once a user chooses to join a lobby, the Client makes a <code class="highlighter-rouge">NetworkTransport.Connect(..)</code> call to initiate the message flow between the Headless Server and the Client.</p>
+<p>Each lobby is a separate (Headless Server) process on the server, which means that it has its own port. The example above shows a lobby named <code class="language-plaintext highlighter-rouge">Epic Game</code> which supports 8 playes at the peak and currently has no players. It is deployed on <code class="language-plaintext highlighter-rouge">pylon1.usc.edu</code> and is listening to packets on UDP port <code class="language-plaintext highlighter-rouge">8888</code>. Once a user chooses to join a lobby, the Client makes a <code class="language-plaintext highlighter-rouge">NetworkTransport.Connect(..)</code> call to initiate the message flow between the Headless Server and the Client.</p>
 
 <h4 id="creating-a-lobby">Creating a Lobby</h4>
 
-<p>But, how does one create a lobby? It’s as simple as sending an HTTP <code class="highlighter-rouge">POST /lobby</code> request with the lobby name to the Load Balancer, and magically a new lobby is made available within a few milliseconds.</p>
+<p>But, how does one create a lobby? It’s as simple as sending an HTTP <code class="language-plaintext highlighter-rouge">POST /lobby</code> request with the lobby name to the Load Balancer, and magically a new lobby is made available within a few milliseconds.</p>
 
-<p>Well, how does that happen? When the Load Balancer receives a POST request, it begins a scan to identify the next unused port (using a logic similar to the Linux FDT) and spawns a Headless Server process while supplying it an argument like <code class="highlighter-rouge">-port=8889</code>. The Headless Server process then starts accepting messages on the specified port.</p>
+<p>Well, how does that happen? When the Load Balancer receives a POST request, it begins a scan to identify the next unused port (using a logic similar to the Linux FDT) and spawns a Headless Server process while supplying it an argument like <code class="language-plaintext highlighter-rouge">-port=8889</code>. The Headless Server process then starts accepting messages on the specified port.</p>
 
 <p>The process spawning code looks similar to this:</p>
 
-<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cmd</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">exec</span><span class="o">.</span><span class="n">Command</span><span class="p">(</span><span class="s">"TOIL.x86_64"</span><span class="p">,</span><span class="x"> </span><span class="s">"-batchmode"</span><span class="p">,</span><span class="x"> </span><span class="s">"-nographics"</span><span class="p">,</span><span class="x"> </span><span class="s">"-port="</span><span class="o">+</span><span class="n">portStr</span><span class="p">)</span><span class="x">
-</span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">cmd</span><span class="o">.</span><span class="n">Start</span><span class="p">()</span><span class="x">
-</span></code></pre></div></div>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cmd</span> <span class="o">:=</span> <span class="n">exec</span><span class="o">.</span><span class="n">Command</span><span class="p">(</span><span class="s">"TOIL.x86_64"</span><span class="p">,</span> <span class="s">"-batchmode"</span><span class="p">,</span> <span class="s">"-nographics"</span><span class="p">,</span> <span class="s">"-port="</span><span class="o">+</span><span class="n">portStr</span><span class="p">)</span>
+<span class="n">err</span> <span class="o">:=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">Start</span><span class="p">()</span>
+</code></pre></div></div>
 <h4 id="shutting-down-a-lobby">Shutting Down a Lobby</h4>
 
 <p>Shutting down a lobby is a non-trivial process. The reason is that the Load Balancer must be well aware of the number of players currently in the lobby, and it should reap a Headless Server instance only when it’s sure that no more players are in the game. This may sound trivial, but notice that initially there are 0 players in the game, and, in that case, the Load Balancer must be smart enough to not reap the Headless Server.</p>
@@ -255,19 +255,19 @@ into the {body} of the default.hbs template -->
 <p>To solve the lobby shutdown problem, we put together the following algorithm. The algorithm primarily relies on the Load Balancer Informer for status updates.</p>
 
 <ol>
-  <li>The Load Balancer Informer periodically sends an HTTP <code class="highlighter-rouge">PUT /lobby</code> request along with information about the Headless Server’s <code class="highlighter-rouge">port</code> and number of players connected to it.</li>
+  <li>The Load Balancer Informer periodically sends an HTTP <code class="language-plaintext highlighter-rouge">PUT /lobby</code> request along with information about the Headless Server’s <code class="language-plaintext highlighter-rouge">port</code> and number of players connected to it.</li>
   <li>The Load Balancer updates its in-memory lobby cache with the information it receives from the Load Balancer Informer.</li>
-  <li>A <code class="highlighter-rouge">reaper</code> <a href="https://gobyexample.com/goroutines">goroutine</a> periodically checks this cache and identifies processes that are ready to be reaped.</li>
-  <li>The reaper goroutine then sends a <code class="highlighter-rouge">SIGKILL</code> signal and safely terminates the Headless Server process.</li>
+  <li>A <code class="language-plaintext highlighter-rouge">reaper</code> <a href="https://gobyexample.com/goroutines">goroutine</a> periodically checks this cache and identifies processes that are ready to be reaped.</li>
+  <li>The reaper goroutine then sends a <code class="language-plaintext highlighter-rouge">SIGKILL</code> signal and safely terminates the Headless Server process.</li>
 </ol>
 
 <p>Very briefly, the reaping logic looks like the following.</p>
 
-<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span><span class="x"> </span><span class="n">lobby</span><span class="o">.</span><span class="n">NumPlayers</span><span class="x"> </span><span class="o">==</span><span class="x"> </span><span class="m">0</span><span class="x"> </span><span class="o">&amp;&amp;</span><span class="x"> </span><span class="n">lobby</span><span class="o">.</span><span class="n">HadSomePlayers</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">syscall</span><span class="o">.</span><span class="n">Kill</span><span class="p">(</span><span class="n">lobby</span><span class="o">.</span><span class="n">Pid</span><span class="p">,</span><span class="x"> </span><span class="n">syscall</span><span class="o">.</span><span class="n">SIGKILL</span><span class="p">)</span><span class="x">
-	</span><span class="c">// error handling and logging</span><span class="x">
-</span><span class="p">}</span><span class="x">
-</span></code></pre></div></div>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="n">lobby</span><span class="o">.</span><span class="n">NumPlayers</span> <span class="o">==</span> <span class="m">0</span> <span class="o">&amp;&amp;</span> <span class="n">lobby</span><span class="o">.</span><span class="n">HadSomePlayers</span> <span class="p">{</span>
+	<span class="n">err</span> <span class="o">:=</span> <span class="n">syscall</span><span class="o">.</span><span class="n">Kill</span><span class="p">(</span><span class="n">lobby</span><span class="o">.</span><span class="n">Pid</span><span class="p">,</span> <span class="n">syscall</span><span class="o">.</span><span class="n">SIGKILL</span><span class="p">)</span>
+	<span class="c">// error handling and logging</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <p>As you can see, the Load Balancer also tracks whether the lobby ever had any players i.e. it would consider reaping a process only if the lobby had at least a single player at some point. This algorithm is not completely fool-proof as there can be lobbies that lie unused endlessly, if no one every joins them. I’ve described such concerns/improvements in the next section.</p>
 
@@ -388,6 +388,15 @@ into the {body} of the default.hbs template -->
                                     
                                         
                                         
+                                            <li><a href="/a-beginners-guide-to-authn-and-authz-with-istio">A Beginner's Guide to AuthN and AuthZ with Istio</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
                                             <li><a href="/a-simple-state-machine-framework-in-go">A Simple State Machine Framework in Go</a></li>
                                         
                                     
@@ -405,8 +414,6 @@ into the {body} of the default.hbs template -->
                                   
                                     
                                         
-                                        
-                                            <li><a href="/hand-crafting-a-sidecar-proxy-and-demystifying-istio">Hand-crafting a Sidecar Proxy and Demystifying Istio</a></li>
                                         
                                     
                                   
@@ -469,7 +476,7 @@ into the {body} of the default.hbs template -->
                         <footer class="read-next-card-footer">
                             <a href="/tag/distributed-systems/">
                                 
-                                    See all 11 posts  →
+                                    See all 12 posts  →
                                 
                             </a>
                         </footer>
@@ -618,7 +625,7 @@ into the {body} of the default.hbs template -->
         <!-- The footer at the very bottom of the screen -->
         <footer class="site-footer outer">
             <div class="site-footer-content inner">
-                <section class="copyright"><a href="https://venilnoronha.io/">Venil Noronha</a> &copy; 2020</section>
+                <section class="copyright"><a href="https://venilnoronha.io/">Venil Noronha</a> &copy; 2021</section>
                 <section class="poweredby">Proudly published with <a href="https://jekyllrb.com/">Jekyll</a> &
                     <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> using
                     <a href="https://github.com/jekyller/jasper2" target="_blank" rel="noopener">Jasper2</a></section>

@@ -196,61 +196,61 @@ between the server/client or provider/consumer happens securely.</p>
 
 <h3 id="step-1---build-a-simple-http-server-and-client">Step 1 - Build a simple HTTP Server and Client</h3>
 
-<p>Let’s first create a simple HTTP Server in <code class="highlighter-rouge">server.go</code> which responds with
-<code class="highlighter-rouge">Hello, world!</code> when requested for the <code class="highlighter-rouge">/hello</code> resource over port <code class="highlighter-rouge">8080</code>.</p>
+<p>Let’s first create a simple HTTP Server in <code class="language-plaintext highlighter-rouge">server.go</code> which responds with
+<code class="language-plaintext highlighter-rouge">Hello, world!</code> when requested for the <code class="language-plaintext highlighter-rouge">/hello</code> resource over port <code class="language-plaintext highlighter-rouge">8080</code>.</p>
 
-<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span><span class="x"> </span><span class="n">main</span><span class="x">
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
 
-</span><span class="k">import</span><span class="x"> </span><span class="p">(</span><span class="x">
-	</span><span class="s">"io"</span><span class="x">
-	</span><span class="s">"log"</span><span class="x">
-	</span><span class="s">"net/http"</span><span class="x">
-</span><span class="p">)</span><span class="x">
+<span class="k">import</span> <span class="p">(</span>
+	<span class="s">"io"</span>
+	<span class="s">"log"</span>
+	<span class="s">"net/http"</span>
+<span class="p">)</span>
 
-</span><span class="k">func</span><span class="x"> </span><span class="n">helloHandler</span><span class="p">(</span><span class="n">w</span><span class="x"> </span><span class="n">http</span><span class="o">.</span><span class="n">ResponseWriter</span><span class="p">,</span><span class="x"> </span><span class="n">r</span><span class="x"> </span><span class="o">*</span><span class="n">http</span><span class="o">.</span><span class="n">Request</span><span class="p">)</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="c">// Write "Hello, world!" to the response body</span><span class="x">
-	</span><span class="n">io</span><span class="o">.</span><span class="n">WriteString</span><span class="p">(</span><span class="n">w</span><span class="p">,</span><span class="x"> </span><span class="s">"Hello, world!</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span><span class="x">
-</span><span class="p">}</span><span class="x">
+<span class="k">func</span> <span class="n">helloHandler</span><span class="p">(</span><span class="n">w</span> <span class="n">http</span><span class="o">.</span><span class="n">ResponseWriter</span><span class="p">,</span> <span class="n">r</span> <span class="o">*</span><span class="n">http</span><span class="o">.</span><span class="n">Request</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c">// Write "Hello, world!" to the response body</span>
+	<span class="n">io</span><span class="o">.</span><span class="n">WriteString</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="s">"Hello, world!</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+<span class="p">}</span>
 
-</span><span class="k">func</span><span class="x"> </span><span class="n">main</span><span class="p">()</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="c">// Set up a /hello resource handler</span><span class="x">
-	</span><span class="n">http</span><span class="o">.</span><span class="n">HandleFunc</span><span class="p">(</span><span class="s">"/hello"</span><span class="p">,</span><span class="x"> </span><span class="n">helloHandler</span><span class="p">)</span><span class="x">
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="c">// Set up a /hello resource handler</span>
+	<span class="n">http</span><span class="o">.</span><span class="n">HandleFunc</span><span class="p">(</span><span class="s">"/hello"</span><span class="p">,</span> <span class="n">helloHandler</span><span class="p">)</span>
 
-	</span><span class="c">// Listen to port 8080 and wait</span><span class="x">
-	</span><span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">ListenAndServe</span><span class="p">(</span><span class="s">":8080"</span><span class="p">,</span><span class="x"> </span><span class="no">nil</span><span class="p">))</span><span class="x">
-</span><span class="p">}</span><span class="x">
-</span></code></pre></div></div>
+	<span class="c">// Listen to port 8080 and wait</span>
+	<span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">ListenAndServe</span><span class="p">(</span><span class="s">":8080"</span><span class="p">,</span> <span class="no">nil</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
-<p>The Client simply requests for the <code class="highlighter-rouge">/hello</code> resource over port <code class="highlighter-rouge">8080</code> and prints
-the response body to <code class="highlighter-rouge">stdout</code>. Here is what <code class="highlighter-rouge">client.go</code> looks like:</p>
+<p>The Client simply requests for the <code class="language-plaintext highlighter-rouge">/hello</code> resource over port <code class="language-plaintext highlighter-rouge">8080</code> and prints
+the response body to <code class="language-plaintext highlighter-rouge">stdout</code>. Here is what <code class="language-plaintext highlighter-rouge">client.go</code> looks like:</p>
 
-<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span><span class="x"> </span><span class="n">main</span><span class="x">
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
 
-</span><span class="k">import</span><span class="x"> </span><span class="p">(</span><span class="x">
-	</span><span class="s">"fmt"</span><span class="x">
-	</span><span class="s">"io/ioutil"</span><span class="x">
-	</span><span class="s">"log"</span><span class="x">
-	</span><span class="s">"net/http"</span><span class="x">
-</span><span class="p">)</span><span class="x">
+<span class="k">import</span> <span class="p">(</span>
+	<span class="s">"fmt"</span>
+	<span class="s">"io/ioutil"</span>
+	<span class="s">"log"</span>
+	<span class="s">"net/http"</span>
+<span class="p">)</span>
 
-</span><span class="k">func</span><span class="x"> </span><span class="n">main</span><span class="p">()</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="c">// Request /hello over port 8080 via the GET method</span><span class="x">
-	</span><span class="n">r</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">http</span><span class="o">.</span><span class="n">Get</span><span class="p">(</span><span class="s">"http://localhost:8080/hello"</span><span class="p">)</span><span class="x">
-	</span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="x">
-	</span><span class="p">}</span><span class="x">
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="c">// Request /hello over port 8080 via the GET method</span>
+	<span class="n">r</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">http</span><span class="o">.</span><span class="n">Get</span><span class="p">(</span><span class="s">"http://localhost:8080/hello"</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+	<span class="p">}</span>
 
-	</span><span class="c">// Read the response body</span><span class="x">
-	</span><span class="k">defer</span><span class="x"> </span><span class="n">r</span><span class="o">.</span><span class="n">Body</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span><span class="x">
-	</span><span class="n">body</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">ioutil</span><span class="o">.</span><span class="n">ReadAll</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">Body</span><span class="p">)</span><span class="x">
-	</span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="x">
-	</span><span class="p">}</span><span class="x">
+	<span class="c">// Read the response body</span>
+	<span class="k">defer</span> <span class="n">r</span><span class="o">.</span><span class="n">Body</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
+	<span class="n">body</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">ioutil</span><span class="o">.</span><span class="n">ReadAll</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">Body</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+	<span class="p">}</span>
 
-	</span><span class="c">// Print the response body to stdout</span><span class="x">
-	</span><span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"%s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="x"> </span><span class="n">body</span><span class="p">)</span><span class="x">
-</span><span class="p">}</span><span class="x">
-</span></code></pre></div></div>
+	<span class="c">// Print the response body to stdout</span>
+	<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"%s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <p>Open an instance of the terminal and run the Server like so:</p>
 
@@ -264,14 +264,14 @@ the response body to <code class="highlighter-rouge">stdout</code>. Here is what
 
 <p>You should see the following output from the Client.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Hello, world!
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Hello, world!
 </code></pre></div></div>
 
 <h3 id="step-2---generate-and-use-the-certificates-with-the-server">Step 2 - Generate and use the Certificates with the Server</h3>
 
 <p>Use the following command to generate the certificates. The command creates a
-2048 bit key certificate which is valid for 10 years. Additionally, the <code class="highlighter-rouge">CN=localhost</code>
-asserts that the certificate is valid for the <code class="highlighter-rouge">localhost</code> domain.</p>
+2048 bit key certificate which is valid for 10 years. Additionally, the <code class="language-plaintext highlighter-rouge">CN=localhost</code>
+asserts that the certificate is valid for the <code class="language-plaintext highlighter-rouge">localhost</code> domain.</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openssl req <span class="nt">-newkey</span> rsa:2048 <span class="se">\</span>
   <span class="nt">-new</span> <span class="nt">-nodes</span> <span class="nt">-x509</span> <span class="se">\</span>
@@ -281,12 +281,12 @@ asserts that the certificate is valid for the <code class="highlighter-rouge">lo
   <span class="nt">-subj</span> <span class="s2">"/C=US/ST=California/L=Mountain View/O=Your Organization/OU=Your Unit/CN=localhost"</span>
 </code></pre></div></div>
 
-<p>You should now have <code class="highlighter-rouge">cert.pem</code> and <code class="highlighter-rouge">key.pem</code> in your directory.</p>
+<p>You should now have <code class="language-plaintext highlighter-rouge">cert.pem</code> and <code class="language-plaintext highlighter-rouge">key.pem</code> in your directory.</p>
 
 <p>Let’s now enable TLS over HTTP i.e. HTTPS on the Server. Replace the
-<code class="highlighter-rouge">http.ListenAndServe(":8080", nil)</code> call in <code class="highlighter-rouge">server.go</code> with
-<code class="highlighter-rouge">http.ListenAndServeTLS(":8443", "cert.pem", "key.pem", nil)</code> for the Server to
-listen to HTTPS connections over port <code class="highlighter-rouge">8443</code> while supplying the certificates
+<code class="language-plaintext highlighter-rouge">http.ListenAndServe(":8080", nil)</code> call in <code class="language-plaintext highlighter-rouge">server.go</code> with
+<code class="language-plaintext highlighter-rouge">http.ListenAndServeTLS(":8443", "cert.pem", "key.pem", nil)</code> for the Server to
+listen to HTTPS connections over port <code class="language-plaintext highlighter-rouge">8443</code> while supplying the certificates
 generated earlier.</p>
 
 <div class="language-diff highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gd">-	// Listen to port 8080 and wait
@@ -295,11 +295,11 @@ generated earlier.</p>
 +	log.Fatal(http.ListenAndServeTLS(":8443", "cert.pem", "key.pem", nil))
 </span></code></pre></div></div>
 
-<p>You can verify the Server’s working by running it and browsing to <code class="highlighter-rouge">https://localhost:8443/hello</code>.</p>
+<p>You can verify the Server’s working by running it and browsing to <code class="language-plaintext highlighter-rouge">https://localhost:8443/hello</code>.</p>
 
 <p><img src="assets/images/2018-09-04-a-step-by-step-guide-to-mtls-in-go/server_https.png" alt="Secure Server" /></p>
 
-<p>Let’s now update <code class="highlighter-rouge">client.go</code> to connect to the Server over HTTPS.</p>
+<p>Let’s now update <code class="language-plaintext highlighter-rouge">client.go</code> to connect to the Server over HTTPS.</p>
 
 <div class="language-diff highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gd">-	// Request /hello over port 8080 via the GET method
 -	r, err := http.Get("http://localhost:8080/hello")
@@ -310,23 +310,23 @@ generated earlier.</p>
 <p>Since our Client doesn’t yet know about the certificates, running it should
 spit out the following error on the Server.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http: TLS handshake error from [::1]:59436: remote error: tls: bad certificate
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http: TLS handshake error from [::1]:59436: remote error: tls: bad certificate
 </code></pre></div></div>
 
 <p>On the Client, you should observe the following.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>x509: certificate is not valid for any names, but wanted to match localhost
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>x509: certificate is not valid for any names, but wanted to match localhost
 </code></pre></div></div>
 
 <h3 id="step-3---supply-the-certificates-to-the-client">Step 3 - Supply the Certificates to the Client</h3>
 
-<p>Update the <code class="highlighter-rouge">client.go</code> code to read the previously generated certificates, like so:</p>
+<p>Update the <code class="language-plaintext highlighter-rouge">client.go</code> code to read the previously generated certificates, like so:</p>
 
 <div class="language-diff highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gd">-	// Request /hello over HTTPS port 8443 via the GET method
 -	r, err := http.Get("https://localhost:8443/hello")
 </span>
-<span class="gi">+	// Create a CA certificate pool and add cert.pem to it
-+	caCert, err := ioutil.ReadFile("cert.pem")
++	// Create a CA certificate pool and add cert.pem to it
+<span class="gi">+	caCert, err := ioutil.ReadFile("cert.pem")
 +	if err != nil {
 +		log.Fatal(err)
 +	}
@@ -346,10 +346,10 @@ spit out the following error on the Server.</p>
 +	r, err := client.Get("https://localhost:8443/hello")
 </span></code></pre></div></div>
 
-<p>Here, we read the <code class="highlighter-rouge">cert.pem</code> file and supply it as the root CA when creating the
+<p>Here, we read the <code class="language-plaintext highlighter-rouge">cert.pem</code> file and supply it as the root CA when creating the
 Client. Running the Client should now successfully display the following.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Hello, world!
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Hello, world!
 </code></pre></div></div>
 
 <h3 id="final-step---enable-mtls">Final Step - Enable mTLS</h3>
@@ -364,8 +364,8 @@ Client. Running the Client should now successfully display the following.</p>
 </span>
 ...
 
-<span class="gd">-	// Create a HTTPS client and supply the created CA pool
-</span><span class="gi">+	// Create a HTTPS client and supply the created CA pool and certificate
+-	// Create a HTTPS client and supply the created CA pool
+<span class="gi">+	// Create a HTTPS client and supply the created CA pool and certificate
 </span>	client := &amp;http.Client{
 		Transport: &amp;http.Transport{
 			TLSClientConfig: &amp;tls.Config{
@@ -383,8 +383,8 @@ pair for the Server certificate.</p>
 <div class="language-diff highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gd">-	// Listen to HTTPS connections on port 8443 and wait
 -	log.Fatal(http.ListenAndServeTLS(":8443", "cert.pem", "key.pem", nil))
 </span>
-<span class="gi">+	// Create a CA certificate pool and add cert.pem to it
-+	caCert, err := ioutil.ReadFile("cert.pem")
++	// Create a CA certificate pool and add cert.pem to it
+<span class="gi">+	caCert, err := ioutil.ReadFile("cert.pem")
 +	if err != nil {
 +		log.Fatal(err)
 +	}
@@ -408,117 +408,117 @@ pair for the Server certificate.</p>
 +	log.Fatal(server.ListenAndServeTLS("cert.pem", "key.pem"))
 </span></code></pre></div></div>
 
-<p>Run <code class="highlighter-rouge">server.go</code> and then <code class="highlighter-rouge">client.go</code> and you should see a success message on the
+<p>Run <code class="language-plaintext highlighter-rouge">server.go</code> and then <code class="language-plaintext highlighter-rouge">client.go</code> and you should see a success message on the
 Client, like so:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Hello, world!
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Hello, world!
 </code></pre></div></div>
 
 <h3 id="all-together">All Together</h3>
 
-<p>Finally, the <code class="highlighter-rouge">server.go</code> looks like the following.</p>
+<p>Finally, the <code class="language-plaintext highlighter-rouge">server.go</code> looks like the following.</p>
 
-<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span><span class="x"> </span><span class="n">main</span><span class="x">
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
 
-</span><span class="k">import</span><span class="x"> </span><span class="p">(</span><span class="x">
-	</span><span class="s">"crypto/tls"</span><span class="x">
-	</span><span class="s">"crypto/x509"</span><span class="x">
-	</span><span class="s">"io"</span><span class="x">
-	</span><span class="s">"io/ioutil"</span><span class="x">
-	</span><span class="s">"log"</span><span class="x">
-	</span><span class="s">"net/http"</span><span class="x">
-</span><span class="p">)</span><span class="x">
+<span class="k">import</span> <span class="p">(</span>
+	<span class="s">"crypto/tls"</span>
+	<span class="s">"crypto/x509"</span>
+	<span class="s">"io"</span>
+	<span class="s">"io/ioutil"</span>
+	<span class="s">"log"</span>
+	<span class="s">"net/http"</span>
+<span class="p">)</span>
 
-</span><span class="k">func</span><span class="x"> </span><span class="n">helloHandler</span><span class="p">(</span><span class="n">w</span><span class="x"> </span><span class="n">http</span><span class="o">.</span><span class="n">ResponseWriter</span><span class="p">,</span><span class="x"> </span><span class="n">r</span><span class="x"> </span><span class="o">*</span><span class="n">http</span><span class="o">.</span><span class="n">Request</span><span class="p">)</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="c">// Write "Hello, world!" to the response body</span><span class="x">
-	</span><span class="n">io</span><span class="o">.</span><span class="n">WriteString</span><span class="p">(</span><span class="n">w</span><span class="p">,</span><span class="x"> </span><span class="s">"Hello, world!</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span><span class="x">
-</span><span class="p">}</span><span class="x">
+<span class="k">func</span> <span class="n">helloHandler</span><span class="p">(</span><span class="n">w</span> <span class="n">http</span><span class="o">.</span><span class="n">ResponseWriter</span><span class="p">,</span> <span class="n">r</span> <span class="o">*</span><span class="n">http</span><span class="o">.</span><span class="n">Request</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c">// Write "Hello, world!" to the response body</span>
+	<span class="n">io</span><span class="o">.</span><span class="n">WriteString</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="s">"Hello, world!</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+<span class="p">}</span>
 
-</span><span class="k">func</span><span class="x"> </span><span class="n">main</span><span class="p">()</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="c">// Set up a /hello resource handler</span><span class="x">
-	</span><span class="n">http</span><span class="o">.</span><span class="n">HandleFunc</span><span class="p">(</span><span class="s">"/hello"</span><span class="p">,</span><span class="x"> </span><span class="n">helloHandler</span><span class="p">)</span><span class="x">
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="c">// Set up a /hello resource handler</span>
+	<span class="n">http</span><span class="o">.</span><span class="n">HandleFunc</span><span class="p">(</span><span class="s">"/hello"</span><span class="p">,</span> <span class="n">helloHandler</span><span class="p">)</span>
 
-	</span><span class="c">// Create a CA certificate pool and add cert.pem to it</span><span class="x">
-	</span><span class="n">caCert</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">ioutil</span><span class="o">.</span><span class="n">ReadFile</span><span class="p">(</span><span class="s">"cert.pem"</span><span class="p">)</span><span class="x">
-	</span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="x">
-	</span><span class="p">}</span><span class="x">
-	</span><span class="n">caCertPool</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">x509</span><span class="o">.</span><span class="n">NewCertPool</span><span class="p">()</span><span class="x">
-	</span><span class="n">caCertPool</span><span class="o">.</span><span class="n">AppendCertsFromPEM</span><span class="p">(</span><span class="n">caCert</span><span class="p">)</span><span class="x">
+	<span class="c">// Create a CA certificate pool and add cert.pem to it</span>
+	<span class="n">caCert</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">ioutil</span><span class="o">.</span><span class="n">ReadFile</span><span class="p">(</span><span class="s">"cert.pem"</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="n">caCertPool</span> <span class="o">:=</span> <span class="n">x509</span><span class="o">.</span><span class="n">NewCertPool</span><span class="p">()</span>
+	<span class="n">caCertPool</span><span class="o">.</span><span class="n">AppendCertsFromPEM</span><span class="p">(</span><span class="n">caCert</span><span class="p">)</span>
 
-	</span><span class="c">// Create the TLS Config with the CA pool and enable Client certificate validation</span><span class="x">
-	</span><span class="n">tlsConfig</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="o">&amp;</span><span class="n">tls</span><span class="o">.</span><span class="n">Config</span><span class="p">{</span><span class="x">
-		</span><span class="n">ClientCAs</span><span class="o">:</span><span class="x"> </span><span class="n">caCertPool</span><span class="p">,</span><span class="x">
-		</span><span class="n">ClientAuth</span><span class="o">:</span><span class="x"> </span><span class="n">tls</span><span class="o">.</span><span class="n">RequireAndVerifyClientCert</span><span class="p">,</span><span class="x">
-	</span><span class="p">}</span><span class="x">
-	</span><span class="n">tlsConfig</span><span class="o">.</span><span class="n">BuildNameToCertificate</span><span class="p">()</span><span class="x">
+	<span class="c">// Create the TLS Config with the CA pool and enable Client certificate validation</span>
+	<span class="n">tlsConfig</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">tls</span><span class="o">.</span><span class="n">Config</span><span class="p">{</span>
+		<span class="n">ClientCAs</span><span class="o">:</span> <span class="n">caCertPool</span><span class="p">,</span>
+		<span class="n">ClientAuth</span><span class="o">:</span> <span class="n">tls</span><span class="o">.</span><span class="n">RequireAndVerifyClientCert</span><span class="p">,</span>
+	<span class="p">}</span>
+	<span class="n">tlsConfig</span><span class="o">.</span><span class="n">BuildNameToCertificate</span><span class="p">()</span>
 
-	</span><span class="c">// Create a Server instance to listen on port 8443 with the TLS config</span><span class="x">
-	</span><span class="n">server</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="o">&amp;</span><span class="n">http</span><span class="o">.</span><span class="n">Server</span><span class="p">{</span><span class="x">
-		</span><span class="n">Addr</span><span class="o">:</span><span class="x">      </span><span class="s">":8443"</span><span class="p">,</span><span class="x">
-		</span><span class="n">TLSConfig</span><span class="o">:</span><span class="x"> </span><span class="n">tlsConfig</span><span class="p">,</span><span class="x">
-	</span><span class="p">}</span><span class="x">
+	<span class="c">// Create a Server instance to listen on port 8443 with the TLS config</span>
+	<span class="n">server</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">http</span><span class="o">.</span><span class="n">Server</span><span class="p">{</span>
+		<span class="n">Addr</span><span class="o">:</span>      <span class="s">":8443"</span><span class="p">,</span>
+		<span class="n">TLSConfig</span><span class="o">:</span> <span class="n">tlsConfig</span><span class="p">,</span>
+	<span class="p">}</span>
 
-	</span><span class="c">// Listen to HTTPS connections with the server certificate and wait</span><span class="x">
-	</span><span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">server</span><span class="o">.</span><span class="n">ListenAndServeTLS</span><span class="p">(</span><span class="s">"cert.pem"</span><span class="p">,</span><span class="x"> </span><span class="s">"key.pem"</span><span class="p">))</span><span class="x">
-</span><span class="p">}</span><span class="x">
-</span></code></pre></div></div>
+	<span class="c">// Listen to HTTPS connections with the server certificate and wait</span>
+	<span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">server</span><span class="o">.</span><span class="n">ListenAndServeTLS</span><span class="p">(</span><span class="s">"cert.pem"</span><span class="p">,</span> <span class="s">"key.pem"</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
-<p>The <code class="highlighter-rouge">client.go</code> file looks like so:</p>
+<p>The <code class="language-plaintext highlighter-rouge">client.go</code> file looks like so:</p>
 
-<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span><span class="x"> </span><span class="n">main</span><span class="x">
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
 
-</span><span class="k">import</span><span class="x"> </span><span class="p">(</span><span class="x">
-	</span><span class="s">"crypto/tls"</span><span class="x">
-	</span><span class="s">"crypto/x509"</span><span class="x">
-	</span><span class="s">"fmt"</span><span class="x">
-	</span><span class="s">"io/ioutil"</span><span class="x">
-	</span><span class="s">"log"</span><span class="x">
-	</span><span class="s">"net/http"</span><span class="x">
-</span><span class="p">)</span><span class="x">
+<span class="k">import</span> <span class="p">(</span>
+	<span class="s">"crypto/tls"</span>
+	<span class="s">"crypto/x509"</span>
+	<span class="s">"fmt"</span>
+	<span class="s">"io/ioutil"</span>
+	<span class="s">"log"</span>
+	<span class="s">"net/http"</span>
+<span class="p">)</span>
 
-</span><span class="k">func</span><span class="x"> </span><span class="n">main</span><span class="p">()</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="c">// Read the key pair to create certificate</span><span class="x">
-	</span><span class="n">cert</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">tls</span><span class="o">.</span><span class="n">LoadX509KeyPair</span><span class="p">(</span><span class="s">"cert.pem"</span><span class="p">,</span><span class="x"> </span><span class="s">"key.pem"</span><span class="p">)</span><span class="x">
-	</span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="x">
-	</span><span class="p">}</span><span class="x">
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="c">// Read the key pair to create certificate</span>
+	<span class="n">cert</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">tls</span><span class="o">.</span><span class="n">LoadX509KeyPair</span><span class="p">(</span><span class="s">"cert.pem"</span><span class="p">,</span> <span class="s">"key.pem"</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+	<span class="p">}</span>
 
-	</span><span class="c">// Create a CA certificate pool and add cert.pem to it</span><span class="x">
-	</span><span class="n">caCert</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">ioutil</span><span class="o">.</span><span class="n">ReadFile</span><span class="p">(</span><span class="s">"cert.pem"</span><span class="p">)</span><span class="x">
-	</span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="x">
-	</span><span class="p">}</span><span class="x">
-	</span><span class="n">caCertPool</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">x509</span><span class="o">.</span><span class="n">NewCertPool</span><span class="p">()</span><span class="x">
-	</span><span class="n">caCertPool</span><span class="o">.</span><span class="n">AppendCertsFromPEM</span><span class="p">(</span><span class="n">caCert</span><span class="p">)</span><span class="x">
+	<span class="c">// Create a CA certificate pool and add cert.pem to it</span>
+	<span class="n">caCert</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">ioutil</span><span class="o">.</span><span class="n">ReadFile</span><span class="p">(</span><span class="s">"cert.pem"</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="n">caCertPool</span> <span class="o">:=</span> <span class="n">x509</span><span class="o">.</span><span class="n">NewCertPool</span><span class="p">()</span>
+	<span class="n">caCertPool</span><span class="o">.</span><span class="n">AppendCertsFromPEM</span><span class="p">(</span><span class="n">caCert</span><span class="p">)</span>
 
-	</span><span class="c">// Create a HTTPS client and supply the created CA pool and certificate</span><span class="x">
-	</span><span class="n">client</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="o">&amp;</span><span class="n">http</span><span class="o">.</span><span class="n">Client</span><span class="p">{</span><span class="x">
-		</span><span class="n">Transport</span><span class="o">:</span><span class="x"> </span><span class="o">&amp;</span><span class="n">http</span><span class="o">.</span><span class="n">Transport</span><span class="p">{</span><span class="x">
-			</span><span class="n">TLSClientConfig</span><span class="o">:</span><span class="x"> </span><span class="o">&amp;</span><span class="n">tls</span><span class="o">.</span><span class="n">Config</span><span class="p">{</span><span class="x">
-				</span><span class="n">RootCAs</span><span class="o">:</span><span class="x"> </span><span class="n">caCertPool</span><span class="p">,</span><span class="x">
-				</span><span class="n">Certificates</span><span class="o">:</span><span class="x"> </span><span class="p">[]</span><span class="n">tls</span><span class="o">.</span><span class="n">Certificate</span><span class="p">{</span><span class="n">cert</span><span class="p">},</span><span class="x">
-			</span><span class="p">},</span><span class="x">
-		</span><span class="p">},</span><span class="x">
-	</span><span class="p">}</span><span class="x">
+	<span class="c">// Create a HTTPS client and supply the created CA pool and certificate</span>
+	<span class="n">client</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">http</span><span class="o">.</span><span class="n">Client</span><span class="p">{</span>
+		<span class="n">Transport</span><span class="o">:</span> <span class="o">&amp;</span><span class="n">http</span><span class="o">.</span><span class="n">Transport</span><span class="p">{</span>
+			<span class="n">TLSClientConfig</span><span class="o">:</span> <span class="o">&amp;</span><span class="n">tls</span><span class="o">.</span><span class="n">Config</span><span class="p">{</span>
+				<span class="n">RootCAs</span><span class="o">:</span> <span class="n">caCertPool</span><span class="p">,</span>
+				<span class="n">Certificates</span><span class="o">:</span> <span class="p">[]</span><span class="n">tls</span><span class="o">.</span><span class="n">Certificate</span><span class="p">{</span><span class="n">cert</span><span class="p">},</span>
+			<span class="p">},</span>
+		<span class="p">},</span>
+	<span class="p">}</span>
 
-	</span><span class="c">// Request /hello via the created HTTPS client over port 8443 via GET</span><span class="x">
-	</span><span class="n">r</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">client</span><span class="o">.</span><span class="n">Get</span><span class="p">(</span><span class="s">"https://localhost:8443/hello"</span><span class="p">)</span><span class="x">
-	</span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="x">
-	</span><span class="p">}</span><span class="x">
+	<span class="c">// Request /hello via the created HTTPS client over port 8443 via GET</span>
+	<span class="n">r</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">client</span><span class="o">.</span><span class="n">Get</span><span class="p">(</span><span class="s">"https://localhost:8443/hello"</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+	<span class="p">}</span>
 
-	</span><span class="c">// Read the response body</span><span class="x">
-	</span><span class="k">defer</span><span class="x"> </span><span class="n">r</span><span class="o">.</span><span class="n">Body</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span><span class="x">
-	</span><span class="n">body</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">ioutil</span><span class="o">.</span><span class="n">ReadAll</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">Body</span><span class="p">)</span><span class="x">
-	</span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="x">
-	</span><span class="p">}</span><span class="x">
+	<span class="c">// Read the response body</span>
+	<span class="k">defer</span> <span class="n">r</span><span class="o">.</span><span class="n">Body</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
+	<span class="n">body</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">ioutil</span><span class="o">.</span><span class="n">ReadAll</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">Body</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+	<span class="p">}</span>
 
-	</span><span class="c">// Print the response body to stdout</span><span class="x">
-	</span><span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"%s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="x"> </span><span class="n">body</span><span class="p">)</span><span class="x">
-</span><span class="p">}</span><span class="x">
-</span></code></pre></div></div>
+	<span class="c">// Print the response body to stdout</span>
+	<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"%s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <h2 id="conclusion">Conclusion</h2>
 
@@ -625,6 +625,15 @@ Client, like so:</p>
                                     
                                         
                                         
+                                            <li><a href="/a-beginners-guide-to-authn-and-authz-with-istio">A Beginner's Guide to AuthN and AuthZ with Istio</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
                                             <li><a href="/a-simple-state-machine-framework-in-go">A Simple State Machine Framework in Go</a></li>
                                         
                                     
@@ -642,8 +651,6 @@ Client, like so:</p>
                                   
                                     
                                         
-                                        
-                                            <li><a href="/hand-crafting-a-sidecar-proxy-and-demystifying-istio">Hand-crafting a Sidecar Proxy and Demystifying Istio</a></li>
                                         
                                     
                                   
@@ -706,7 +713,7 @@ Client, like so:</p>
                         <footer class="read-next-card-footer">
                             <a href="/tag/distributed-systems/">
                                 
-                                    See all 11 posts  →
+                                    See all 12 posts  →
                                 
                             </a>
                         </footer>
@@ -855,7 +862,7 @@ Client, like so:</p>
         <!-- The footer at the very bottom of the screen -->
         <footer class="site-footer outer">
             <div class="site-footer-content inner">
-                <section class="copyright"><a href="https://venilnoronha.io/">Venil Noronha</a> &copy; 2020</section>
+                <section class="copyright"><a href="https://venilnoronha.io/">Venil Noronha</a> &copy; 2021</section>
                 <section class="poweredby">Proudly published with <a href="https://jekyllrb.com/">Jekyll</a> &
                     <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> using
                     <a href="https://github.com/jekyller/jasper2" target="_blank" rel="noopener">Jasper2</a></section>

@@ -214,104 +214,104 @@ proxy in Golang that can sniff HTTP traffic.</p>
 <p>Our proxy needs to listen on a TCP port for incoming HTTP requests and then
 forward those to a destination address. Since, in our case, both the proxy and
 the service reside in the same container, the destination host can be addressed
-via the loopback IP address (i.e. <code class="highlighter-rouge">127.0.0.1</code>); however, we still need a port
+via the loopback IP address (i.e. <code class="language-plaintext highlighter-rouge">127.0.0.1</code>); however, we still need a port
 number to identify the destination service.</p>
 
-<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">const</span><span class="x"> </span><span class="p">(</span><span class="x">
-        </span><span class="n">proxyPort</span><span class="x">   </span><span class="o">=</span><span class="x"> </span><span class="m">8000</span><span class="x">
-        </span><span class="n">servicePort</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="m">80</span><span class="x">
-</span><span class="p">)</span><span class="x">
-</span></code></pre></div></div>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">const</span> <span class="p">(</span>
+        <span class="n">proxyPort</span>   <span class="o">=</span> <span class="m">8000</span>
+        <span class="n">servicePort</span> <span class="o">=</span> <span class="m">80</span>
+<span class="p">)</span>
+</code></pre></div></div>
 
 <p>We can now define the base for the proxy. The proxy will listen to requests on
-<code class="highlighter-rouge">proxyPort</code> and forward requests to the <code class="highlighter-rouge">servicePort</code>. The proxy will finally
+<code class="language-plaintext highlighter-rouge">proxyPort</code> and forward requests to the <code class="language-plaintext highlighter-rouge">servicePort</code>. The proxy will finally
 print statistics after servicing each request.</p>
 
-<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// Create a structure to define the proxy functionality.</span><span class="x">
-</span><span class="k">type</span><span class="x"> </span><span class="n">Proxy</span><span class="x"> </span><span class="k">struct</span><span class="p">{}</span><span class="x">
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// Create a structure to define the proxy functionality.</span>
+<span class="k">type</span> <span class="n">Proxy</span> <span class="k">struct</span><span class="p">{}</span>
 
-</span><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">p</span><span class="x"> </span><span class="o">*</span><span class="n">Proxy</span><span class="p">)</span><span class="x"> </span><span class="n">ServeHTTP</span><span class="p">(</span><span class="n">w</span><span class="x"> </span><span class="n">http</span><span class="o">.</span><span class="n">ResponseWriter</span><span class="p">,</span><span class="x"> </span><span class="n">req</span><span class="x"> </span><span class="o">*</span><span class="n">http</span><span class="o">.</span><span class="n">Request</span><span class="p">)</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="c">// Forward the HTTP request to the destination service.</span><span class="x">
-        </span><span class="n">res</span><span class="p">,</span><span class="x"> </span><span class="n">duration</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">p</span><span class="o">.</span><span class="n">forwardRequest</span><span class="p">(</span><span class="n">req</span><span class="p">)</span><span class="x">
+<span class="k">func</span> <span class="p">(</span><span class="n">p</span> <span class="o">*</span><span class="n">Proxy</span><span class="p">)</span> <span class="n">ServeHTTP</span><span class="p">(</span><span class="n">w</span> <span class="n">http</span><span class="o">.</span><span class="n">ResponseWriter</span><span class="p">,</span> <span class="n">req</span> <span class="o">*</span><span class="n">http</span><span class="o">.</span><span class="n">Request</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c">// Forward the HTTP request to the destination service.</span>
+        <span class="n">res</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">p</span><span class="o">.</span><span class="n">forwardRequest</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
 
-	</span><span class="c">// Notify the client if there was an error while forwarding the request.</span><span class="x">
-        </span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
-                </span><span class="n">http</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span><span class="n">w</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="o">.</span><span class="n">Error</span><span class="p">(),</span><span class="x"> </span><span class="n">http</span><span class="o">.</span><span class="n">StatusBadGateway</span><span class="p">)</span><span class="x">
-                </span><span class="k">return</span><span class="x">
-        </span><span class="p">}</span><span class="x">
+	<span class="c">// Notify the client if there was an error while forwarding the request.</span>
+        <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+                <span class="n">http</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">err</span><span class="o">.</span><span class="n">Error</span><span class="p">(),</span> <span class="n">http</span><span class="o">.</span><span class="n">StatusBadGateway</span><span class="p">)</span>
+                <span class="k">return</span>
+        <span class="p">}</span>
 
-	</span><span class="c">// If the request was forwarded successfully, write the response back to</span><span class="x">
-	</span><span class="c">// the client.</span><span class="x">
-        </span><span class="n">p</span><span class="o">.</span><span class="n">writeResponse</span><span class="p">(</span><span class="n">w</span><span class="p">,</span><span class="x"> </span><span class="n">res</span><span class="p">)</span><span class="x">
+	<span class="c">// If the request was forwarded successfully, write the response back to</span>
+	<span class="c">// the client.</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">writeResponse</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
 
-	</span><span class="c">// Print request and response statistics.</span><span class="x">
-        </span><span class="n">p</span><span class="o">.</span><span class="n">printStats</span><span class="p">(</span><span class="n">req</span><span class="p">,</span><span class="x"> </span><span class="n">res</span><span class="p">,</span><span class="x"> </span><span class="n">duration</span><span class="p">)</span><span class="x">
-</span><span class="p">}</span><span class="x">
+	<span class="c">// Print request and response statistics.</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">printStats</span><span class="p">(</span><span class="n">req</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">duration</span><span class="p">)</span>
+<span class="p">}</span>
 
-</span><span class="k">func</span><span class="x"> </span><span class="n">main</span><span class="p">()</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="c">// Listen on the predefined proxy port.</span><span class="x">
-        </span><span class="n">http</span><span class="o">.</span><span class="n">ListenAndServe</span><span class="p">(</span><span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">":%d"</span><span class="p">,</span><span class="x"> </span><span class="n">proxyPort</span><span class="p">),</span><span class="x"> </span><span class="o">&amp;</span><span class="n">Proxy</span><span class="p">{})</span><span class="x">
-</span><span class="p">}</span><span class="x">
-</span></code></pre></div></div>
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="c">// Listen on the predefined proxy port.</span>
+        <span class="n">http</span><span class="o">.</span><span class="n">ListenAndServe</span><span class="p">(</span><span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">":%d"</span><span class="p">,</span> <span class="n">proxyPort</span><span class="p">),</span> <span class="o">&amp;</span><span class="n">Proxy</span><span class="p">{})</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <p>The most important part for a proxy is its capability to forward requests. Let’s
 first define this functionality in our proxy implementation.</p>
 
-<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">p</span><span class="x"> </span><span class="o">*</span><span class="n">Proxy</span><span class="p">)</span><span class="x"> </span><span class="n">forwardRequest</span><span class="p">(</span><span class="n">req</span><span class="x"> </span><span class="o">*</span><span class="n">http</span><span class="o">.</span><span class="n">Request</span><span class="p">)</span><span class="x"> </span><span class="p">(</span><span class="o">*</span><span class="n">http</span><span class="o">.</span><span class="n">Response</span><span class="p">,</span><span class="x"> </span><span class="n">time</span><span class="o">.</span><span class="n">Duration</span><span class="p">,</span><span class="x"> </span><span class="kt">error</span><span class="p">)</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="c">// Prepare the destination endpoint to forward the request to.</span><span class="x">
-        </span><span class="n">proxyUrl</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"http://127.0.0.1:%d%s"</span><span class="p">,</span><span class="x"> </span><span class="n">servicePort</span><span class="p">,</span><span class="x"> </span><span class="n">req</span><span class="o">.</span><span class="n">RequestURI</span><span class="p">)</span><span class="x">
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="p">(</span><span class="n">p</span> <span class="o">*</span><span class="n">Proxy</span><span class="p">)</span> <span class="n">forwardRequest</span><span class="p">(</span><span class="n">req</span> <span class="o">*</span><span class="n">http</span><span class="o">.</span><span class="n">Request</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="n">http</span><span class="o">.</span><span class="n">Response</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">Duration</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c">// Prepare the destination endpoint to forward the request to.</span>
+        <span class="n">proxyUrl</span> <span class="o">:=</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"http://127.0.0.1:%d%s"</span><span class="p">,</span> <span class="n">servicePort</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">RequestURI</span><span class="p">)</span>
 
-	</span><span class="c">// Print the original URL and the proxied request URL.</span><span class="x">
-        </span><span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"Original URL: http://%s:%d%s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="x"> </span><span class="n">req</span><span class="o">.</span><span class="n">Host</span><span class="p">,</span><span class="x"> </span><span class="n">servicePort</span><span class="p">,</span><span class="x"> </span><span class="n">req</span><span class="o">.</span><span class="n">RequestURI</span><span class="p">)</span><span class="x">
-        </span><span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"Proxy URL: %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="x"> </span><span class="n">proxyUrl</span><span class="p">)</span><span class="x">
+	<span class="c">// Print the original URL and the proxied request URL.</span>
+        <span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"Original URL: http://%s:%d%s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">Host</span><span class="p">,</span> <span class="n">servicePort</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">RequestURI</span><span class="p">)</span>
+        <span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"Proxy URL: %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">proxyUrl</span><span class="p">)</span>
 
-	</span><span class="c">// Create an HTTP client and a proxy request based on the original request.</span><span class="x">
-        </span><span class="n">httpClient</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">http</span><span class="o">.</span><span class="n">Client</span><span class="p">{}</span><span class="x">
-        </span><span class="n">proxyReq</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">http</span><span class="o">.</span><span class="n">NewRequest</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">Method</span><span class="p">,</span><span class="x"> </span><span class="n">proxyUrl</span><span class="p">,</span><span class="x"> </span><span class="n">req</span><span class="o">.</span><span class="n">Body</span><span class="p">)</span><span class="x">
+	<span class="c">// Create an HTTP client and a proxy request based on the original request.</span>
+        <span class="n">httpClient</span> <span class="o">:=</span> <span class="n">http</span><span class="o">.</span><span class="n">Client</span><span class="p">{}</span>
+        <span class="n">proxyReq</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">http</span><span class="o">.</span><span class="n">NewRequest</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">Method</span><span class="p">,</span> <span class="n">proxyUrl</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">Body</span><span class="p">)</span>
 
-	</span><span class="c">// Capture the duration while making a request to the destination service.</span><span class="x">
-        </span><span class="n">start</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">time</span><span class="o">.</span><span class="n">Now</span><span class="p">()</span><span class="x">
-        </span><span class="n">res</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">httpClient</span><span class="o">.</span><span class="n">Do</span><span class="p">(</span><span class="n">proxyReq</span><span class="p">)</span><span class="x">
-        </span><span class="n">duration</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">time</span><span class="o">.</span><span class="n">Since</span><span class="p">(</span><span class="n">start</span><span class="p">)</span><span class="x">
+	<span class="c">// Capture the duration while making a request to the destination service.</span>
+        <span class="n">start</span> <span class="o">:=</span> <span class="n">time</span><span class="o">.</span><span class="n">Now</span><span class="p">()</span>
+        <span class="n">res</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">httpClient</span><span class="o">.</span><span class="n">Do</span><span class="p">(</span><span class="n">proxyReq</span><span class="p">)</span>
+        <span class="n">duration</span> <span class="o">:=</span> <span class="n">time</span><span class="o">.</span><span class="n">Since</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
 
-	</span><span class="c">// Return the response, the request duration, and the error.</span><span class="x">
-        </span><span class="k">return</span><span class="x"> </span><span class="n">res</span><span class="p">,</span><span class="x"> </span><span class="n">duration</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x">
-</span><span class="p">}</span><span class="x">
-</span></code></pre></div></div>
+	<span class="c">// Return the response, the request duration, and the error.</span>
+        <span class="k">return</span> <span class="n">res</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">err</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <p>Now that we have the response from the proxied request, let’s define the logic
 to write it back to the client.</p>
 
-<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">p</span><span class="x"> </span><span class="o">*</span><span class="n">Proxy</span><span class="p">)</span><span class="x"> </span><span class="n">writeResponse</span><span class="p">(</span><span class="n">w</span><span class="x"> </span><span class="n">http</span><span class="o">.</span><span class="n">ResponseWriter</span><span class="p">,</span><span class="x"> </span><span class="n">res</span><span class="x"> </span><span class="o">*</span><span class="n">http</span><span class="o">.</span><span class="n">Response</span><span class="p">)</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="c">// Copy all the header values from the response.</span><span class="x">
-        </span><span class="k">for</span><span class="x"> </span><span class="n">name</span><span class="p">,</span><span class="x"> </span><span class="n">values</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="k">range</span><span class="x"> </span><span class="n">res</span><span class="o">.</span><span class="n">Header</span><span class="x"> </span><span class="p">{</span><span class="x">
-                </span><span class="n">w</span><span class="o">.</span><span class="n">Header</span><span class="p">()[</span><span class="n">name</span><span class="p">]</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">values</span><span class="x">
-        </span><span class="p">}</span><span class="x">
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="p">(</span><span class="n">p</span> <span class="o">*</span><span class="n">Proxy</span><span class="p">)</span> <span class="n">writeResponse</span><span class="p">(</span><span class="n">w</span> <span class="n">http</span><span class="o">.</span><span class="n">ResponseWriter</span><span class="p">,</span> <span class="n">res</span> <span class="o">*</span><span class="n">http</span><span class="o">.</span><span class="n">Response</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c">// Copy all the header values from the response.</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">values</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">res</span><span class="o">.</span><span class="n">Header</span> <span class="p">{</span>
+                <span class="n">w</span><span class="o">.</span><span class="n">Header</span><span class="p">()[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span>
+        <span class="p">}</span>
 
-	</span><span class="c">// Set a special header to notify that the proxy actually serviced the request.</span><span class="x">
-        </span><span class="n">w</span><span class="o">.</span><span class="n">Header</span><span class="p">()</span><span class="o">.</span><span class="n">Set</span><span class="p">(</span><span class="s">"Server"</span><span class="p">,</span><span class="x"> </span><span class="s">"amazing-proxy"</span><span class="p">)</span><span class="x">
+	<span class="c">// Set a special header to notify that the proxy actually serviced the request.</span>
+        <span class="n">w</span><span class="o">.</span><span class="n">Header</span><span class="p">()</span><span class="o">.</span><span class="n">Set</span><span class="p">(</span><span class="s">"Server"</span><span class="p">,</span> <span class="s">"amazing-proxy"</span><span class="p">)</span>
 
-	</span><span class="c">// Set the status code returned by the destination service.</span><span class="x">
-        </span><span class="n">w</span><span class="o">.</span><span class="n">WriteHeader</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">StatusCode</span><span class="p">)</span><span class="x">
+	<span class="c">// Set the status code returned by the destination service.</span>
+        <span class="n">w</span><span class="o">.</span><span class="n">WriteHeader</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">StatusCode</span><span class="p">)</span>
 
-	</span><span class="c">// Copy the contents from the response body.</span><span class="x">
-        </span><span class="n">io</span><span class="o">.</span><span class="n">Copy</span><span class="p">(</span><span class="n">w</span><span class="p">,</span><span class="x"> </span><span class="n">res</span><span class="o">.</span><span class="n">Body</span><span class="p">)</span><span class="x">
+	<span class="c">// Copy the contents from the response body.</span>
+        <span class="n">io</span><span class="o">.</span><span class="n">Copy</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">Body</span><span class="p">)</span>
 
-	</span><span class="c">// Finish the request.</span><span class="x">
-        </span><span class="n">res</span><span class="o">.</span><span class="n">Body</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span><span class="x">
-</span><span class="p">}</span><span class="x">
-</span></code></pre></div></div>
+	<span class="c">// Finish the request.</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">Body</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <p>The final part for the proxy is to print statistics. Let’s go ahead and
 implement that.</p>
 
-<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">p</span><span class="x"> </span><span class="o">*</span><span class="n">Proxy</span><span class="p">)</span><span class="x"> </span><span class="n">printStats</span><span class="p">(</span><span class="n">req</span><span class="x"> </span><span class="o">*</span><span class="n">http</span><span class="o">.</span><span class="n">Request</span><span class="p">,</span><span class="x"> </span><span class="n">res</span><span class="x"> </span><span class="o">*</span><span class="n">http</span><span class="o">.</span><span class="n">Response</span><span class="p">,</span><span class="x"> </span><span class="n">duration</span><span class="x"> </span><span class="n">time</span><span class="o">.</span><span class="n">Duration</span><span class="p">)</span><span class="x"> </span><span class="p">{</span><span class="x">
-        </span><span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"Request Duration: %v</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="x"> </span><span class="n">duration</span><span class="p">)</span><span class="x">
-        </span><span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"Request Size: %d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="x"> </span><span class="n">req</span><span class="o">.</span><span class="n">ContentLength</span><span class="p">)</span><span class="x">
-        </span><span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"Response Size: %d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="x"> </span><span class="n">res</span><span class="o">.</span><span class="n">ContentLength</span><span class="p">)</span><span class="x">
-        </span><span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"Response Status: %d</span><span class="se">\n\n</span><span class="s">"</span><span class="p">,</span><span class="x"> </span><span class="n">res</span><span class="o">.</span><span class="n">StatusCode</span><span class="p">)</span><span class="x">
-</span><span class="p">}</span><span class="x">
-</span></code></pre></div></div>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="p">(</span><span class="n">p</span> <span class="o">*</span><span class="n">Proxy</span><span class="p">)</span> <span class="n">printStats</span><span class="p">(</span><span class="n">req</span> <span class="o">*</span><span class="n">http</span><span class="o">.</span><span class="n">Request</span><span class="p">,</span> <span class="n">res</span> <span class="o">*</span><span class="n">http</span><span class="o">.</span><span class="n">Response</span><span class="p">,</span> <span class="n">duration</span> <span class="n">time</span><span class="o">.</span><span class="n">Duration</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"Request Duration: %v</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">duration</span><span class="p">)</span>
+        <span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"Request Size: %d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">ContentLength</span><span class="p">)</span>
+        <span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"Response Size: %d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">ContentLength</span><span class="p">)</span>
+        <span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"Response Status: %d</span><span class="se">\n\n</span><span class="s">"</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">StatusCode</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <p>We have now built a fully functional HTTP traffic-sniffing proxy.</p>
 
@@ -338,7 +338,7 @@ Istio’s behavior.</p>
 <p>To build the proxy container image, we can simply issue the following Docker
 command.</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> docker build <span class="nt">-t</span> venilnoronha/amazing-proxy:latest <span class="nt">-f</span> Dockerfile <span class="nb">.</span>
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>docker build <span class="nt">-t</span> venilnoronha/amazing-proxy:latest <span class="nt">-f</span> Dockerfile <span class="nb">.</span>
 </code></pre></div></div>
 
 <h2 id="setting-up-the-pod-network">Setting up the Pod Network</h2>
@@ -356,26 +356,26 @@ component from the Linux kernel.</p>
 <p>To understand it better, let’s list the network interfaces exposed by Kubernetes
 to a Pod.</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> kubectl run <span class="nt">-i</span> <span class="nt">--rm</span> <span class="nt">--restart</span><span class="o">=</span>Never busybox <span class="nt">--image</span><span class="o">=</span>busybox <span class="nt">--</span> sh <span class="nt">-c</span> <span class="s2">"ip addr"</span>
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>kubectl run <span class="nt">-i</span> <span class="nt">--rm</span> <span class="nt">--restart</span><span class="o">=</span>Never busybox <span class="nt">--image</span><span class="o">=</span>busybox <span class="nt">--</span> sh <span class="nt">-c</span> <span class="s2">"ip addr"</span>
 <span class="go">
-</span><span class="gp">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt;</span> mtu 65536 qdisc noqueue qlen 1000
+</span><span class="gp">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt;</span><span class="w"> </span>mtu 65536 qdisc noqueue qlen 1000
 <span class="go">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
     inet 127.0.0.1/8 scope host lo
        valid_lft forever preferred_lft forever
 
-</span><span class="gp">174: eth0@if175: &lt;BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN&gt;</span> mtu 1500 qdisc noqueue
+</span><span class="gp">174: eth0@if175: &lt;BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN&gt;</span><span class="w"> </span>mtu 1500 qdisc noqueue
 <span class="go">    link/ether 02:42:ac:11:00:05 brd ff:ff:ff:ff:ff:ff
     inet 172.17.0.5/16 brd 172.17.255.255 scope global eth0
        valid_lft forever preferred_lft forever
 </span></code></pre></div></div>
 
-<p>As you observe, a Pod gets access to at least 2 network interfaces i.e. <code class="highlighter-rouge">lo</code> and
-<code class="highlighter-rouge">eth0</code>. Interface <code class="highlighter-rouge">lo</code> stands for loopback and <code class="highlighter-rouge">eth0</code> for ethernet.  A thing to
+<p>As you observe, a Pod gets access to at least 2 network interfaces i.e. <code class="language-plaintext highlighter-rouge">lo</code> and
+<code class="language-plaintext highlighter-rouge">eth0</code>. Interface <code class="language-plaintext highlighter-rouge">lo</code> stands for loopback and <code class="language-plaintext highlighter-rouge">eth0</code> for ethernet.  A thing to
 note here is that these are virtual and not real interfaces.</p>
 
 <h3 id="port-mapping-with-iptables">Port Mapping With iptables</h3>
 
-<p>A simplest use for <code class="highlighter-rouge">iptables</code> is to map one port to another. We can leverage
+<p>A simplest use for <code class="language-plaintext highlighter-rouge">iptables</code> is to map one port to another. We can leverage
 this to transparently route traffic to our proxy. Istio uses this exact concept
 to set up its Pod networking.</p>
 
@@ -383,10 +383,10 @@ to set up its Pod networking.</p>
   <img src="assets/images/2019-03-10-hand-crafting-a-sidecar-proxy-and-demystifying-istio/pod-networking.png" alt="Sidecar Proxy" style="width: 80%; display: inline-block;" />
 </p>
 
-<p>The idea here is map the service port (<code class="highlighter-rouge">80</code>) on the <code class="highlighter-rouge">eth0</code> interface to the
-proxy port (<code class="highlighter-rouge">8000</code>). This will ensure that the traffic from outside the
+<p>The idea here is map the service port (<code class="language-plaintext highlighter-rouge">80</code>) on the <code class="language-plaintext highlighter-rouge">eth0</code> interface to the
+proxy port (<code class="language-plaintext highlighter-rouge">8000</code>). This will ensure that the traffic from outside the
 container is routed to the proxy whenever it tries to access the service via
-port <code class="highlighter-rouge">80</code>. We let the <code class="highlighter-rouge">lo</code> interface to route Pod-internal traffic directly to
+port <code class="language-plaintext highlighter-rouge">80</code>. We let the <code class="language-plaintext highlighter-rouge">lo</code> interface to route Pod-internal traffic directly to
 the destination service i.e. without the hop to the proxy as shown in the above
 diagram.</p>
 
@@ -394,7 +394,7 @@ diagram.</p>
 
 <p>Kubernetes let’s you run <em>init containers</em> prior to running regular <em>containers</em>
 in a Pod. Istio uses an init container to set up the Pod networking in order to
-set up the necessary <code class="highlighter-rouge">iptables</code> rules. Let’s do the same to route Pod-external
+set up the necessary <code class="language-plaintext highlighter-rouge">iptables</code> rules. Let’s do the same to route Pod-external
 traffic to the proxy.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
@@ -413,13 +413,13 @@ iptables <span class="nt">-t</span> nat <span class="nt">--list</span>
 
 <span class="c"># Install the iptables command.</span>
 <span class="k">RUN </span>apt-get update <span class="o">&amp;&amp;</span> <span class="se">\
-</span>    apt-get install <span class="nt">-y</span> iptables
+</span>    apt-get <span class="nb">install</span> <span class="nt">-y</span> iptables
 
 <span class="c"># Copy the initialization script into the container.</span>
 <span class="k">COPY</span><span class="s"> init.sh /usr/local/bin/</span>
 
 <span class="c"># Mark the initialization script as executable.</span>
-<span class="k">RUN </span>chmod +x /usr/local/bin/init.sh
+<span class="k">RUN </span><span class="nb">chmod</span> +x /usr/local/bin/init.sh
 
 <span class="c"># Start the initialization script on container startup.</span>
 <span class="k">ENTRYPOINT</span><span class="s"> ["init.sh"]</span>
@@ -427,7 +427,7 @@ iptables <span class="nt">-t</span> nat <span class="nt">--list</span>
 
 <p>To build the Docker image, we execute the following command.</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> docker build <span class="nt">-t</span> venilnoronha/init-networking:latest <span class="nt">-f</span> Dockerfile <span class="nb">.</span>
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>docker build <span class="nt">-t</span> venilnoronha/init-networking:latest <span class="nt">-f</span> Dockerfile <span class="nb">.</span>
 </code></pre></div></div>
 
 <h2 id="the-demo">The Demo</h2>
@@ -460,36 +460,36 @@ for our experiment, we can manually craft the Pod yaml.</p>
   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">service</span>
     <span class="na">image</span><span class="pi">:</span> <span class="s">kennethreitz/httpbin</span>
     <span class="na">ports</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="s">80</span>
+    <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">80</span>
   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">proxy</span>
     <span class="na">image</span><span class="pi">:</span> <span class="s">venilnoronha/amazing-proxy</span>
     <span class="na">ports</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="s">8000</span>
+    <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">8000</span>
 </code></pre></div></div>
 
-<p>We’ve set up the init container with <code class="highlighter-rouge">root</code> privileges and have configured the
-<code class="highlighter-rouge">proxy</code> and the <code class="highlighter-rouge">service</code> as regular containers. To deploy this on a Kubernetes
+<p>We’ve set up the init container with <code class="language-plaintext highlighter-rouge">root</code> privileges and have configured the
+<code class="language-plaintext highlighter-rouge">proxy</code> and the <code class="language-plaintext highlighter-rouge">service</code> as regular containers. To deploy this on a Kubernetes
 cluster, we can issue the following command.</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> kubectl apply <span class="nt">-f</span> httpbin.yaml
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>kubectl apply <span class="nt">-f</span> httpbin.yaml
 </code></pre></div></div>
 
 <h3 id="the-test">The Test</h3>
 
-<p>To test the deployment, let’s first identify the <code class="highlighter-rouge">ClusterIP</code> for the Pod. To do
+<p>To test the deployment, let’s first identify the <code class="language-plaintext highlighter-rouge">ClusterIP</code> for the Pod. To do
 so, we can execute the following command.</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> kubectl get pods <span class="nt">-o</span> wide
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>kubectl get pods <span class="nt">-o</span> wide
 <span class="go">NAME          READY     STATUS    RESTARTS   AGE       IP           NODE
 httpbin-pod   2/2       Running   0          21h       172.17.0.4   minikube
 </span></code></pre></div></div>
 
 <p>We now need to generate traffic from outside the Pod. For this purpose, I’ll
-be using the <code class="highlighter-rouge">busybox</code> container to issue HTTP requests via <code class="highlighter-rouge">curl</code>.</p>
+be using the <code class="language-plaintext highlighter-rouge">busybox</code> container to issue HTTP requests via <code class="language-plaintext highlighter-rouge">curl</code>.</p>
 
 <p>Let’s first send a GET request to the httpbin service.</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> kubectl run <span class="nt">-i</span> <span class="nt">--rm</span> <span class="nt">--restart</span><span class="o">=</span>Never busybox <span class="nt">--image</span><span class="o">=</span>odise/busybox-curl <span class="se">\</span>
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>kubectl run <span class="nt">-i</span> <span class="nt">--rm</span> <span class="nt">--restart</span><span class="o">=</span>Never busybox <span class="nt">--image</span><span class="o">=</span>odise/busybox-curl <span class="se">\</span>
           <span class="nt">--</span> sh <span class="nt">-c</span> <span class="s2">"curl -i 172.17.0.4:80/get?query=param"</span>
 <span class="go">
 HTTP/1.1 200 OK
@@ -500,7 +500,7 @@ Server: amazing-proxy
 
 <p>Let’s now send a POST request.</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> kubectl run <span class="nt">-i</span> <span class="nt">--rm</span> <span class="nt">--restart</span><span class="o">=</span>Never busybox <span class="nt">--image</span><span class="o">=</span>odise/busybox-curl <span class="se">\</span>
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>kubectl run <span class="nt">-i</span> <span class="nt">--rm</span> <span class="nt">--restart</span><span class="o">=</span>Never busybox <span class="nt">--image</span><span class="o">=</span>odise/busybox-curl <span class="se">\</span>
           <span class="nt">--</span> sh <span class="nt">-c</span> <span class="s2">"curl -i -X POST -d 'body=parameters' 172.17.0.4:80/post"</span>
 <span class="go">
 HTTP/1.1 200 OK
@@ -509,28 +509,28 @@ Content-Type: application/json
 Server: amazing-proxy
 </span></code></pre></div></div>
 
-<p>Let’s finally send a GET request to the <code class="highlighter-rouge">/status</code> endpoint.</p>
+<p>Let’s finally send a GET request to the <code class="language-plaintext highlighter-rouge">/status</code> endpoint.</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> kubectl run <span class="nt">-i</span> <span class="nt">--rm</span> <span class="nt">--restart</span><span class="o">=</span>Never busybox <span class="nt">--image</span><span class="o">=</span>odise/busybox-curl <span class="se">\</span>
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>kubectl run <span class="nt">-i</span> <span class="nt">--rm</span> <span class="nt">--restart</span><span class="o">=</span>Never busybox <span class="nt">--image</span><span class="o">=</span>odise/busybox-curl <span class="se">\</span>
           <span class="nt">--</span> sh <span class="nt">-c</span> <span class="s2">"curl -i http://172.17.0.4:80/status/429"</span>
 <span class="go">
 HTTP/1.1 429 Too Many Requests
 Content-Length: 0
-</span><span class="gp">Content-Type: text/html;</span> <span class="nv">charset</span><span class="o">=</span>utf-8
+</span><span class="gp">Content-Type: text/html;</span><span class="w"> </span><span class="nv">charset</span><span class="o">=</span>utf-8
 <span class="go">Server: amazing-proxy
 </span></code></pre></div></div>
 
-<p>Note that we send the request to port <code class="highlighter-rouge">80</code> i.e. the service port and not the
-proxy port. The <code class="highlighter-rouge">iptables</code> rules ensure that this gets routed to the proxy first
+<p>Note that we send the request to port <code class="language-plaintext highlighter-rouge">80</code> i.e. the service port and not the
+proxy port. The <code class="language-plaintext highlighter-rouge">iptables</code> rules ensure that this gets routed to the proxy first
 which then forwards the request to the service. Also, we see the extra header
-<code class="highlighter-rouge">Server: amazing-proxy</code> which we had added in our proxy implementation.</p>
+<code class="language-plaintext highlighter-rouge">Server: amazing-proxy</code> which we had added in our proxy implementation.</p>
 
 <h3 id="proxy-statistics">Proxy Statistics</h3>
 
 <p>Let’s now peek into the statistics produced by the proxy. To do so, we can run
 the following command.</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> kubectl logs httpbin-pod <span class="nt">--container</span><span class="o">=</span><span class="s2">"proxy"</span>
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>kubectl logs httpbin-pod <span class="nt">--container</span><span class="o">=</span><span class="s2">"proxy"</span>
 <span class="go">
 Original URL: http://172.17.0.4:80/get?query=param
 Proxy URL: http://127.0.0.1:80/get?query=param
@@ -560,7 +560,7 @@ we generated.</p>
 <h2 id="conclusion">Conclusion</h2>
 
 <p>We implemented a simple HTTP traffic-sniffing proxy, which we wired in a
-Kubernetes Pod using the init container. We also looked at how <code class="highlighter-rouge">iptables</code> can
+Kubernetes Pod using the init container. We also looked at how <code class="language-plaintext highlighter-rouge">iptables</code> can
 provide flexible networking in order to provide a great user experience when
 dealing with proxies. Above all, we’ve learnt some key concepts that form Istio
 to what it is today.</p>
@@ -669,6 +669,15 @@ then feel free to reach out to me.</p>
                                     
                                         
                                         
+                                            <li><a href="/a-beginners-guide-to-authn-and-authz-with-istio">A Beginner's Guide to AuthN and AuthZ with Istio</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
                                             <li><a href="/a-simple-state-machine-framework-in-go">A Simple State Machine Framework in Go</a></li>
                                         
                                     
@@ -690,8 +699,6 @@ then feel free to reach out to me.</p>
                                   
                                     
                                         
-                                        
-                                            <li><a href="/seamless-cloud-native-apps-with-grpc-web-and-istio">Seamless Cloud-Native Apps with gRPC-Web and Istio</a></li>
                                         
                                     
                                   
@@ -750,7 +757,7 @@ then feel free to reach out to me.</p>
                         <footer class="read-next-card-footer">
                             <a href="/tag/distributed-systems/">
                                 
-                                    See all 11 posts  →
+                                    See all 12 posts  →
                                 
                             </a>
                         </footer>
@@ -899,7 +906,7 @@ then feel free to reach out to me.</p>
         <!-- The footer at the very bottom of the screen -->
         <footer class="site-footer outer">
             <div class="site-footer-content inner">
-                <section class="copyright"><a href="https://venilnoronha.io/">Venil Noronha</a> &copy; 2020</section>
+                <section class="copyright"><a href="https://venilnoronha.io/">Venil Noronha</a> &copy; 2021</section>
                 <section class="poweredby">Proudly published with <a href="https://jekyllrb.com/">Jekyll</a> &
                     <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> using
                     <a href="https://github.com/jekyller/jasper2" target="_blank" rel="noopener">Jasper2</a></section>

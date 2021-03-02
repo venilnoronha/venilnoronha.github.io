@@ -182,7 +182,7 @@ into the {body} of the default.hbs template -->
 
 <p>Bootstrapping a configuration server with Spring Cloud Config Server MongoDB is just a matter of the following three steps.</p>
 
-<p>1. Configure your <code class="highlighter-rouge">pom.xml</code>:</p>
+<p>1. Configure your <code class="language-plaintext highlighter-rouge">pom.xml</code>:</p>
 
 <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependencies&gt;</span>
     <span class="nt">&lt;dependency&gt;</span>
@@ -211,18 +211,18 @@ into the {body} of the default.hbs template -->
 <span class="nt">&lt;/repositories&gt;</span>
 </code></pre></div></div>
 
-<p>2. Create a standard Spring Boot application with the <code class="highlighter-rouge">EnableMongoConfigServer</code> annotation:</p>
+<p>2. Create a standard Spring Boot application with the <code class="language-plaintext highlighter-rouge">EnableMongoConfigServer</code> annotation:</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@SpringBootApplication</span>
 <span class="nd">@EnableMongoConfigServer</span>
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">Application</span> <span class="o">{</span>
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">SpringApplication</span><span class="o">.</span><span class="na">run</span><span class="o">(</span><span class="n">Application</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">SpringApplication</span><span class="o">.</span><span class="na">run</span><span class="o">(</span><span class="nc">Application</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div></div>
 
-<p>3. Configure the application’s <code class="highlighter-rouge">spring.data.mongodb.*</code> properties in <code class="highlighter-rouge">application.yml</code>:</p>
+<p>3. Configure the application’s <code class="language-plaintext highlighter-rouge">spring.data.mongodb.*</code> properties in <code class="language-plaintext highlighter-rouge">application.yml</code>:</p>
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">spring</span><span class="pi">:</span>
   <span class="na">data</span><span class="pi">:</span>
@@ -241,18 +241,18 @@ into the {body} of the default.hbs template -->
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">use</span> <span class="nx">config</span><span class="o">-</span><span class="nx">db</span><span class="p">;</span>
 
 <span class="nx">db</span><span class="p">.</span><span class="nx">gateway</span><span class="p">.</span><span class="nx">insert</span><span class="p">({</span>
-  <span class="s2">"label"</span><span class="p">:</span> <span class="s2">"master"</span><span class="p">,</span>
-  <span class="s2">"profile"</span><span class="p">:</span> <span class="s2">"prod"</span><span class="p">,</span>
-  <span class="s2">"source"</span><span class="p">:</span> <span class="p">{</span>
-    <span class="s2">"user"</span><span class="p">:</span> <span class="p">{</span>
-      <span class="s2">"maxConnections"</span><span class="p">:</span> <span class="nx">NumberInt</span><span class="p">(</span><span class="mi">8</span><span class="p">),</span>
-      <span class="s2">"timeoutMs"</span><span class="p">:</span> <span class="nx">NumberInt</span><span class="p">(</span><span class="mi">3600</span><span class="p">)</span>
+  <span class="dl">"</span><span class="s2">label</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">master</span><span class="dl">"</span><span class="p">,</span>
+  <span class="dl">"</span><span class="s2">profile</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">prod</span><span class="dl">"</span><span class="p">,</span>
+  <span class="dl">"</span><span class="s2">source</span><span class="dl">"</span><span class="p">:</span> <span class="p">{</span>
+    <span class="dl">"</span><span class="s2">user</span><span class="dl">"</span><span class="p">:</span> <span class="p">{</span>
+      <span class="dl">"</span><span class="s2">maxConnections</span><span class="dl">"</span><span class="p">:</span> <span class="nx">NumberInt</span><span class="p">(</span><span class="mi">8</span><span class="p">),</span>
+      <span class="dl">"</span><span class="s2">timeoutMs</span><span class="dl">"</span><span class="p">:</span> <span class="nx">NumberInt</span><span class="p">(</span><span class="mi">3600</span><span class="p">)</span>
     <span class="p">}</span>
   <span class="p">}</span>
 <span class="p">});</span>
 </code></pre></div></div>
 
-<p>2. Access it by invoking <code class="highlighter-rouge">http://localhost:8080/master/gateway-prod.properties</code>:</p>
+<p>2. Access it by invoking <code class="language-plaintext highlighter-rouge">http://localhost:8080/master/gateway-prod.properties</code>:</p>
 
 <div class="language-properties highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="py">user.maxConnections</span><span class="p">:</span> <span class="s">8</span>
 <span class="py">user.timeoutMs</span><span class="p">:</span> <span class="s">3600</span>
@@ -361,6 +361,15 @@ into the {body} of the default.hbs template -->
                                     
                                         
                                         
+                                            <li><a href="/a-beginners-guide-to-authn-and-authz-with-istio">A Beginner's Guide to AuthN and AuthZ with Istio</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
                                             <li><a href="/a-simple-state-machine-framework-in-go">A Simple State Machine Framework in Go</a></li>
                                         
                                     
@@ -378,8 +387,6 @@ into the {body} of the default.hbs template -->
                                   
                                     
                                         
-                                        
-                                            <li><a href="/hand-crafting-a-sidecar-proxy-and-demystifying-istio">Hand-crafting a Sidecar Proxy and Demystifying Istio</a></li>
                                         
                                     
                                   
@@ -442,7 +449,7 @@ into the {body} of the default.hbs template -->
                         <footer class="read-next-card-footer">
                             <a href="/tag/distributed-systems/">
                                 
-                                    See all 11 posts  →
+                                    See all 12 posts  →
                                 
                             </a>
                         </footer>
@@ -549,7 +556,7 @@ into the {body} of the default.hbs template -->
         <!-- The footer at the very bottom of the screen -->
         <footer class="site-footer outer">
             <div class="site-footer-content inner">
-                <section class="copyright"><a href="https://venilnoronha.io/">Venil Noronha</a> &copy; 2020</section>
+                <section class="copyright"><a href="https://venilnoronha.io/">Venil Noronha</a> &copy; 2021</section>
                 <section class="poweredby">Proudly published with <a href="https://jekyllrb.com/">Jekyll</a> &
                     <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> using
                     <a href="https://github.com/jekyller/jasper2" target="_blank" rel="noopener">Jasper2</a></section>

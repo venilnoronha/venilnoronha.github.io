@@ -204,91 +204,91 @@ and returns it as a response. Below is a pictorial representation of the same.</
 
 <p>Let’s now look at the Go code for the TCP Echo Server.</p>
 
-<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span><span class="x"> </span><span class="n">main</span><span class="x">
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
 
-</span><span class="k">import</span><span class="x"> </span><span class="p">(</span><span class="x">
-	</span><span class="s">"bufio"</span><span class="x">
-	</span><span class="s">"fmt"</span><span class="x">
-	</span><span class="s">"io"</span><span class="x">
-	</span><span class="s">"net"</span><span class="x">
-	</span><span class="s">"os"</span><span class="x">
-</span><span class="p">)</span><span class="x">
+<span class="k">import</span> <span class="p">(</span>
+	<span class="s">"bufio"</span>
+	<span class="s">"fmt"</span>
+	<span class="s">"io"</span>
+	<span class="s">"net"</span>
+	<span class="s">"os"</span>
+<span class="p">)</span>
 
-</span><span class="c">// main serves as the program entry point</span><span class="x">
-</span><span class="k">func</span><span class="x"> </span><span class="n">main</span><span class="p">()</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="c">// obtain the port and prefix via program arguments</span><span class="x">
-	</span><span class="n">port</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">":%s"</span><span class="p">,</span><span class="x"> </span><span class="n">os</span><span class="o">.</span><span class="n">Args</span><span class="p">[</span><span class="m">1</span><span class="p">])</span><span class="x">
-	</span><span class="n">prefix</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">os</span><span class="o">.</span><span class="n">Args</span><span class="p">[</span><span class="m">2</span><span class="p">]</span><span class="x">
+<span class="c">// main serves as the program entry point</span>
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="c">// obtain the port and prefix via program arguments</span>
+	<span class="n">port</span> <span class="o">:=</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">":%s"</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">Args</span><span class="p">[</span><span class="m">1</span><span class="p">])</span>
+	<span class="n">prefix</span> <span class="o">:=</span> <span class="n">os</span><span class="o">.</span><span class="n">Args</span><span class="p">[</span><span class="m">2</span><span class="p">]</span>
 
-	</span><span class="c">// create a tcp listener on the given port</span><span class="x">
-	</span><span class="n">listener</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">net</span><span class="o">.</span><span class="n">Listen</span><span class="p">(</span><span class="s">"tcp"</span><span class="p">,</span><span class="x"> </span><span class="n">port</span><span class="p">)</span><span class="x">
-	</span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"failed to create listener, err:"</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="p">)</span><span class="x">
-		</span><span class="n">os</span><span class="o">.</span><span class="n">Exit</span><span class="p">(</span><span class="m">1</span><span class="p">)</span><span class="x">
-	</span><span class="p">}</span><span class="x">
-	</span><span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"listening on %s, prefix: %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="x"> </span><span class="n">listener</span><span class="o">.</span><span class="n">Addr</span><span class="p">(),</span><span class="x"> </span><span class="n">prefix</span><span class="p">)</span><span class="x">
+	<span class="c">// create a tcp listener on the given port</span>
+	<span class="n">listener</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">net</span><span class="o">.</span><span class="n">Listen</span><span class="p">(</span><span class="s">"tcp"</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"failed to create listener, err:"</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+		<span class="n">os</span><span class="o">.</span><span class="n">Exit</span><span class="p">(</span><span class="m">1</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"listening on %s, prefix: %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">listener</span><span class="o">.</span><span class="n">Addr</span><span class="p">(),</span> <span class="n">prefix</span><span class="p">)</span>
 
-	</span><span class="c">// listen for new connections</span><span class="x">
-	</span><span class="k">for</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="n">conn</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">listener</span><span class="o">.</span><span class="n">Accept</span><span class="p">()</span><span class="x">
-		</span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
-			</span><span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"failed to accept connection, err:"</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="p">)</span><span class="x">
-			</span><span class="k">continue</span><span class="x">
-		</span><span class="p">}</span><span class="x">
+	<span class="c">// listen for new connections</span>
+	<span class="k">for</span> <span class="p">{</span>
+		<span class="n">conn</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">listener</span><span class="o">.</span><span class="n">Accept</span><span class="p">()</span>
+		<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+			<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"failed to accept connection, err:"</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+			<span class="k">continue</span>
+		<span class="p">}</span>
 
-		</span><span class="c">// pass an accepted connection to a handler goroutine</span><span class="x">
-		</span><span class="k">go</span><span class="x"> </span><span class="n">handleConnection</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span><span class="x"> </span><span class="n">prefix</span><span class="p">)</span><span class="x">
-	</span><span class="p">}</span><span class="x">
-</span><span class="p">}</span><span class="x">
+		<span class="c">// pass an accepted connection to a handler goroutine</span>
+		<span class="k">go</span> <span class="n">handleConnection</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">prefix</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
 
-</span><span class="c">// handleConnection handles the lifetime of a connection</span><span class="x">
-</span><span class="k">func</span><span class="x"> </span><span class="n">handleConnection</span><span class="p">(</span><span class="n">conn</span><span class="x"> </span><span class="n">net</span><span class="o">.</span><span class="n">Conn</span><span class="p">,</span><span class="x"> </span><span class="n">prefix</span><span class="x"> </span><span class="kt">string</span><span class="p">)</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="k">defer</span><span class="x"> </span><span class="n">conn</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span><span class="x">
-	</span><span class="n">reader</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">bufio</span><span class="o">.</span><span class="n">NewReader</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span><span class="x">
-	</span><span class="k">for</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="c">// read client request data</span><span class="x">
-		</span><span class="n">bytes</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">reader</span><span class="o">.</span><span class="n">ReadBytes</span><span class="p">(</span><span class="kt">byte</span><span class="p">(</span><span class="sc">'\n'</span><span class="p">))</span><span class="x">
-		</span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
-			</span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="n">io</span><span class="o">.</span><span class="n">EOF</span><span class="x"> </span><span class="p">{</span><span class="x">
-				</span><span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"failed to read data, err:"</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="p">)</span><span class="x">
-			</span><span class="p">}</span><span class="x">
-			</span><span class="k">return</span><span class="x">
-		</span><span class="p">}</span><span class="x">
-		</span><span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"request: %s"</span><span class="p">,</span><span class="x"> </span><span class="n">bytes</span><span class="p">)</span><span class="x">
+<span class="c">// handleConnection handles the lifetime of a connection</span>
+<span class="k">func</span> <span class="n">handleConnection</span><span class="p">(</span><span class="n">conn</span> <span class="n">net</span><span class="o">.</span><span class="n">Conn</span><span class="p">,</span> <span class="n">prefix</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">defer</span> <span class="n">conn</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
+	<span class="n">reader</span> <span class="o">:=</span> <span class="n">bufio</span><span class="o">.</span><span class="n">NewReader</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+	<span class="k">for</span> <span class="p">{</span>
+		<span class="c">// read client request data</span>
+		<span class="n">bytes</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">reader</span><span class="o">.</span><span class="n">ReadBytes</span><span class="p">(</span><span class="kt">byte</span><span class="p">(</span><span class="sc">'\n'</span><span class="p">))</span>
+		<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+			<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="n">io</span><span class="o">.</span><span class="n">EOF</span> <span class="p">{</span>
+				<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"failed to read data, err:"</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+			<span class="p">}</span>
+			<span class="k">return</span>
+		<span class="p">}</span>
+		<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"request: %s"</span><span class="p">,</span> <span class="n">bytes</span><span class="p">)</span>
 
-		</span><span class="c">// prepend prefix and send as response</span><span class="x">
-		</span><span class="n">line</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"%s %s"</span><span class="p">,</span><span class="x"> </span><span class="n">prefix</span><span class="p">,</span><span class="x"> </span><span class="n">bytes</span><span class="p">)</span><span class="x">
-		</span><span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"response: %s"</span><span class="p">,</span><span class="x"> </span><span class="n">line</span><span class="p">)</span><span class="x">
-		</span><span class="n">conn</span><span class="o">.</span><span class="n">Write</span><span class="p">([]</span><span class="kt">byte</span><span class="p">(</span><span class="n">line</span><span class="p">))</span><span class="x">
-	</span><span class="p">}</span><span class="x">
-</span><span class="p">}</span><span class="x">
-</span></code></pre></div></div>
+		<span class="c">// prepend prefix and send as response</span>
+		<span class="n">line</span> <span class="o">:=</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"%s %s"</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">bytes</span><span class="p">)</span>
+		<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"response: %s"</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+		<span class="n">conn</span><span class="o">.</span><span class="n">Write</span><span class="p">([]</span><span class="kt">byte</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
-<p>To test this program, simply copy the code into a file named <code class="highlighter-rouge">main.go</code> and run
+<p>To test this program, simply copy the code into a file named <code class="language-plaintext highlighter-rouge">main.go</code> and run
 it as shown below.</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> go run <span class="nt">-v</span> main.go 9000 hello
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>go run <span class="nt">-v</span> main.go 9000 hello
 <span class="go">listening on [::]:9000, prefix: hello
 </span></code></pre></div></div>
 
-<p>We can now interact with this program over TCP via <code class="highlighter-rouge">nc</code> (<a href="https://en.wikipedia.org/wiki/Netcat">Netcat</a>).
+<p>We can now interact with this program over TCP via <code class="language-plaintext highlighter-rouge">nc</code> (<a href="https://en.wikipedia.org/wiki/Netcat">Netcat</a>).
 To send a request, we can use a BusyBox container as shown below.</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> docker run <span class="nt">-it</span> <span class="nt">--rm</span> busybox sh <span class="nt">-c</span> <span class="s1">'echo world | nc docker.for.mac.localhost 9000'</span>
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>docker run <span class="nt">-it</span> <span class="nt">--rm</span> busybox sh <span class="nt">-c</span> <span class="s1">'echo world | nc docker.for.mac.localhost 9000'</span>
 <span class="go">hello world
 </span></code></pre></div></div>
 
 <p>As you see, the request “world” was prepended with “hello” which resulted in the
 “hello world” response. Note that I’m executing the BusyBox container over
 <a href="https://docs.docker.com/docker-for-mac/">Docker for Mac</a> which is why I access
-the TCP Echo Server via <code class="highlighter-rouge">docker.for.mac.localhost</code> instead of <code class="highlighter-rouge">localhost</code>.</p>
+the TCP Echo Server via <code class="language-plaintext highlighter-rouge">docker.for.mac.localhost</code> instead of <code class="language-plaintext highlighter-rouge">localhost</code>.</p>
 
 <h2 id="containerizing-the-tcp-echo-server">Containerizing The TCP Echo Server</h2>
 
 <p>Since we eventually want to run the TCP Echo Server over a Kubernetes cluster,
 let’s now put it in a container and publish the image to <a href="https://hub.docker.com/">Docker Hub</a>.</p>
 
-<p>Firstly, we create a <code class="highlighter-rouge">Dockerfile</code> with the following contents.</p>
+<p>Firstly, we create a <code class="language-plaintext highlighter-rouge">Dockerfile</code> with the following contents.</p>
 
 <div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># build a main binary using the golang container</span>
 <span class="k">FROM</span><span class="s"> golang:1.11 as builder</span>
@@ -308,13 +308,13 @@ let’s now put it in a container and publish the image to <a href="https://hub.
 
 <p>We now build the container and publish the image to Docker Hub as shown below.</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> docker build <span class="nt">-t</span> vnoronha/tcp-echo-server:latest <span class="nb">.</span>
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>docker build <span class="nt">-t</span> vnoronha/tcp-echo-server:latest <span class="nb">.</span>
 <span class="go">Sending build context to Docker daemon  60.93kB
 </span><span class="c">...
 </span><span class="go">Successfully built d172af115e18
 Successfully tagged vnoronha/tcp-echo-server:latest
 
-</span><span class="gp">$</span> docker push vnoronha/tcp-echo-server:latest
+</span><span class="gp">$</span><span class="w"> </span>docker push vnoronha/tcp-echo-server:latest
 <span class="go">The push refers to repository [docker.io/vnoronha/tcp-echo-server]
 b4cc76510de6: Pushed
 </span><span class="c">...
@@ -326,7 +326,7 @@ b4cc76510de6: Pushed
 <h3 id="service-configuration">Service Configuration</h3>
 
 <p>We want to deploy 2 versions of the TCP Echo Server, both with different
-prefixes to show the routing behavior. To do so, we create <code class="highlighter-rouge">service.yaml</code> with
+prefixes to show the routing behavior. To do so, we create <code class="language-plaintext highlighter-rouge">service.yaml</code> with
 a Kubernetes <a href="https://kubernetes.io/docs/concepts/services-networking/service/">Service</a>
 and 2 <a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/">Deployments</a>
 for the 2 different versions of TCP Echo Server we want to run.</p>
@@ -341,7 +341,7 @@ for the 2 different versions of TCP Echo Server we want to run.</p>
   <span class="na">selector</span><span class="pi">:</span>
     <span class="na">app</span><span class="pi">:</span> <span class="s">tcp-echo-server</span>
   <span class="na">ports</span><span class="pi">:</span>
-  <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="s">9000</span>
+  <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">9000</span>
     <span class="na">name</span><span class="pi">:</span> <span class="s">tcp</span>
 <span class="nn">---</span>
 <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">extensions/v1beta1</span>
@@ -349,7 +349,7 @@ for the 2 different versions of TCP Echo Server we want to run.</p>
 <span class="na">metadata</span><span class="pi">:</span>
   <span class="na">name</span><span class="pi">:</span> <span class="s">tcp-echo-server-v1</span>
 <span class="na">spec</span><span class="pi">:</span>
-  <span class="na">replicas</span><span class="pi">:</span> <span class="s">1</span>
+  <span class="na">replicas</span><span class="pi">:</span> <span class="m">1</span>
   <span class="na">template</span><span class="pi">:</span>
     <span class="na">metadata</span><span class="pi">:</span>
       <span class="na">labels</span><span class="pi">:</span>
@@ -362,14 +362,14 @@ for the 2 different versions of TCP Echo Server we want to run.</p>
         <span class="na">args</span><span class="pi">:</span> <span class="pi">[</span> <span class="s2">"</span><span class="s">9000"</span><span class="pi">,</span> <span class="s2">"</span><span class="s">one"</span> <span class="pi">]</span> <span class="c1"># prefix: one</span>
         <span class="na">imagePullPolicy</span><span class="pi">:</span> <span class="s">IfNotPresent</span>
         <span class="na">ports</span><span class="pi">:</span>
-        <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="s">9000</span>
+        <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">9000</span>
 <span class="nn">---</span>
 <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">extensions/v1beta1</span>
 <span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
 <span class="na">metadata</span><span class="pi">:</span>
   <span class="na">name</span><span class="pi">:</span> <span class="s">tcp-echo-server-v2</span>
 <span class="na">spec</span><span class="pi">:</span>
-  <span class="na">replicas</span><span class="pi">:</span> <span class="s">1</span>
+  <span class="na">replicas</span><span class="pi">:</span> <span class="m">1</span>
   <span class="na">template</span><span class="pi">:</span>
     <span class="na">metadata</span><span class="pi">:</span>
       <span class="na">labels</span><span class="pi">:</span>
@@ -382,7 +382,7 @@ for the 2 different versions of TCP Echo Server we want to run.</p>
         <span class="na">args</span><span class="pi">:</span> <span class="pi">[</span> <span class="s2">"</span><span class="s">9000"</span><span class="pi">,</span> <span class="s2">"</span><span class="s">two"</span> <span class="pi">]</span> <span class="c1"># prefix: two</span>
         <span class="na">imagePullPolicy</span><span class="pi">:</span> <span class="s">IfNotPresent</span>
         <span class="na">ports</span><span class="pi">:</span>
-        <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="s">9000</span>
+        <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">9000</span>
 </code></pre></div></div>
 
 <h3 id="deploying-minikube">Deploying Minikube</h3>
@@ -391,7 +391,7 @@ for the 2 different versions of TCP Echo Server we want to run.</p>
 for locally developing on Kubernetes. I’ve started my Minikube instance with the
 following command.</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> minikube start <span class="nt">--bootstrapper</span> kubeadm       <span class="se">\</span>
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>minikube start <span class="nt">--bootstrapper</span> kubeadm       <span class="se">\</span>
                  <span class="nt">--memory</span><span class="o">=</span>8192                <span class="se">\</span>
                  <span class="nt">--cpus</span><span class="o">=</span>4                     <span class="se">\</span>
                  <span class="nt">--kubernetes-version</span><span class="o">=</span>v1.10.0 <span class="se">\</span>
@@ -411,13 +411,13 @@ to learn to download and configure Istio.</p>
 
 <p>Once configured, here’s an easy way to fully deploy Istio components.</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> kubectl apply <span class="nt">-f</span> install/kubernetes/helm/istio/templates/crds.yaml
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>kubectl apply <span class="nt">-f</span> <span class="nb">install</span>/kubernetes/helm/istio/templates/crds.yaml
 <span class="go">customresourcedefinition.apiextensions.k8s.io/virtualservices.networking.istio.io created
 </span><span class="c">...
 </span><span class="go">customresourcedefinition.apiextensions.k8s.io/templates.config.istio.io created
 customresourcedefinition.apiextensions.k8s.io/handlers.config.istio.io created
 
-</span><span class="gp">$</span> kubectl apply <span class="nt">-f</span> install/kubernetes/istio-demo.yaml
+</span><span class="gp">$</span><span class="w"> </span>kubectl apply <span class="nt">-f</span> <span class="nb">install</span>/kubernetes/istio-demo.yaml
 <span class="go">namespace/istio-system created
 </span><span class="c">...
 </span><span class="go">destinationrule.networking.istio.io/istio-policy created
@@ -427,9 +427,9 @@ destinationrule.networking.istio.io/istio-telemetry created
 <h3 id="deploying-tcp-echo-servers-with-istio-proxies">Deploying TCP Echo Servers With Istio Proxies</h3>
 
 <p>Since we want to demonstrate Istio’s routing mechanics, let’s deploy the
-<code class="highlighter-rouge">tcp-echo-server</code> with the Istio Proxy side-car as shown below.</p>
+<code class="language-plaintext highlighter-rouge">tcp-echo-server</code> with the Istio Proxy side-car as shown below.</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> kubectl apply <span class="nt">-f</span> &lt;<span class="o">(</span>istioctl kube-inject <span class="nt">-f</span> service.yaml<span class="o">)</span>
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>kubectl apply <span class="nt">-f</span> &lt;<span class="o">(</span>istioctl kube-inject <span class="nt">-f</span> service.yaml<span class="o">)</span>
 <span class="go">service/tcp-echo-server created
 deployment.extensions/tcp-echo-server-v1 created
 deployment.extensions/tcp-echo-server-v2 created
@@ -437,29 +437,29 @@ deployment.extensions/tcp-echo-server-v2 created
 
 <p>We can verify that the services are running via the following commands.</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> kubectl get pods
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>kubectl get pods
 <span class="go">NAME                                  READY     STATUS    RESTARTS   AGE
 tcp-echo-server-v1-78684f5697-sv5r5   2/2       Running   0          56s
 tcp-echo-server-v2-74bf9999c8-hhhf9   2/2       Running   0          56s
 
-</span><span class="gp">$</span> kubectl logs tcp-echo-server-v1-78684f5697-sv5r5 tcp-echo-server
+</span><span class="gp">$</span><span class="w"> </span>kubectl logs tcp-echo-server-v1-78684f5697-sv5r5 tcp-echo-server
 <span class="go">listening on [::]:9000, prefix: one
 
-</span><span class="gp">$</span> kubectl logs tcp-echo-server-v2-74bf9999c8-hhhf9 tcp-echo-server
+</span><span class="gp">$</span><span class="w"> </span>kubectl logs tcp-echo-server-v2-74bf9999c8-hhhf9 tcp-echo-server
 <span class="go">listening on [::]:9000, prefix: two
 </span></code></pre></div></div>
 
 <h2 id="weighted-tcp-routing-with-istio">Weighted TCP Routing With Istio</h2>
 
-<p>This is the final part of this exercise where we define a <code class="highlighter-rouge">VirtualService</code>,
-<code class="highlighter-rouge">DestinationRule</code> and a <code class="highlighter-rouge">Gateway</code> with weighted routes and verify the system
+<p>This is the final part of this exercise where we define a <code class="language-plaintext highlighter-rouge">VirtualService</code>,
+<code class="language-plaintext highlighter-rouge">DestinationRule</code> and a <code class="language-plaintext highlighter-rouge">Gateway</code> with weighted routes and verify the system
 behavior.</p>
 
 <h3 id="routing-configuration">Routing Configuration</h3>
 
-<p>We create a <code class="highlighter-rouge">DestinationRule</code> with 2 <code class="highlighter-rouge">subsets</code> to represent the 2 versions of
-the TCP Echo Server. The <code class="highlighter-rouge">Gateway</code> allows traffic to access the services on TCP
-port <code class="highlighter-rouge">31400</code>. Finally, the <code class="highlighter-rouge">VirtualService</code> specifies that 80% of the traffic
+<p>We create a <code class="language-plaintext highlighter-rouge">DestinationRule</code> with 2 <code class="language-plaintext highlighter-rouge">subsets</code> to represent the 2 versions of
+the TCP Echo Server. The <code class="language-plaintext highlighter-rouge">Gateway</code> allows traffic to access the services on TCP
+port <code class="language-plaintext highlighter-rouge">31400</code>. Finally, the <code class="language-plaintext highlighter-rouge">VirtualService</code> specifies that 80% of the traffic
 must be routed to TCP Echo Server v1 and 20% to v2.</p>
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">networking.istio.io/v1alpha3</span>
@@ -485,7 +485,7 @@ must be routed to TCP Echo Server v1 and 20% to v2.</p>
     <span class="na">istio</span><span class="pi">:</span> <span class="s">ingressgateway</span>
   <span class="na">servers</span><span class="pi">:</span>
   <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span>
-      <span class="na">number</span><span class="pi">:</span> <span class="s">31400</span>
+      <span class="na">number</span><span class="pi">:</span> <span class="m">31400</span>
       <span class="na">name</span><span class="pi">:</span> <span class="s">tcp</span>
       <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
     <span class="na">hosts</span><span class="pi">:</span>
@@ -502,25 +502,25 @@ must be routed to TCP Echo Server v1 and 20% to v2.</p>
   <span class="pi">-</span> <span class="s">gateway</span>
   <span class="na">tcp</span><span class="pi">:</span>
   <span class="pi">-</span> <span class="na">match</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="s">31400</span>
+    <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">31400</span>
     <span class="na">route</span><span class="pi">:</span>
     <span class="pi">-</span> <span class="na">destination</span><span class="pi">:</span>
         <span class="na">host</span><span class="pi">:</span> <span class="s">tcp-echo-server</span>
         <span class="na">port</span><span class="pi">:</span>
-          <span class="na">number</span><span class="pi">:</span> <span class="s">9000</span>
+          <span class="na">number</span><span class="pi">:</span> <span class="m">9000</span>
         <span class="na">subset</span><span class="pi">:</span> <span class="s">v1</span>
-      <span class="na">weight</span><span class="pi">:</span> <span class="s">80</span>
+      <span class="na">weight</span><span class="pi">:</span> <span class="m">80</span>
     <span class="pi">-</span> <span class="na">destination</span><span class="pi">:</span>
         <span class="na">host</span><span class="pi">:</span> <span class="s">tcp-echo-server</span>
         <span class="na">port</span><span class="pi">:</span>
-          <span class="na">number</span><span class="pi">:</span> <span class="s">9000</span>
+          <span class="na">number</span><span class="pi">:</span> <span class="m">9000</span>
         <span class="na">subset</span><span class="pi">:</span> <span class="s">v2</span>
-      <span class="na">weight</span><span class="pi">:</span> <span class="s">20</span>
+      <span class="na">weight</span><span class="pi">:</span> <span class="m">20</span>
 </code></pre></div></div>
 
 <h3 id="deploying-the-route-configuration">Deploying The Route Configuration</h3>
 
-<p>To apply the configuration, copy it to a file named <code class="highlighter-rouge">route-config.yaml</code> and
+<p>To apply the configuration, copy it to a file named <code class="language-plaintext highlighter-rouge">route-config.yaml</code> and
 install it via the following command.</p>
 
 <div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="go">kubectl apply -f route-config.yaml
@@ -533,16 +533,16 @@ virtualservice.networking.istio.io/route created
 
 <p>Let’s first <a href="https://istio.io/docs/tasks/traffic-management/ingress/#determining-the-ingress-ip-and-ports">determine the Ingress IP</a>.</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> minikube ip
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>minikube ip
 <span class="go">192.168.99.100
 </span></code></pre></div></div>
 
 <p>We can now send a few requests to the weight balanced TCP Echo Server via the
 Ingress.</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> <span class="k">for </span>i <span class="k">in</span> <span class="o">{</span>1..10<span class="o">}</span><span class="p">;</span> <span class="k">do</span>
-<span class="gp">for&gt;</span> docker run <span class="nt">-it</span> <span class="nt">--rm</span> busybox sh <span class="nt">-c</span> <span class="s1">'(date; sleep 1) | nc 192.168.99.100 31400'</span>
-<span class="gp">for&gt;</span> <span class="k">done</span>
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span><span class="k">for </span>i <span class="k">in</span> <span class="o">{</span>1..10<span class="o">}</span><span class="p">;</span> <span class="k">do</span>
+<span class="gp">for&gt;</span><span class="w"> </span>docker run <span class="nt">-it</span> <span class="nt">--rm</span> busybox sh <span class="nt">-c</span> <span class="s1">'(date; sleep 1) | nc 192.168.99.100 31400'</span>
+<span class="gp">for&gt;</span><span class="w"> </span><span class="k">done</span>
 <span class="go">one Sat Oct 20 04:38:05 UTC 2018
 two Sat Oct 20 04:38:07 UTC 2018
 two Sat Oct 20 04:38:09 UTC 2018
@@ -568,7 +568,7 @@ for this demonstration looks like.</p>
 
 <p>Just delete the Minikube deployment, like so:</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> minikube stop <span class="o">&amp;&amp;</span> minikube delete
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>minikube stop <span class="o">&amp;&amp;</span> minikube delete
 <span class="go">Stopping local Kubernetes cluster...
 Machine stopped.
 Deleting local Kubernetes cluster...
@@ -685,6 +685,15 @@ from the ground up!</p>
                                     
                                         
                                         
+                                            <li><a href="/a-beginners-guide-to-authn-and-authz-with-istio">A Beginner's Guide to AuthN and AuthZ with Istio</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
                                             <li><a href="/a-simple-state-machine-framework-in-go">A Simple State Machine Framework in Go</a></li>
                                         
                                     
@@ -702,8 +711,6 @@ from the ground up!</p>
                                   
                                     
                                         
-                                        
-                                            <li><a href="/hand-crafting-a-sidecar-proxy-and-demystifying-istio">Hand-crafting a Sidecar Proxy and Demystifying Istio</a></li>
                                         
                                     
                                   
@@ -766,7 +773,7 @@ from the ground up!</p>
                         <footer class="read-next-card-footer">
                             <a href="/tag/distributed-systems/">
                                 
-                                    See all 11 posts  →
+                                    See all 12 posts  →
                                 
                             </a>
                         </footer>
@@ -915,7 +922,7 @@ from the ground up!</p>
         <!-- The footer at the very bottom of the screen -->
         <footer class="site-footer outer">
             <div class="site-footer-content inner">
-                <section class="copyright"><a href="https://venilnoronha.io/">Venil Noronha</a> &copy; 2020</section>
+                <section class="copyright"><a href="https://venilnoronha.io/">Venil Noronha</a> &copy; 2021</section>
                 <section class="poweredby">Proudly published with <a href="https://jekyllrb.com/">Jekyll</a> &
                     <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> using
                     <a href="https://github.com/jekyller/jasper2" target="_blank" rel="noopener">Jasper2</a></section>

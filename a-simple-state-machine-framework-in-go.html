@@ -211,104 +211,104 @@ true when the <i>switch-on</i> event is triggered when the system is in the <i>o
 
 <p>Here is the framework in Go in under 100 lines of code.</p>
 
-<div class="language-golang highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// ErrEventRejected is the error returned when the state machine cannot process</span><span class="x">
-</span><span class="c">// an event in the state that it is in.</span><span class="x">
-</span><span class="k">var</span><span class="x"> </span><span class="n">ErrEventRejected</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">errors</span><span class="o">.</span><span class="n">New</span><span class="p">(</span><span class="s">"event rejected"</span><span class="p">)</span><span class="x">
+<div class="language-golang highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// ErrEventRejected is the error returned when the state machine cannot process</span>
+<span class="c">// an event in the state that it is in.</span>
+<span class="k">var</span> <span class="n">ErrEventRejected</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">New</span><span class="p">(</span><span class="s">"event rejected"</span><span class="p">)</span>
 
-</span><span class="k">const</span><span class="x"> </span><span class="p">(</span><span class="x">
-	</span><span class="c">// Default represents the default state of the system.</span><span class="x">
-	</span><span class="n">Default</span><span class="x"> </span><span class="n">StateType</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="s">""</span><span class="x">
+<span class="k">const</span> <span class="p">(</span>
+	<span class="c">// Default represents the default state of the system.</span>
+	<span class="n">Default</span> <span class="n">StateType</span> <span class="o">=</span> <span class="s">""</span>
 
-	</span><span class="c">// NoOp represents a no-op event.</span><span class="x">
-	</span><span class="n">NoOp</span><span class="x"> </span><span class="n">EventType</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="s">"NoOp"</span><span class="x">
-</span><span class="p">)</span><span class="x">
+	<span class="c">// NoOp represents a no-op event.</span>
+	<span class="n">NoOp</span> <span class="n">EventType</span> <span class="o">=</span> <span class="s">"NoOp"</span>
+<span class="p">)</span>
 
-</span><span class="c">// StateType represents an extensible state type in the state machine.</span><span class="x">
-</span><span class="k">type</span><span class="x"> </span><span class="n">StateType</span><span class="x"> </span><span class="kt">string</span><span class="x">
+<span class="c">// StateType represents an extensible state type in the state machine.</span>
+<span class="k">type</span> <span class="n">StateType</span> <span class="kt">string</span>
 
-</span><span class="c">// EventType represents an extensible event type in the state machine.</span><span class="x">
-</span><span class="k">type</span><span class="x"> </span><span class="n">EventType</span><span class="x"> </span><span class="kt">string</span><span class="x">
+<span class="c">// EventType represents an extensible event type in the state machine.</span>
+<span class="k">type</span> <span class="n">EventType</span> <span class="kt">string</span>
 
-</span><span class="c">// EventContext represents the context to be passed to the action implementation.</span><span class="x">
-</span><span class="k">type</span><span class="x"> </span><span class="n">EventContext</span><span class="x"> </span><span class="k">interface</span><span class="p">{}</span><span class="x">
+<span class="c">// EventContext represents the context to be passed to the action implementation.</span>
+<span class="k">type</span> <span class="n">EventContext</span> <span class="k">interface</span><span class="p">{}</span>
 
-</span><span class="c">// Action represents the action to be executed in a given state.</span><span class="x">
-</span><span class="k">type</span><span class="x"> </span><span class="n">Action</span><span class="x"> </span><span class="k">interface</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="n">Execute</span><span class="p">(</span><span class="n">eventCtx</span><span class="x"> </span><span class="n">EventContext</span><span class="p">)</span><span class="x"> </span><span class="n">EventType</span><span class="x">
-</span><span class="p">}</span><span class="x">
+<span class="c">// Action represents the action to be executed in a given state.</span>
+<span class="k">type</span> <span class="n">Action</span> <span class="k">interface</span> <span class="p">{</span>
+	<span class="n">Execute</span><span class="p">(</span><span class="n">eventCtx</span> <span class="n">EventContext</span><span class="p">)</span> <span class="n">EventType</span>
+<span class="p">}</span>
 
-</span><span class="c">// Events represents a mapping of events and states.</span><span class="x">
-</span><span class="k">type</span><span class="x"> </span><span class="n">Events</span><span class="x"> </span><span class="k">map</span><span class="p">[</span><span class="n">EventType</span><span class="p">]</span><span class="n">StateType</span><span class="x">
+<span class="c">// Events represents a mapping of events and states.</span>
+<span class="k">type</span> <span class="n">Events</span> <span class="k">map</span><span class="p">[</span><span class="n">EventType</span><span class="p">]</span><span class="n">StateType</span>
 
-</span><span class="c">// State binds a state with an action and a set of events it can handle.</span><span class="x">
-</span><span class="k">type</span><span class="x"> </span><span class="n">State</span><span class="x"> </span><span class="k">struct</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="n">Action</span><span class="x"> </span><span class="n">Action</span><span class="x">
-	</span><span class="n">Events</span><span class="x"> </span><span class="n">Events</span><span class="x">
-</span><span class="p">}</span><span class="x">
+<span class="c">// State binds a state with an action and a set of events it can handle.</span>
+<span class="k">type</span> <span class="n">State</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">Action</span> <span class="n">Action</span>
+	<span class="n">Events</span> <span class="n">Events</span>
+<span class="p">}</span>
 
-</span><span class="c">// States represents a mapping of states and their implementations.</span><span class="x">
-</span><span class="k">type</span><span class="x"> </span><span class="n">States</span><span class="x"> </span><span class="k">map</span><span class="p">[</span><span class="n">StateType</span><span class="p">]</span><span class="n">State</span><span class="x">
+<span class="c">// States represents a mapping of states and their implementations.</span>
+<span class="k">type</span> <span class="n">States</span> <span class="k">map</span><span class="p">[</span><span class="n">StateType</span><span class="p">]</span><span class="n">State</span>
 
-</span><span class="c">// StateMachine represents the state machine.</span><span class="x">
-</span><span class="k">type</span><span class="x"> </span><span class="n">StateMachine</span><span class="x"> </span><span class="k">struct</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="c">// Previous represents the previous state.</span><span class="x">
-	</span><span class="n">Previous</span><span class="x"> </span><span class="n">StateType</span><span class="x">
+<span class="c">// StateMachine represents the state machine.</span>
+<span class="k">type</span> <span class="n">StateMachine</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="c">// Previous represents the previous state.</span>
+	<span class="n">Previous</span> <span class="n">StateType</span>
 
-	</span><span class="c">// Current represents the current state.</span><span class="x">
-	</span><span class="n">Current</span><span class="x"> </span><span class="n">StateType</span><span class="x">
+	<span class="c">// Current represents the current state.</span>
+	<span class="n">Current</span> <span class="n">StateType</span>
 
-	</span><span class="c">// States holds the configuration of states and events handled by the state machine.</span><span class="x">
-	</span><span class="n">States</span><span class="x"> </span><span class="n">States</span><span class="x">
+	<span class="c">// States holds the configuration of states and events handled by the state machine.</span>
+	<span class="n">States</span> <span class="n">States</span>
 
-	</span><span class="c">// mutex ensures that only 1 event is processed by the state machine at any given time.</span><span class="x">
-	</span><span class="n">mutex</span><span class="x"> </span><span class="n">sync</span><span class="o">.</span><span class="n">Mutex</span><span class="x">
-</span><span class="p">}</span><span class="x">
+	<span class="c">// mutex ensures that only 1 event is processed by the state machine at any given time.</span>
+	<span class="n">mutex</span> <span class="n">sync</span><span class="o">.</span><span class="n">Mutex</span>
+<span class="p">}</span>
 
-</span><span class="c">// getNextState returns the next state for the event given the machine's current</span><span class="x">
-</span><span class="c">// state, or an error if the event can't be handled in the given state.</span><span class="x">
-</span><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">s</span><span class="x"> </span><span class="o">*</span><span class="n">StateMachine</span><span class="p">)</span><span class="x"> </span><span class="n">getNextState</span><span class="p">(</span><span class="n">event</span><span class="x"> </span><span class="n">EventType</span><span class="p">)</span><span class="x"> </span><span class="p">(</span><span class="n">StateType</span><span class="p">,</span><span class="x"> </span><span class="kt">error</span><span class="p">)</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="k">if</span><span class="x"> </span><span class="n">state</span><span class="p">,</span><span class="x"> </span><span class="n">ok</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">s</span><span class="o">.</span><span class="n">States</span><span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">Current</span><span class="p">];</span><span class="x"> </span><span class="n">ok</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="k">if</span><span class="x"> </span><span class="n">state</span><span class="o">.</span><span class="n">Events</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
-			</span><span class="k">if</span><span class="x"> </span><span class="n">next</span><span class="p">,</span><span class="x"> </span><span class="n">ok</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">state</span><span class="o">.</span><span class="n">Events</span><span class="p">[</span><span class="n">event</span><span class="p">];</span><span class="x"> </span><span class="n">ok</span><span class="x"> </span><span class="p">{</span><span class="x">
-				</span><span class="k">return</span><span class="x"> </span><span class="n">next</span><span class="p">,</span><span class="x"> </span><span class="no">nil</span><span class="x">
-			</span><span class="p">}</span><span class="x">
-		</span><span class="p">}</span><span class="x">
-	</span><span class="p">}</span><span class="x">
-	</span><span class="k">return</span><span class="x"> </span><span class="n">Default</span><span class="p">,</span><span class="x"> </span><span class="n">ErrEventRejected</span><span class="x">
-</span><span class="p">}</span><span class="x">
+<span class="c">// getNextState returns the next state for the event given the machine's current</span>
+<span class="c">// state, or an error if the event can't be handled in the given state.</span>
+<span class="k">func</span> <span class="p">(</span><span class="n">s</span> <span class="o">*</span><span class="n">StateMachine</span><span class="p">)</span> <span class="n">getNextState</span><span class="p">(</span><span class="n">event</span> <span class="n">EventType</span><span class="p">)</span> <span class="p">(</span><span class="n">StateType</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="n">state</span><span class="p">,</span> <span class="n">ok</span> <span class="o">:=</span> <span class="n">s</span><span class="o">.</span><span class="n">States</span><span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">Current</span><span class="p">];</span> <span class="n">ok</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">Events</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+			<span class="k">if</span> <span class="n">next</span><span class="p">,</span> <span class="n">ok</span> <span class="o">:=</span> <span class="n">state</span><span class="o">.</span><span class="n">Events</span><span class="p">[</span><span class="n">event</span><span class="p">];</span> <span class="n">ok</span> <span class="p">{</span>
+				<span class="k">return</span> <span class="n">next</span><span class="p">,</span> <span class="no">nil</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="n">Default</span><span class="p">,</span> <span class="n">ErrEventRejected</span>
+<span class="p">}</span>
 
-</span><span class="c">// SendEvent sends an event to the state machine.</span><span class="x">
-</span><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">s</span><span class="x"> </span><span class="o">*</span><span class="n">StateMachine</span><span class="p">)</span><span class="x"> </span><span class="n">SendEvent</span><span class="p">(</span><span class="n">event</span><span class="x"> </span><span class="n">EventType</span><span class="p">,</span><span class="x"> </span><span class="n">eventCtx</span><span class="x"> </span><span class="n">EventContext</span><span class="p">)</span><span class="x"> </span><span class="kt">error</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="n">s</span><span class="o">.</span><span class="n">mutex</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span><span class="x">
-	</span><span class="k">defer</span><span class="x"> </span><span class="n">s</span><span class="o">.</span><span class="n">mutex</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span><span class="x">
+<span class="c">// SendEvent sends an event to the state machine.</span>
+<span class="k">func</span> <span class="p">(</span><span class="n">s</span> <span class="o">*</span><span class="n">StateMachine</span><span class="p">)</span> <span class="n">SendEvent</span><span class="p">(</span><span class="n">event</span> <span class="n">EventType</span><span class="p">,</span> <span class="n">eventCtx</span> <span class="n">EventContext</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+	<span class="n">s</span><span class="o">.</span><span class="n">mutex</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+	<span class="k">defer</span> <span class="n">s</span><span class="o">.</span><span class="n">mutex</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
 
-	</span><span class="k">for</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="c">// Determine the next state for the event given the machine's current state.</span><span class="x">
-		</span><span class="n">nextState</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">s</span><span class="o">.</span><span class="n">getNextState</span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="x">
-		</span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
-			</span><span class="k">return</span><span class="x"> </span><span class="n">ErrEventRejected</span><span class="x">
-		</span><span class="p">}</span><span class="x">
+	<span class="k">for</span> <span class="p">{</span>
+		<span class="c">// Determine the next state for the event given the machine's current state.</span>
+		<span class="n">nextState</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">s</span><span class="o">.</span><span class="n">getNextState</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="n">ErrEventRejected</span>
+		<span class="p">}</span>
 
-		</span><span class="c">// Identify the state definition for the next state.</span><span class="x">
-		</span><span class="n">state</span><span class="p">,</span><span class="x"> </span><span class="n">ok</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">s</span><span class="o">.</span><span class="n">States</span><span class="p">[</span><span class="n">nextState</span><span class="p">]</span><span class="x">
-		</span><span class="k">if</span><span class="x"> </span><span class="o">!</span><span class="n">ok</span><span class="x"> </span><span class="o">||</span><span class="x"> </span><span class="n">state</span><span class="o">.</span><span class="n">Action</span><span class="x"> </span><span class="o">==</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
-			</span><span class="c">// configuration error</span><span class="x">
-		</span><span class="p">}</span><span class="x">
+		<span class="c">// Identify the state definition for the next state.</span>
+		<span class="n">state</span><span class="p">,</span> <span class="n">ok</span> <span class="o">:=</span> <span class="n">s</span><span class="o">.</span><span class="n">States</span><span class="p">[</span><span class="n">nextState</span><span class="p">]</span>
+		<span class="k">if</span> <span class="o">!</span><span class="n">ok</span> <span class="o">||</span> <span class="n">state</span><span class="o">.</span><span class="n">Action</span> <span class="o">==</span> <span class="no">nil</span> <span class="p">{</span>
+			<span class="c">// configuration error</span>
+		<span class="p">}</span>
 
-		</span><span class="c">// Transition over to the next state.</span><span class="x">
-		</span><span class="n">s</span><span class="o">.</span><span class="n">Previous</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">s</span><span class="o">.</span><span class="n">Current</span><span class="x">
-		</span><span class="n">s</span><span class="o">.</span><span class="n">Current</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">nextState</span><span class="x">
+		<span class="c">// Transition over to the next state.</span>
+		<span class="n">s</span><span class="o">.</span><span class="n">Previous</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">Current</span>
+		<span class="n">s</span><span class="o">.</span><span class="n">Current</span> <span class="o">=</span> <span class="n">nextState</span>
 
-		</span><span class="c">// Execute the next state's action and loop over again if the event returned</span><span class="x">
-		</span><span class="c">// is not a no-op.</span><span class="x">
-		</span><span class="n">nextEvent</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">state</span><span class="o">.</span><span class="n">Action</span><span class="o">.</span><span class="n">Execute</span><span class="p">(</span><span class="n">eventCtx</span><span class="p">)</span><span class="x">
-		</span><span class="k">if</span><span class="x"> </span><span class="n">nextEvent</span><span class="x"> </span><span class="o">==</span><span class="x"> </span><span class="n">NoOp</span><span class="x"> </span><span class="p">{</span><span class="x">
-			</span><span class="k">return</span><span class="x"> </span><span class="no">nil</span><span class="x">
-		</span><span class="p">}</span><span class="x">
-		</span><span class="n">event</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">nextEvent</span><span class="x">
-	</span><span class="p">}</span><span class="x">
-</span><span class="p">}</span><span class="x">
-</span></code></pre></div></div>
+		<span class="c">// Execute the next state's action and loop over again if the event returned</span>
+		<span class="c">// is not a no-op.</span>
+		<span class="n">nextEvent</span> <span class="o">:=</span> <span class="n">state</span><span class="o">.</span><span class="n">Action</span><span class="o">.</span><span class="n">Execute</span><span class="p">(</span><span class="n">eventCtx</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">nextEvent</span> <span class="o">==</span> <span class="n">NoOp</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="no">nil</span>
+		<span class="p">}</span>
+		<span class="n">event</span> <span class="o">=</span> <span class="n">nextEvent</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <p>For the sake of brevity, I’ve skipped over database handling in this post. It’s also quite easy to
 wire into this state machine framework.</p>
@@ -318,107 +318,107 @@ wire into this state machine framework.</p>
 <p>Here is the same light switch example from above, but this time implemented using the Go framework.
 Let’s first define the states and events for the light switch state machine.</p>
 
-<div class="language-golang highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">const</span><span class="x"> </span><span class="p">(</span><span class="x">
-	</span><span class="n">Off</span><span class="x"> </span><span class="n">StateType</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="s">"Off"</span><span class="x">
-	</span><span class="n">On</span><span class="x">  </span><span class="n">StateType</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="s">"On"</span><span class="x">
+<div class="language-golang highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">const</span> <span class="p">(</span>
+	<span class="n">Off</span> <span class="n">StateType</span> <span class="o">=</span> <span class="s">"Off"</span>
+	<span class="n">On</span>  <span class="n">StateType</span> <span class="o">=</span> <span class="s">"On"</span>
 
-	</span><span class="n">SwitchOff</span><span class="x"> </span><span class="n">EventType</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="s">"SwitchOff"</span><span class="x">
-	</span><span class="n">SwitchOn</span><span class="x">  </span><span class="n">EventType</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="s">"SwitchOn"</span><span class="x">
-</span><span class="p">)</span><span class="x">
-</span></code></pre></div></div>
+	<span class="n">SwitchOff</span> <span class="n">EventType</span> <span class="o">=</span> <span class="s">"SwitchOff"</span>
+	<span class="n">SwitchOn</span>  <span class="n">EventType</span> <span class="o">=</span> <span class="s">"SwitchOn"</span>
+<span class="p">)</span>
+</code></pre></div></div>
 
 <p>We can now also define the actions corresponding to each state.</p>
 
-<div class="language-golang highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// OffAction represents the action executed on entering the Off state.</span><span class="x">
-</span><span class="k">type</span><span class="x"> </span><span class="n">OffAction</span><span class="x"> </span><span class="k">struct</span><span class="p">{}</span><span class="x">
+<div class="language-golang highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// OffAction represents the action executed on entering the Off state.</span>
+<span class="k">type</span> <span class="n">OffAction</span> <span class="k">struct</span><span class="p">{}</span>
 
-</span><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">a</span><span class="x"> </span><span class="o">*</span><span class="n">OffAction</span><span class="p">)</span><span class="x"> </span><span class="n">Execute</span><span class="p">(</span><span class="n">eventCtx</span><span class="x"> </span><span class="n">EventContext</span><span class="p">)</span><span class="x"> </span><span class="n">EventType</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"The light has been switched off"</span><span class="p">)</span><span class="x">
-	</span><span class="k">return</span><span class="x"> </span><span class="n">NoOp</span><span class="x">
-</span><span class="p">}</span><span class="x">
+<span class="k">func</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span><span class="n">OffAction</span><span class="p">)</span> <span class="n">Execute</span><span class="p">(</span><span class="n">eventCtx</span> <span class="n">EventContext</span><span class="p">)</span> <span class="n">EventType</span> <span class="p">{</span>
+	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"The light has been switched off"</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">NoOp</span>
+<span class="p">}</span>
 
-</span><span class="c">// OnAction represents the action executed on entering the On state.</span><span class="x">
-</span><span class="k">type</span><span class="x"> </span><span class="n">OnAction</span><span class="x"> </span><span class="k">struct</span><span class="p">{}</span><span class="x">
+<span class="c">// OnAction represents the action executed on entering the On state.</span>
+<span class="k">type</span> <span class="n">OnAction</span> <span class="k">struct</span><span class="p">{}</span>
 
-</span><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">a</span><span class="x"> </span><span class="o">*</span><span class="n">OnAction</span><span class="p">)</span><span class="x"> </span><span class="n">Execute</span><span class="p">(</span><span class="n">eventCtx</span><span class="x"> </span><span class="n">EventContext</span><span class="p">)</span><span class="x"> </span><span class="n">EventType</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"The light has been switched on"</span><span class="p">)</span><span class="x">
-	</span><span class="k">return</span><span class="x"> </span><span class="n">NoOp</span><span class="x">
-</span><span class="p">}</span><span class="x">
-</span></code></pre></div></div>
+<span class="k">func</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span><span class="n">OnAction</span><span class="p">)</span> <span class="n">Execute</span><span class="p">(</span><span class="n">eventCtx</span> <span class="n">EventContext</span><span class="p">)</span> <span class="n">EventType</span> <span class="p">{</span>
+	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"The light has been switched on"</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">NoOp</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <p>We can now define our state machine using the previously defined states, events and actions.</p>
 
-<div class="language-golang highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span><span class="x"> </span><span class="n">newLightSwitchFSM</span><span class="p">()</span><span class="x"> </span><span class="o">*</span><span class="n">StateMachine</span><span class="x"> </span><span class="p">{</span><span class="x">
-  </span><span class="k">return</span><span class="x"> </span><span class="o">&amp;</span><span class="n">StateMachine</span><span class="p">{</span><span class="x">
-		</span><span class="n">States</span><span class="o">:</span><span class="x"> </span><span class="n">States</span><span class="p">{</span><span class="x">
-			</span><span class="n">Default</span><span class="o">:</span><span class="x"> </span><span class="n">State</span><span class="p">{</span><span class="x">
-				</span><span class="n">Events</span><span class="o">:</span><span class="x"> </span><span class="n">Events</span><span class="p">{</span><span class="x">
-					</span><span class="n">SwitchOff</span><span class="o">:</span><span class="x"> </span><span class="n">Off</span><span class="p">,</span><span class="x">
-				</span><span class="p">},</span><span class="x">
-			</span><span class="p">},</span><span class="x">
-			</span><span class="n">Off</span><span class="o">:</span><span class="x"> </span><span class="n">State</span><span class="p">{</span><span class="x">
-				</span><span class="n">Action</span><span class="o">:</span><span class="x"> </span><span class="o">&amp;</span><span class="n">OffAction</span><span class="p">{},</span><span class="x">
-				</span><span class="n">Events</span><span class="o">:</span><span class="x"> </span><span class="n">Events</span><span class="p">{</span><span class="x">
-					</span><span class="n">SwitchOn</span><span class="o">:</span><span class="x"> </span><span class="n">On</span><span class="p">,</span><span class="x">
-				</span><span class="p">},</span><span class="x">
-			</span><span class="p">},</span><span class="x">
-			</span><span class="n">On</span><span class="o">:</span><span class="x"> </span><span class="n">State</span><span class="p">{</span><span class="x">
-				</span><span class="n">Action</span><span class="o">:</span><span class="x"> </span><span class="o">&amp;</span><span class="n">OnAction</span><span class="p">{},</span><span class="x">
-				</span><span class="n">Events</span><span class="o">:</span><span class="x"> </span><span class="n">Events</span><span class="p">{</span><span class="x">
-					</span><span class="n">SwitchOff</span><span class="o">:</span><span class="x"> </span><span class="n">Off</span><span class="p">,</span><span class="x">
-				</span><span class="p">},</span><span class="x">
-			</span><span class="p">},</span><span class="x">
-		</span><span class="p">},</span><span class="x">
-	</span><span class="p">}</span><span class="x">
-</span><span class="p">}</span><span class="x">
-</span></code></pre></div></div>
+<div class="language-golang highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">newLightSwitchFSM</span><span class="p">()</span> <span class="o">*</span><span class="n">StateMachine</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="o">&amp;</span><span class="n">StateMachine</span><span class="p">{</span>
+		<span class="n">States</span><span class="o">:</span> <span class="n">States</span><span class="p">{</span>
+			<span class="n">Default</span><span class="o">:</span> <span class="n">State</span><span class="p">{</span>
+				<span class="n">Events</span><span class="o">:</span> <span class="n">Events</span><span class="p">{</span>
+					<span class="n">SwitchOff</span><span class="o">:</span> <span class="n">Off</span><span class="p">,</span>
+				<span class="p">},</span>
+			<span class="p">},</span>
+			<span class="n">Off</span><span class="o">:</span> <span class="n">State</span><span class="p">{</span>
+				<span class="n">Action</span><span class="o">:</span> <span class="o">&amp;</span><span class="n">OffAction</span><span class="p">{},</span>
+				<span class="n">Events</span><span class="o">:</span> <span class="n">Events</span><span class="p">{</span>
+					<span class="n">SwitchOn</span><span class="o">:</span> <span class="n">On</span><span class="p">,</span>
+				<span class="p">},</span>
+			<span class="p">},</span>
+			<span class="n">On</span><span class="o">:</span> <span class="n">State</span><span class="p">{</span>
+				<span class="n">Action</span><span class="o">:</span> <span class="o">&amp;</span><span class="n">OnAction</span><span class="p">{},</span>
+				<span class="n">Events</span><span class="o">:</span> <span class="n">Events</span><span class="p">{</span>
+					<span class="n">SwitchOff</span><span class="o">:</span> <span class="n">Off</span><span class="p">,</span>
+				<span class="p">},</span>
+			<span class="p">},</span>
+		<span class="p">},</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <p>Let’s now put our light switch state machine to test.</p>
 
-<div class="language-golang highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span><span class="x"> </span><span class="n">TestLightSwitchStateMachine</span><span class="p">(</span><span class="n">t</span><span class="x"> </span><span class="o">*</span><span class="n">testing</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="c">// Create a new instance of the light switch state machine.</span><span class="x">
-	</span><span class="n">lightSwitchFsm</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">newLightSwitchFSM</span><span class="p">()</span><span class="x">
+<div class="language-golang highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">TestLightSwitchStateMachine</span><span class="p">(</span><span class="n">t</span> <span class="o">*</span><span class="n">testing</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c">// Create a new instance of the light switch state machine.</span>
+	<span class="n">lightSwitchFsm</span> <span class="o">:=</span> <span class="n">newLightSwitchFSM</span><span class="p">()</span>
 
-	</span><span class="c">// Set the initial "off" state in the state machine.</span><span class="x">
-	</span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">lightSwitchFsm</span><span class="o">.</span><span class="n">SendEvent</span><span class="p">(</span><span class="n">SwitchOff</span><span class="p">,</span><span class="x"> </span><span class="no">nil</span><span class="p">)</span><span class="x">
-	</span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="n">t</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"Couldn't set the initial state of the state machine, err: %v"</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="p">)</span><span class="x">
-	</span><span class="p">}</span><span class="x">
+	<span class="c">// Set the initial "off" state in the state machine.</span>
+	<span class="n">err</span> <span class="o">:=</span> <span class="n">lightSwitchFsm</span><span class="o">.</span><span class="n">SendEvent</span><span class="p">(</span><span class="n">SwitchOff</span><span class="p">,</span> <span class="no">nil</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="n">t</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"Couldn't set the initial state of the state machine, err: %v"</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+	<span class="p">}</span>
 
-	</span><span class="c">// Send the switch-off event again and expect the state machine to return an error.</span><span class="x">
-	</span><span class="n">err</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">lightSwitchFsm</span><span class="o">.</span><span class="n">SendEvent</span><span class="p">(</span><span class="n">SwitchOff</span><span class="p">,</span><span class="x"> </span><span class="no">nil</span><span class="p">)</span><span class="x">
-	</span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="n">ErrEventRejected</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="n">t</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"Expected the event rejected error, got nil"</span><span class="p">)</span><span class="x">
-	</span><span class="p">}</span><span class="x">
+	<span class="c">// Send the switch-off event again and expect the state machine to return an error.</span>
+	<span class="n">err</span> <span class="o">=</span> <span class="n">lightSwitchFsm</span><span class="o">.</span><span class="n">SendEvent</span><span class="p">(</span><span class="n">SwitchOff</span><span class="p">,</span> <span class="no">nil</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="n">ErrEventRejected</span> <span class="p">{</span>
+		<span class="n">t</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"Expected the event rejected error, got nil"</span><span class="p">)</span>
+	<span class="p">}</span>
 
-	</span><span class="c">// Send the switch-on event and expect the state machine to transition to the</span><span class="x">
-	</span><span class="c">// "on" state.</span><span class="x">
-	</span><span class="n">err</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">lightSwitchFsm</span><span class="o">.</span><span class="n">SendEvent</span><span class="p">(</span><span class="n">SwitchOn</span><span class="p">,</span><span class="x"> </span><span class="no">nil</span><span class="p">)</span><span class="x">
-	</span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="n">t</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"Couldn't switch the light on, err: %v"</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="p">)</span><span class="x">
-	</span><span class="p">}</span><span class="x">
+	<span class="c">// Send the switch-on event and expect the state machine to transition to the</span>
+	<span class="c">// "on" state.</span>
+	<span class="n">err</span> <span class="o">=</span> <span class="n">lightSwitchFsm</span><span class="o">.</span><span class="n">SendEvent</span><span class="p">(</span><span class="n">SwitchOn</span><span class="p">,</span> <span class="no">nil</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="n">t</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"Couldn't switch the light on, err: %v"</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+	<span class="p">}</span>
 
-	</span><span class="c">// Send the switch-on event again and expect the state machine to return an error.</span><span class="x">
-	</span><span class="n">err</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">lightSwitchFsm</span><span class="o">.</span><span class="n">SendEvent</span><span class="p">(</span><span class="n">SwitchOn</span><span class="p">,</span><span class="x"> </span><span class="no">nil</span><span class="p">)</span><span class="x">
-	</span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="n">ErrEventRejected</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="n">t</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"Expected the event rejected error, got nil"</span><span class="p">)</span><span class="x">
-	</span><span class="p">}</span><span class="x">
+	<span class="c">// Send the switch-on event again and expect the state machine to return an error.</span>
+	<span class="n">err</span> <span class="o">=</span> <span class="n">lightSwitchFsm</span><span class="o">.</span><span class="n">SendEvent</span><span class="p">(</span><span class="n">SwitchOn</span><span class="p">,</span> <span class="no">nil</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="n">ErrEventRejected</span> <span class="p">{</span>
+		<span class="n">t</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"Expected the event rejected error, got nil"</span><span class="p">)</span>
+	<span class="p">}</span>
 
-	</span><span class="c">// Send the switch-off event and expect the state machine to transition back</span><span class="x">
-	</span><span class="c">// to the "off" state.</span><span class="x">
-	</span><span class="n">err</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">lightSwitchFsm</span><span class="o">.</span><span class="n">SendEvent</span><span class="p">(</span><span class="n">SwitchOff</span><span class="p">,</span><span class="x"> </span><span class="no">nil</span><span class="p">)</span><span class="x">
-	</span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="n">t</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"Couldn't switch the light off, err: %v"</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="p">)</span><span class="x">
-	</span><span class="p">}</span><span class="x">
-</span><span class="p">}</span><span class="x">
-</span></code></pre></div></div>
+	<span class="c">// Send the switch-off event and expect the state machine to transition back</span>
+	<span class="c">// to the "off" state.</span>
+	<span class="n">err</span> <span class="o">=</span> <span class="n">lightSwitchFsm</span><span class="o">.</span><span class="n">SendEvent</span><span class="p">(</span><span class="n">SwitchOff</span><span class="p">,</span> <span class="no">nil</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="n">t</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"Couldn't switch the light off, err: %v"</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
-<p>As you see above, the whole state machine becomes very clear just by looking at the <code class="highlighter-rouge">lightSwitchFsm</code>
-definition. The <code class="highlighter-rouge">OffAction</code> and <code class="highlighter-rouge">OnAction</code> implement the <code class="highlighter-rouge">Action</code> interface from the framework and
+<p>As you see above, the whole state machine becomes very clear just by looking at the <code class="language-plaintext highlighter-rouge">lightSwitchFsm</code>
+definition. The <code class="language-plaintext highlighter-rouge">OffAction</code> and <code class="language-plaintext highlighter-rouge">OnAction</code> implement the <code class="language-plaintext highlighter-rouge">Action</code> interface from the framework and
 in this simple example they both print a statement to <i>stdout</i>. Events are sent to the state
-machine using statements like <code class="highlighter-rouge">lightSwitchFsm.SendEvent(SwitchOn, nil)</code> where the first parameter is
-the event itself and the second parameter represents the <code class="highlighter-rouge">EventContext</code>. In this example, there
-is no need for passing any context, so we send <code class="highlighter-rouge">nil</code>, but we will also see another example that
+machine using statements like <code class="language-plaintext highlighter-rouge">lightSwitchFsm.SendEvent(SwitchOn, nil)</code> where the first parameter is
+the event itself and the second parameter represents the <code class="language-plaintext highlighter-rouge">EventContext</code>. In this example, there
+is no need for passing any context, so we send <code class="language-plaintext highlighter-rouge">nil</code>, but we will also see another example that
 showcases its usage.</p>
 
 <p>Following is the output from executing the above test.</p>
@@ -441,7 +441,7 @@ to the definition of the state machine and the state that it is in when the even
 </p>
 
 <p>Here is a slightly fancier state machine example of order processing. The state machine starts in
-the <i>order creating</i> state where it validates the order details (passed via <code class="highlighter-rouge">EventContext</code>). It
+the <i>order creating</i> state where it validates the order details (passed via <code class="language-plaintext highlighter-rouge">EventContext</code>). It
 then can transition to the <i>order created</i> state if the order is valid, and if not, it
 transitions over to the <i>order failed</i> state. Then another event is sent to it externally for
 charging the user’s card and shipping the order. The state machine here transitions to the <i>
@@ -450,241 +450,241 @@ state, and if not, to the <i>transaction failed</i> state.</p>
 
 <p>To implement this in Go, we first define the set of states and events as in the previous example.</p>
 
-<div class="language-golang highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">const</span><span class="x"> </span><span class="p">(</span><span class="x">
-	</span><span class="n">CreatingOrder</span><span class="x">     </span><span class="n">StateType</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="s">"CreatingOrder"</span><span class="x">
-	</span><span class="n">OrderFailed</span><span class="x">       </span><span class="n">StateType</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="s">"OrderFailed"</span><span class="x">
-	</span><span class="n">OrderPlaced</span><span class="x">       </span><span class="n">StateType</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="s">"OrderPlaced"</span><span class="x">
-	</span><span class="n">ChargingCard</span><span class="x">      </span><span class="n">StateType</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="s">"ChargingCard"</span><span class="x">
-	</span><span class="n">TransactionFailed</span><span class="x"> </span><span class="n">StateType</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="s">"TransactionFailed"</span><span class="x">
-	</span><span class="n">OrderShipped</span><span class="x">      </span><span class="n">StateType</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="s">"OrderShipped"</span><span class="x">
+<div class="language-golang highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">const</span> <span class="p">(</span>
+	<span class="n">CreatingOrder</span>     <span class="n">StateType</span> <span class="o">=</span> <span class="s">"CreatingOrder"</span>
+	<span class="n">OrderFailed</span>       <span class="n">StateType</span> <span class="o">=</span> <span class="s">"OrderFailed"</span>
+	<span class="n">OrderPlaced</span>       <span class="n">StateType</span> <span class="o">=</span> <span class="s">"OrderPlaced"</span>
+	<span class="n">ChargingCard</span>      <span class="n">StateType</span> <span class="o">=</span> <span class="s">"ChargingCard"</span>
+	<span class="n">TransactionFailed</span> <span class="n">StateType</span> <span class="o">=</span> <span class="s">"TransactionFailed"</span>
+	<span class="n">OrderShipped</span>      <span class="n">StateType</span> <span class="o">=</span> <span class="s">"OrderShipped"</span>
 
-	</span><span class="n">CreateOrder</span><span class="x">     </span><span class="n">EventType</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="s">"CreateOrder"</span><span class="x">
-	</span><span class="n">FailOrder</span><span class="x">       </span><span class="n">EventType</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="s">"FailOrder"</span><span class="x">
-	</span><span class="n">PlaceOrder</span><span class="x">      </span><span class="n">EventType</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="s">"PlaceOrder"</span><span class="x">
-	</span><span class="n">ChargeCard</span><span class="x">      </span><span class="n">EventType</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="s">"ChargeCard"</span><span class="x">
-	</span><span class="n">FailTransaction</span><span class="x"> </span><span class="n">EventType</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="s">"FailTransaction"</span><span class="x">
-	</span><span class="n">ShipOrder</span><span class="x">       </span><span class="n">EventType</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="s">"ShipOrder"</span><span class="x">
-</span><span class="p">)</span><span class="x">
-</span></code></pre></div></div>
+	<span class="n">CreateOrder</span>     <span class="n">EventType</span> <span class="o">=</span> <span class="s">"CreateOrder"</span>
+	<span class="n">FailOrder</span>       <span class="n">EventType</span> <span class="o">=</span> <span class="s">"FailOrder"</span>
+	<span class="n">PlaceOrder</span>      <span class="n">EventType</span> <span class="o">=</span> <span class="s">"PlaceOrder"</span>
+	<span class="n">ChargeCard</span>      <span class="n">EventType</span> <span class="o">=</span> <span class="s">"ChargeCard"</span>
+	<span class="n">FailTransaction</span> <span class="n">EventType</span> <span class="o">=</span> <span class="s">"FailTransaction"</span>
+	<span class="n">ShipOrder</span>       <span class="n">EventType</span> <span class="o">=</span> <span class="s">"ShipOrder"</span>
+<span class="p">)</span>
+</code></pre></div></div>
 
 <p>This time we also define special context types for the purpose of passing data
 to event actions.</p>
 
-<div class="language-golang highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span><span class="x"> </span><span class="n">OrderCreationContext</span><span class="x"> </span><span class="k">struct</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="n">items</span><span class="x"> </span><span class="p">[]</span><span class="kt">string</span><span class="x">
-	</span><span class="n">err</span><span class="x">   </span><span class="kt">error</span><span class="x">
-</span><span class="p">}</span><span class="x">
+<div class="language-golang highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">OrderCreationContext</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">items</span> <span class="p">[]</span><span class="kt">string</span>
+	<span class="n">err</span>   <span class="kt">error</span>
+<span class="p">}</span>
 
-</span><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">c</span><span class="x"> </span><span class="o">*</span><span class="n">OrderCreationContext</span><span class="p">)</span><span class="x"> </span><span class="n">String</span><span class="p">()</span><span class="x"> </span><span class="kt">string</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="k">return</span><span class="x"> </span><span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"OrderCreationContext [ items: %s, err: %v ]"</span><span class="p">,</span><span class="x">
-		</span><span class="n">strings</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">items</span><span class="p">,</span><span class="x"> </span><span class="s">","</span><span class="p">),</span><span class="x"> </span><span class="n">c</span><span class="o">.</span><span class="n">err</span><span class="p">)</span><span class="x">
-</span><span class="p">}</span><span class="x">
+<span class="k">func</span> <span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">OrderCreationContext</span><span class="p">)</span> <span class="n">String</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"OrderCreationContext [ items: %s, err: %v ]"</span><span class="p">,</span>
+		<span class="n">strings</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">items</span><span class="p">,</span> <span class="s">","</span><span class="p">),</span> <span class="n">c</span><span class="o">.</span><span class="n">err</span><span class="p">)</span>
+<span class="p">}</span>
 
-</span><span class="k">type</span><span class="x"> </span><span class="n">OrderShipmentContext</span><span class="x"> </span><span class="k">struct</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="n">cardNumber</span><span class="x"> </span><span class="kt">string</span><span class="x">
-	</span><span class="n">address</span><span class="x">    </span><span class="kt">string</span><span class="x">
-	</span><span class="n">err</span><span class="x">        </span><span class="kt">error</span><span class="x">
-</span><span class="p">}</span><span class="x">
+<span class="k">type</span> <span class="n">OrderShipmentContext</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">cardNumber</span> <span class="kt">string</span>
+	<span class="n">address</span>    <span class="kt">string</span>
+	<span class="n">err</span>        <span class="kt">error</span>
+<span class="p">}</span>
 
-</span><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">c</span><span class="x"> </span><span class="o">*</span><span class="n">OrderShipmentContext</span><span class="p">)</span><span class="x"> </span><span class="n">String</span><span class="p">()</span><span class="x"> </span><span class="kt">string</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="k">return</span><span class="x"> </span><span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"OrderShipmentContext [ cardNumber: %s, address: %s, err: %v ]"</span><span class="p">,</span><span class="x">
-		</span><span class="n">c</span><span class="o">.</span><span class="n">cardNumber</span><span class="p">,</span><span class="x"> </span><span class="n">c</span><span class="o">.</span><span class="n">address</span><span class="p">,</span><span class="x"> </span><span class="n">c</span><span class="o">.</span><span class="n">err</span><span class="p">)</span><span class="x">
-</span><span class="p">}</span><span class="x">
-</span></code></pre></div></div>
+<span class="k">func</span> <span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">OrderShipmentContext</span><span class="p">)</span> <span class="n">String</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"OrderShipmentContext [ cardNumber: %s, address: %s, err: %v ]"</span><span class="p">,</span>
+		<span class="n">c</span><span class="o">.</span><span class="n">cardNumber</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">address</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">err</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <p>We can now define actions for all our states.</p>
 
-<div class="language-golang highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span><span class="x"> </span><span class="n">CreatingOrderAction</span><span class="x"> </span><span class="k">struct</span><span class="p">{}</span><span class="x">
+<div class="language-golang highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">CreatingOrderAction</span> <span class="k">struct</span><span class="p">{}</span>
 
-</span><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">a</span><span class="x"> </span><span class="o">*</span><span class="n">CreatingOrderAction</span><span class="p">)</span><span class="x"> </span><span class="n">Execute</span><span class="p">(</span><span class="n">eventCtx</span><span class="x"> </span><span class="n">EventContext</span><span class="p">)</span><span class="x"> </span><span class="n">EventType</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="n">order</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">eventCtx</span><span class="o">.</span><span class="p">(</span><span class="o">*</span><span class="n">OrderCreationContext</span><span class="p">)</span><span class="x">
-	</span><span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"Validating, order:"</span><span class="p">,</span><span class="x"> </span><span class="n">order</span><span class="p">)</span><span class="x">
-	</span><span class="k">if</span><span class="x"> </span><span class="nb">len</span><span class="p">(</span><span class="n">order</span><span class="o">.</span><span class="n">items</span><span class="p">)</span><span class="x"> </span><span class="o">==</span><span class="x"> </span><span class="m">0</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="n">order</span><span class="o">.</span><span class="n">err</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">errors</span><span class="o">.</span><span class="n">New</span><span class="p">(</span><span class="s">"Insufficient number of items in order"</span><span class="p">)</span><span class="x">
-		</span><span class="k">return</span><span class="x"> </span><span class="n">FailOrder</span><span class="x">
-	</span><span class="p">}</span><span class="x">
-	</span><span class="k">return</span><span class="x"> </span><span class="n">PlaceOrder</span><span class="x">
-</span><span class="p">}</span><span class="x">
+<span class="k">func</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span><span class="n">CreatingOrderAction</span><span class="p">)</span> <span class="n">Execute</span><span class="p">(</span><span class="n">eventCtx</span> <span class="n">EventContext</span><span class="p">)</span> <span class="n">EventType</span> <span class="p">{</span>
+	<span class="n">order</span> <span class="o">:=</span> <span class="n">eventCtx</span><span class="o">.</span><span class="p">(</span><span class="o">*</span><span class="n">OrderCreationContext</span><span class="p">)</span>
+	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"Validating, order:"</span><span class="p">,</span> <span class="n">order</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">order</span><span class="o">.</span><span class="n">items</span><span class="p">)</span> <span class="o">==</span> <span class="m">0</span> <span class="p">{</span>
+		<span class="n">order</span><span class="o">.</span><span class="n">err</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">New</span><span class="p">(</span><span class="s">"Insufficient number of items in order"</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">FailOrder</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="n">PlaceOrder</span>
+<span class="p">}</span>
 
-</span><span class="k">type</span><span class="x"> </span><span class="n">OrderFailedAction</span><span class="x"> </span><span class="k">struct</span><span class="p">{}</span><span class="x">
+<span class="k">type</span> <span class="n">OrderFailedAction</span> <span class="k">struct</span><span class="p">{}</span>
 
-</span><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">a</span><span class="x"> </span><span class="o">*</span><span class="n">OrderFailedAction</span><span class="p">)</span><span class="x"> </span><span class="n">Execute</span><span class="p">(</span><span class="n">eventCtx</span><span class="x"> </span><span class="n">EventContext</span><span class="p">)</span><span class="x"> </span><span class="n">EventType</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="n">order</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">eventCtx</span><span class="o">.</span><span class="p">(</span><span class="o">*</span><span class="n">OrderCreationContext</span><span class="p">)</span><span class="x">
-	</span><span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"Order failed, err:"</span><span class="p">,</span><span class="x"> </span><span class="n">order</span><span class="o">.</span><span class="n">err</span><span class="p">)</span><span class="x">
-	</span><span class="k">return</span><span class="x"> </span><span class="n">NoOp</span><span class="x">
-</span><span class="p">}</span><span class="x">
+<span class="k">func</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span><span class="n">OrderFailedAction</span><span class="p">)</span> <span class="n">Execute</span><span class="p">(</span><span class="n">eventCtx</span> <span class="n">EventContext</span><span class="p">)</span> <span class="n">EventType</span> <span class="p">{</span>
+	<span class="n">order</span> <span class="o">:=</span> <span class="n">eventCtx</span><span class="o">.</span><span class="p">(</span><span class="o">*</span><span class="n">OrderCreationContext</span><span class="p">)</span>
+	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"Order failed, err:"</span><span class="p">,</span> <span class="n">order</span><span class="o">.</span><span class="n">err</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">NoOp</span>
+<span class="p">}</span>
 
-</span><span class="k">type</span><span class="x"> </span><span class="n">OrderPlacedAction</span><span class="x"> </span><span class="k">struct</span><span class="p">{}</span><span class="x">
+<span class="k">type</span> <span class="n">OrderPlacedAction</span> <span class="k">struct</span><span class="p">{}</span>
 
-</span><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">a</span><span class="x"> </span><span class="o">*</span><span class="n">OrderPlacedAction</span><span class="p">)</span><span class="x"> </span><span class="n">Execute</span><span class="p">(</span><span class="n">eventCtx</span><span class="x"> </span><span class="n">EventContext</span><span class="p">)</span><span class="x"> </span><span class="n">EventType</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="n">order</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">eventCtx</span><span class="o">.</span><span class="p">(</span><span class="o">*</span><span class="n">OrderCreationContext</span><span class="p">)</span><span class="x">
-	</span><span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"Order placed, items:"</span><span class="p">,</span><span class="x"> </span><span class="n">order</span><span class="o">.</span><span class="n">items</span><span class="p">)</span><span class="x">
-	</span><span class="k">return</span><span class="x"> </span><span class="n">NoOp</span><span class="x">
-</span><span class="p">}</span><span class="x">
+<span class="k">func</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span><span class="n">OrderPlacedAction</span><span class="p">)</span> <span class="n">Execute</span><span class="p">(</span><span class="n">eventCtx</span> <span class="n">EventContext</span><span class="p">)</span> <span class="n">EventType</span> <span class="p">{</span>
+	<span class="n">order</span> <span class="o">:=</span> <span class="n">eventCtx</span><span class="o">.</span><span class="p">(</span><span class="o">*</span><span class="n">OrderCreationContext</span><span class="p">)</span>
+	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"Order placed, items:"</span><span class="p">,</span> <span class="n">order</span><span class="o">.</span><span class="n">items</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">NoOp</span>
+<span class="p">}</span>
 
-</span><span class="k">type</span><span class="x"> </span><span class="n">ChargingCardAction</span><span class="x"> </span><span class="k">struct</span><span class="p">{}</span><span class="x">
+<span class="k">type</span> <span class="n">ChargingCardAction</span> <span class="k">struct</span><span class="p">{}</span>
 
-</span><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">a</span><span class="x"> </span><span class="o">*</span><span class="n">ChargingCardAction</span><span class="p">)</span><span class="x"> </span><span class="n">Execute</span><span class="p">(</span><span class="n">eventCtx</span><span class="x"> </span><span class="n">EventContext</span><span class="p">)</span><span class="x"> </span><span class="n">EventType</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="n">shipment</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">eventCtx</span><span class="o">.</span><span class="p">(</span><span class="o">*</span><span class="n">OrderShipmentContext</span><span class="p">)</span><span class="x">
-	</span><span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"Validating card, shipment:"</span><span class="p">,</span><span class="x"> </span><span class="n">shipment</span><span class="p">)</span><span class="x">
-	</span><span class="k">if</span><span class="x"> </span><span class="n">shipment</span><span class="o">.</span><span class="n">cardNumber</span><span class="x"> </span><span class="o">==</span><span class="x"> </span><span class="s">""</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="n">shipment</span><span class="o">.</span><span class="n">err</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">errors</span><span class="o">.</span><span class="n">New</span><span class="p">(</span><span class="s">"Card number is invalid"</span><span class="p">)</span><span class="x">
-		</span><span class="k">return</span><span class="x"> </span><span class="n">FailTransaction</span><span class="x">
-	</span><span class="p">}</span><span class="x">
-	</span><span class="k">return</span><span class="x"> </span><span class="n">ShipOrder</span><span class="x">
-</span><span class="p">}</span><span class="x">
+<span class="k">func</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span><span class="n">ChargingCardAction</span><span class="p">)</span> <span class="n">Execute</span><span class="p">(</span><span class="n">eventCtx</span> <span class="n">EventContext</span><span class="p">)</span> <span class="n">EventType</span> <span class="p">{</span>
+	<span class="n">shipment</span> <span class="o">:=</span> <span class="n">eventCtx</span><span class="o">.</span><span class="p">(</span><span class="o">*</span><span class="n">OrderShipmentContext</span><span class="p">)</span>
+	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"Validating card, shipment:"</span><span class="p">,</span> <span class="n">shipment</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">shipment</span><span class="o">.</span><span class="n">cardNumber</span> <span class="o">==</span> <span class="s">""</span> <span class="p">{</span>
+		<span class="n">shipment</span><span class="o">.</span><span class="n">err</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">New</span><span class="p">(</span><span class="s">"Card number is invalid"</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">FailTransaction</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="n">ShipOrder</span>
+<span class="p">}</span>
 
-</span><span class="k">type</span><span class="x"> </span><span class="n">TransactionFailedAction</span><span class="x"> </span><span class="k">struct</span><span class="p">{}</span><span class="x">
+<span class="k">type</span> <span class="n">TransactionFailedAction</span> <span class="k">struct</span><span class="p">{}</span>
 
-</span><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">a</span><span class="x"> </span><span class="o">*</span><span class="n">TransactionFailedAction</span><span class="p">)</span><span class="x"> </span><span class="n">Execute</span><span class="p">(</span><span class="n">eventCtx</span><span class="x"> </span><span class="n">EventContext</span><span class="p">)</span><span class="x"> </span><span class="n">EventType</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="n">shipment</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">eventCtx</span><span class="o">.</span><span class="p">(</span><span class="o">*</span><span class="n">OrderShipmentContext</span><span class="p">)</span><span class="x">
-	</span><span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"Transaction failed, err:"</span><span class="p">,</span><span class="x"> </span><span class="n">shipment</span><span class="o">.</span><span class="n">err</span><span class="p">)</span><span class="x">
-	</span><span class="k">return</span><span class="x"> </span><span class="n">NoOp</span><span class="x">
-</span><span class="p">}</span><span class="x">
+<span class="k">func</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span><span class="n">TransactionFailedAction</span><span class="p">)</span> <span class="n">Execute</span><span class="p">(</span><span class="n">eventCtx</span> <span class="n">EventContext</span><span class="p">)</span> <span class="n">EventType</span> <span class="p">{</span>
+	<span class="n">shipment</span> <span class="o">:=</span> <span class="n">eventCtx</span><span class="o">.</span><span class="p">(</span><span class="o">*</span><span class="n">OrderShipmentContext</span><span class="p">)</span>
+	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"Transaction failed, err:"</span><span class="p">,</span> <span class="n">shipment</span><span class="o">.</span><span class="n">err</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">NoOp</span>
+<span class="p">}</span>
 
-</span><span class="k">type</span><span class="x"> </span><span class="n">OrderShippedAction</span><span class="x"> </span><span class="k">struct</span><span class="p">{}</span><span class="x">
+<span class="k">type</span> <span class="n">OrderShippedAction</span> <span class="k">struct</span><span class="p">{}</span>
 
-</span><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">a</span><span class="x"> </span><span class="o">*</span><span class="n">OrderShippedAction</span><span class="p">)</span><span class="x"> </span><span class="n">Execute</span><span class="p">(</span><span class="n">eventCtx</span><span class="x"> </span><span class="n">EventContext</span><span class="p">)</span><span class="x"> </span><span class="n">EventType</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="n">shipment</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">eventCtx</span><span class="o">.</span><span class="p">(</span><span class="o">*</span><span class="n">OrderShipmentContext</span><span class="p">)</span><span class="x">
-	</span><span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"Order shipped, address:"</span><span class="p">,</span><span class="x"> </span><span class="n">shipment</span><span class="o">.</span><span class="n">address</span><span class="p">)</span><span class="x">
-	</span><span class="k">return</span><span class="x"> </span><span class="n">NoOp</span><span class="x">
-</span><span class="p">}</span><span class="x">
-</span></code></pre></div></div>
+<span class="k">func</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span><span class="n">OrderShippedAction</span><span class="p">)</span> <span class="n">Execute</span><span class="p">(</span><span class="n">eventCtx</span> <span class="n">EventContext</span><span class="p">)</span> <span class="n">EventType</span> <span class="p">{</span>
+	<span class="n">shipment</span> <span class="o">:=</span> <span class="n">eventCtx</span><span class="o">.</span><span class="p">(</span><span class="o">*</span><span class="n">OrderShipmentContext</span><span class="p">)</span>
+	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"Order shipped, address:"</span><span class="p">,</span> <span class="n">shipment</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">NoOp</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <p>Let’s now define our state machine.</p>
 
-<div class="language-golang highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span><span class="x"> </span><span class="n">newOrderFSM</span><span class="p">()</span><span class="x"> </span><span class="o">*</span><span class="n">StateMachine</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="k">return</span><span class="x"> </span><span class="o">&amp;</span><span class="n">StateMachine</span><span class="p">{</span><span class="x">
-		</span><span class="n">States</span><span class="o">:</span><span class="x"> </span><span class="n">States</span><span class="p">{</span><span class="x">
-			</span><span class="n">Default</span><span class="o">:</span><span class="x"> </span><span class="n">State</span><span class="p">{</span><span class="x">
-				</span><span class="n">Events</span><span class="o">:</span><span class="x"> </span><span class="n">Events</span><span class="p">{</span><span class="x">
-					</span><span class="n">CreateOrder</span><span class="o">:</span><span class="x"> </span><span class="n">CreatingOrder</span><span class="p">,</span><span class="x">
-				</span><span class="p">},</span><span class="x">
-			</span><span class="p">},</span><span class="x">
-			</span><span class="n">CreatingOrder</span><span class="o">:</span><span class="x"> </span><span class="n">State</span><span class="p">{</span><span class="x">
-				</span><span class="n">Action</span><span class="o">:</span><span class="x"> </span><span class="o">&amp;</span><span class="n">CreatingOrderAction</span><span class="p">{},</span><span class="x">
-				</span><span class="n">Events</span><span class="o">:</span><span class="x"> </span><span class="n">Events</span><span class="p">{</span><span class="x">
-					</span><span class="n">FailOrder</span><span class="o">:</span><span class="x">  </span><span class="n">OrderFailed</span><span class="p">,</span><span class="x">
-					</span><span class="n">PlaceOrder</span><span class="o">:</span><span class="x"> </span><span class="n">OrderPlaced</span><span class="p">,</span><span class="x">
-				</span><span class="p">},</span><span class="x">
-			</span><span class="p">},</span><span class="x">
-			</span><span class="n">OrderFailed</span><span class="o">:</span><span class="x"> </span><span class="n">State</span><span class="p">{</span><span class="x">
-				</span><span class="n">Action</span><span class="o">:</span><span class="x"> </span><span class="o">&amp;</span><span class="n">OrderFailedAction</span><span class="p">{},</span><span class="x">
-				</span><span class="n">Events</span><span class="o">:</span><span class="x"> </span><span class="n">Events</span><span class="p">{</span><span class="x">
-					</span><span class="n">CreateOrder</span><span class="o">:</span><span class="x"> </span><span class="n">CreatingOrder</span><span class="p">,</span><span class="x">
-				</span><span class="p">},</span><span class="x">
-			</span><span class="p">},</span><span class="x">
-			</span><span class="n">OrderPlaced</span><span class="o">:</span><span class="x"> </span><span class="n">State</span><span class="p">{</span><span class="x">
-				</span><span class="n">Action</span><span class="o">:</span><span class="x"> </span><span class="o">&amp;</span><span class="n">OrderPlacedAction</span><span class="p">{},</span><span class="x">
-				</span><span class="n">Events</span><span class="o">:</span><span class="x"> </span><span class="n">Events</span><span class="p">{</span><span class="x">
-					</span><span class="n">ChargeCard</span><span class="o">:</span><span class="x"> </span><span class="n">ChargingCard</span><span class="p">,</span><span class="x">
-				</span><span class="p">},</span><span class="x">
-			</span><span class="p">},</span><span class="x">
-			</span><span class="n">ChargingCard</span><span class="o">:</span><span class="x"> </span><span class="n">State</span><span class="p">{</span><span class="x">
-				</span><span class="n">Action</span><span class="o">:</span><span class="x"> </span><span class="o">&amp;</span><span class="n">ChargingCardAction</span><span class="p">{},</span><span class="x">
-				</span><span class="n">Events</span><span class="o">:</span><span class="x"> </span><span class="n">Events</span><span class="p">{</span><span class="x">
-					</span><span class="n">FailTransaction</span><span class="o">:</span><span class="x"> </span><span class="n">TransactionFailed</span><span class="p">,</span><span class="x">
-					</span><span class="n">ShipOrder</span><span class="o">:</span><span class="x">       </span><span class="n">OrderShipped</span><span class="p">,</span><span class="x">
-				</span><span class="p">},</span><span class="x">
-			</span><span class="p">},</span><span class="x">
-			</span><span class="n">TransactionFailed</span><span class="o">:</span><span class="x"> </span><span class="n">State</span><span class="p">{</span><span class="x">
-				</span><span class="n">Action</span><span class="o">:</span><span class="x"> </span><span class="o">&amp;</span><span class="n">TransactionFailedAction</span><span class="p">{},</span><span class="x">
-				</span><span class="n">Events</span><span class="o">:</span><span class="x"> </span><span class="n">Events</span><span class="p">{</span><span class="x">
-					</span><span class="n">ChargeCard</span><span class="o">:</span><span class="x"> </span><span class="n">ChargingCard</span><span class="p">,</span><span class="x">
-				</span><span class="p">},</span><span class="x">
-			</span><span class="p">},</span><span class="x">
-			</span><span class="n">OrderShipped</span><span class="o">:</span><span class="x"> </span><span class="n">State</span><span class="p">{</span><span class="x">
-				</span><span class="n">Action</span><span class="o">:</span><span class="x"> </span><span class="o">&amp;</span><span class="n">OrderShippedAction</span><span class="p">{},</span><span class="x">
-			</span><span class="p">},</span><span class="x">
-		</span><span class="p">},</span><span class="x">
-	</span><span class="p">}</span><span class="x">
-</span><span class="p">}</span><span class="x">
-</span></code></pre></div></div>
+<div class="language-golang highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">newOrderFSM</span><span class="p">()</span> <span class="o">*</span><span class="n">StateMachine</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="o">&amp;</span><span class="n">StateMachine</span><span class="p">{</span>
+		<span class="n">States</span><span class="o">:</span> <span class="n">States</span><span class="p">{</span>
+			<span class="n">Default</span><span class="o">:</span> <span class="n">State</span><span class="p">{</span>
+				<span class="n">Events</span><span class="o">:</span> <span class="n">Events</span><span class="p">{</span>
+					<span class="n">CreateOrder</span><span class="o">:</span> <span class="n">CreatingOrder</span><span class="p">,</span>
+				<span class="p">},</span>
+			<span class="p">},</span>
+			<span class="n">CreatingOrder</span><span class="o">:</span> <span class="n">State</span><span class="p">{</span>
+				<span class="n">Action</span><span class="o">:</span> <span class="o">&amp;</span><span class="n">CreatingOrderAction</span><span class="p">{},</span>
+				<span class="n">Events</span><span class="o">:</span> <span class="n">Events</span><span class="p">{</span>
+					<span class="n">FailOrder</span><span class="o">:</span>  <span class="n">OrderFailed</span><span class="p">,</span>
+					<span class="n">PlaceOrder</span><span class="o">:</span> <span class="n">OrderPlaced</span><span class="p">,</span>
+				<span class="p">},</span>
+			<span class="p">},</span>
+			<span class="n">OrderFailed</span><span class="o">:</span> <span class="n">State</span><span class="p">{</span>
+				<span class="n">Action</span><span class="o">:</span> <span class="o">&amp;</span><span class="n">OrderFailedAction</span><span class="p">{},</span>
+				<span class="n">Events</span><span class="o">:</span> <span class="n">Events</span><span class="p">{</span>
+					<span class="n">CreateOrder</span><span class="o">:</span> <span class="n">CreatingOrder</span><span class="p">,</span>
+				<span class="p">},</span>
+			<span class="p">},</span>
+			<span class="n">OrderPlaced</span><span class="o">:</span> <span class="n">State</span><span class="p">{</span>
+				<span class="n">Action</span><span class="o">:</span> <span class="o">&amp;</span><span class="n">OrderPlacedAction</span><span class="p">{},</span>
+				<span class="n">Events</span><span class="o">:</span> <span class="n">Events</span><span class="p">{</span>
+					<span class="n">ChargeCard</span><span class="o">:</span> <span class="n">ChargingCard</span><span class="p">,</span>
+				<span class="p">},</span>
+			<span class="p">},</span>
+			<span class="n">ChargingCard</span><span class="o">:</span> <span class="n">State</span><span class="p">{</span>
+				<span class="n">Action</span><span class="o">:</span> <span class="o">&amp;</span><span class="n">ChargingCardAction</span><span class="p">{},</span>
+				<span class="n">Events</span><span class="o">:</span> <span class="n">Events</span><span class="p">{</span>
+					<span class="n">FailTransaction</span><span class="o">:</span> <span class="n">TransactionFailed</span><span class="p">,</span>
+					<span class="n">ShipOrder</span><span class="o">:</span>       <span class="n">OrderShipped</span><span class="p">,</span>
+				<span class="p">},</span>
+			<span class="p">},</span>
+			<span class="n">TransactionFailed</span><span class="o">:</span> <span class="n">State</span><span class="p">{</span>
+				<span class="n">Action</span><span class="o">:</span> <span class="o">&amp;</span><span class="n">TransactionFailedAction</span><span class="p">{},</span>
+				<span class="n">Events</span><span class="o">:</span> <span class="n">Events</span><span class="p">{</span>
+					<span class="n">ChargeCard</span><span class="o">:</span> <span class="n">ChargingCard</span><span class="p">,</span>
+				<span class="p">},</span>
+			<span class="p">},</span>
+			<span class="n">OrderShipped</span><span class="o">:</span> <span class="n">State</span><span class="p">{</span>
+				<span class="n">Action</span><span class="o">:</span> <span class="o">&amp;</span><span class="n">OrderShippedAction</span><span class="p">{},</span>
+			<span class="p">},</span>
+		<span class="p">},</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <p>Let’s put our order processing FSM to test.</p>
 
-<div class="language-golang highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span><span class="x"> </span><span class="n">TestOrderFSM</span><span class="p">(</span><span class="n">t</span><span class="x"> </span><span class="o">*</span><span class="n">testing</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="n">orderFsm</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">newOrderFSM</span><span class="p">()</span><span class="x">
+<div class="language-golang highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">TestOrderFSM</span><span class="p">(</span><span class="n">t</span> <span class="o">*</span><span class="n">testing</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">orderFsm</span> <span class="o">:=</span> <span class="n">newOrderFSM</span><span class="p">()</span>
 
-	</span><span class="c">// Define the context for order creation.</span><span class="x">
-	</span><span class="n">creationCtx</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="o">&amp;</span><span class="n">OrderCreationContext</span><span class="p">{</span><span class="x">
-		</span><span class="n">items</span><span class="o">:</span><span class="x"> </span><span class="p">[]</span><span class="kt">string</span><span class="p">{},</span><span class="x">
-	</span><span class="p">}</span><span class="x">
+	<span class="c">// Define the context for order creation.</span>
+	<span class="n">creationCtx</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">OrderCreationContext</span><span class="p">{</span>
+		<span class="n">items</span><span class="o">:</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{},</span>
+	<span class="p">}</span>
 
-	</span><span class="c">// Try to create an order with invalid set of items.</span><span class="x">
-	</span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">orderFsm</span><span class="o">.</span><span class="n">SendEvent</span><span class="p">(</span><span class="n">CreateOrder</span><span class="p">,</span><span class="x"> </span><span class="n">creationCtx</span><span class="p">)</span><span class="x">
-	</span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="n">t</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"Failed to send create order event, err: %v"</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="p">)</span><span class="x">
-	</span><span class="p">}</span><span class="x">
+	<span class="c">// Try to create an order with invalid set of items.</span>
+	<span class="n">err</span> <span class="o">:=</span> <span class="n">orderFsm</span><span class="o">.</span><span class="n">SendEvent</span><span class="p">(</span><span class="n">CreateOrder</span><span class="p">,</span> <span class="n">creationCtx</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="n">t</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"Failed to send create order event, err: %v"</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+	<span class="p">}</span>
 
-	</span><span class="c">// The state machine should enter the OrderFailed state.</span><span class="x">
-	</span><span class="k">if</span><span class="x"> </span><span class="n">orderFsm</span><span class="o">.</span><span class="n">Current</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="n">OrderFailed</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="n">t</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"Expected the FSM to be in the OrderFailed state, actual: %s"</span><span class="p">,</span><span class="x">
-			</span><span class="n">orderFsm</span><span class="o">.</span><span class="n">Current</span><span class="p">)</span><span class="x">
-	</span><span class="p">}</span><span class="x">
+	<span class="c">// The state machine should enter the OrderFailed state.</span>
+	<span class="k">if</span> <span class="n">orderFsm</span><span class="o">.</span><span class="n">Current</span> <span class="o">!=</span> <span class="n">OrderFailed</span> <span class="p">{</span>
+		<span class="n">t</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"Expected the FSM to be in the OrderFailed state, actual: %s"</span><span class="p">,</span>
+			<span class="n">orderFsm</span><span class="o">.</span><span class="n">Current</span><span class="p">)</span>
+	<span class="p">}</span>
 
-	</span><span class="c">// Let's fix the order creation context.</span><span class="x">
-	</span><span class="n">creationCtx</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="o">&amp;</span><span class="n">OrderCreationContext</span><span class="p">{</span><span class="x">
-		</span><span class="n">items</span><span class="o">:</span><span class="x"> </span><span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">"foo"</span><span class="p">,</span><span class="x"> </span><span class="s">"bar"</span><span class="p">},</span><span class="x">
-	</span><span class="p">}</span><span class="x">
+	<span class="c">// Let's fix the order creation context.</span>
+	<span class="n">creationCtx</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">OrderCreationContext</span><span class="p">{</span>
+		<span class="n">items</span><span class="o">:</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">"foo"</span><span class="p">,</span> <span class="s">"bar"</span><span class="p">},</span>
+	<span class="p">}</span>
 
-	</span><span class="c">// Let's now retry the same order with a valid set of items.</span><span class="x">
-	</span><span class="n">err</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">orderFsm</span><span class="o">.</span><span class="n">SendEvent</span><span class="p">(</span><span class="n">CreateOrder</span><span class="p">,</span><span class="x"> </span><span class="n">creationCtx</span><span class="p">)</span><span class="x">
-	</span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="n">t</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"Failed to send create order event, err: %v"</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="p">)</span><span class="x">
-	</span><span class="p">}</span><span class="x">
+	<span class="c">// Let's now retry the same order with a valid set of items.</span>
+	<span class="n">err</span> <span class="o">=</span> <span class="n">orderFsm</span><span class="o">.</span><span class="n">SendEvent</span><span class="p">(</span><span class="n">CreateOrder</span><span class="p">,</span> <span class="n">creationCtx</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="n">t</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"Failed to send create order event, err: %v"</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+	<span class="p">}</span>
 
-	</span><span class="c">// The state machine should enter the OrderPlaced state.</span><span class="x">
-	</span><span class="k">if</span><span class="x"> </span><span class="n">orderFsm</span><span class="o">.</span><span class="n">Current</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="n">OrderPlaced</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="n">t</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"Expected the FSM to be in the OrderPlaced state, actual: %s"</span><span class="p">,</span><span class="x">
-			</span><span class="n">orderFsm</span><span class="o">.</span><span class="n">Current</span><span class="p">)</span><span class="x">
-	</span><span class="p">}</span><span class="x">
+	<span class="c">// The state machine should enter the OrderPlaced state.</span>
+	<span class="k">if</span> <span class="n">orderFsm</span><span class="o">.</span><span class="n">Current</span> <span class="o">!=</span> <span class="n">OrderPlaced</span> <span class="p">{</span>
+		<span class="n">t</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"Expected the FSM to be in the OrderPlaced state, actual: %s"</span><span class="p">,</span>
+			<span class="n">orderFsm</span><span class="o">.</span><span class="n">Current</span><span class="p">)</span>
+	<span class="p">}</span>
 
-	</span><span class="c">// Let's now define the context for shipping the order.</span><span class="x">
-	</span><span class="n">shipmentCtx</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="o">&amp;</span><span class="n">OrderShipmentContext</span><span class="p">{</span><span class="x">
-		</span><span class="n">cardNumber</span><span class="o">:</span><span class="x"> </span><span class="s">""</span><span class="p">,</span><span class="x">
-		</span><span class="n">address</span><span class="o">:</span><span class="x">    </span><span class="s">"123 Foo Street, Bar Baz, QU 45678, USA"</span><span class="p">,</span><span class="x">
-	</span><span class="p">}</span><span class="x">
+	<span class="c">// Let's now define the context for shipping the order.</span>
+	<span class="n">shipmentCtx</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">OrderShipmentContext</span><span class="p">{</span>
+		<span class="n">cardNumber</span><span class="o">:</span> <span class="s">""</span><span class="p">,</span>
+		<span class="n">address</span><span class="o">:</span>    <span class="s">"123 Foo Street, Bar Baz, QU 45678, USA"</span><span class="p">,</span>
+	<span class="p">}</span>
 
-	</span><span class="c">// Try to charge the card using an invalid card number.</span><span class="x">
-	</span><span class="n">err</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">orderFsm</span><span class="o">.</span><span class="n">SendEvent</span><span class="p">(</span><span class="n">ChargeCard</span><span class="p">,</span><span class="x"> </span><span class="n">shipmentCtx</span><span class="p">)</span><span class="x">
-	</span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="n">t</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"Failed to send charge card event, err: %v"</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="p">)</span><span class="x">
-	</span><span class="p">}</span><span class="x">
+	<span class="c">// Try to charge the card using an invalid card number.</span>
+	<span class="n">err</span> <span class="o">=</span> <span class="n">orderFsm</span><span class="o">.</span><span class="n">SendEvent</span><span class="p">(</span><span class="n">ChargeCard</span><span class="p">,</span> <span class="n">shipmentCtx</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="n">t</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"Failed to send charge card event, err: %v"</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+	<span class="p">}</span>
 
-	</span><span class="c">// The state machine should enter the TransactionFailed state.</span><span class="x">
-	</span><span class="k">if</span><span class="x"> </span><span class="n">orderFsm</span><span class="o">.</span><span class="n">Current</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="n">TransactionFailed</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="n">t</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"Expected the FSM to be in the TransactionFailed state, actual: %s"</span><span class="p">,</span><span class="x">
-			</span><span class="n">orderFsm</span><span class="o">.</span><span class="n">Current</span><span class="p">)</span><span class="x">
-	</span><span class="p">}</span><span class="x">
+	<span class="c">// The state machine should enter the TransactionFailed state.</span>
+	<span class="k">if</span> <span class="n">orderFsm</span><span class="o">.</span><span class="n">Current</span> <span class="o">!=</span> <span class="n">TransactionFailed</span> <span class="p">{</span>
+		<span class="n">t</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"Expected the FSM to be in the TransactionFailed state, actual: %s"</span><span class="p">,</span>
+			<span class="n">orderFsm</span><span class="o">.</span><span class="n">Current</span><span class="p">)</span>
+	<span class="p">}</span>
 
-	</span><span class="c">// Let's fix the shipment context.</span><span class="x">
-	</span><span class="n">shipmentCtx</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="o">&amp;</span><span class="n">OrderShipmentContext</span><span class="p">{</span><span class="x">
-		</span><span class="n">cardNumber</span><span class="o">:</span><span class="x"> </span><span class="s">"0000-0000-0000-0000"</span><span class="p">,</span><span class="x">
-		</span><span class="n">address</span><span class="o">:</span><span class="x">    </span><span class="s">"123 Foo Street, Bar Baz, QU 45678, USA"</span><span class="p">,</span><span class="x">
-	</span><span class="p">}</span><span class="x">
+	<span class="c">// Let's fix the shipment context.</span>
+	<span class="n">shipmentCtx</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">OrderShipmentContext</span><span class="p">{</span>
+		<span class="n">cardNumber</span><span class="o">:</span> <span class="s">"0000-0000-0000-0000"</span><span class="p">,</span>
+		<span class="n">address</span><span class="o">:</span>    <span class="s">"123 Foo Street, Bar Baz, QU 45678, USA"</span><span class="p">,</span>
+	<span class="p">}</span>
 
-	</span><span class="c">// Let's now retry the transaction with a valid card number.</span><span class="x">
-	</span><span class="n">err</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">orderFsm</span><span class="o">.</span><span class="n">SendEvent</span><span class="p">(</span><span class="n">ChargeCard</span><span class="p">,</span><span class="x"> </span><span class="n">shipmentCtx</span><span class="p">)</span><span class="x">
-	</span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="n">t</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"Failed to send charge card event, err: %v"</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="p">)</span><span class="x">
-	</span><span class="p">}</span><span class="x">
+	<span class="c">// Let's now retry the transaction with a valid card number.</span>
+	<span class="n">err</span> <span class="o">=</span> <span class="n">orderFsm</span><span class="o">.</span><span class="n">SendEvent</span><span class="p">(</span><span class="n">ChargeCard</span><span class="p">,</span> <span class="n">shipmentCtx</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="n">t</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"Failed to send charge card event, err: %v"</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+	<span class="p">}</span>
 
-	</span><span class="c">// The state machine should enter the OrderShipped state.</span><span class="x">
-	</span><span class="k">if</span><span class="x"> </span><span class="n">orderFsm</span><span class="o">.</span><span class="n">Current</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="n">OrderShipped</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="n">t</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"Expected the FSM to be in the OrderShipped state, actual: %s"</span><span class="p">,</span><span class="x">
-			</span><span class="n">orderFsm</span><span class="o">.</span><span class="n">Current</span><span class="p">)</span><span class="x">
-	</span><span class="p">}</span><span class="x">
+	<span class="c">// The state machine should enter the OrderShipped state.</span>
+	<span class="k">if</span> <span class="n">orderFsm</span><span class="o">.</span><span class="n">Current</span> <span class="o">!=</span> <span class="n">OrderShipped</span> <span class="p">{</span>
+		<span class="n">t</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"Expected the FSM to be in the OrderShipped state, actual: %s"</span><span class="p">,</span>
+			<span class="n">orderFsm</span><span class="o">.</span><span class="n">Current</span><span class="p">)</span>
+	<span class="p">}</span>
 
-	</span><span class="c">// Let's try charging the card again for the same order. We should see the</span><span class="x">
-	</span><span class="c">// event getting rejected as the card has been already charged once and the</span><span class="x">
-	</span><span class="c">// state machine is in the OrderShipped state.</span><span class="x">
-	</span><span class="n">err</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">orderFsm</span><span class="o">.</span><span class="n">SendEvent</span><span class="p">(</span><span class="n">ChargeCard</span><span class="p">,</span><span class="x"> </span><span class="n">shipmentCtx</span><span class="p">)</span><span class="x">
-	</span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="n">ErrEventRejected</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="n">t</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"Expected the FSM to return a rejected event error"</span><span class="p">)</span><span class="x">
-	</span><span class="p">}</span><span class="x">
-</span><span class="p">}</span><span class="x">
-</span></code></pre></div></div>
+	<span class="c">// Let's try charging the card again for the same order. We should see the</span>
+	<span class="c">// event getting rejected as the card has been already charged once and the</span>
+	<span class="c">// state machine is in the OrderShipped state.</span>
+	<span class="n">err</span> <span class="o">=</span> <span class="n">orderFsm</span><span class="o">.</span><span class="n">SendEvent</span><span class="p">(</span><span class="n">ChargeCard</span><span class="p">,</span> <span class="n">shipmentCtx</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="n">ErrEventRejected</span> <span class="p">{</span>
+		<span class="n">t</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"Expected the FSM to return a rejected event error"</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <p>Here’s the output from running the test.</p>
 
@@ -700,13 +700,13 @@ Order shipped, address: 123 Foo Street, Bar Baz, QU 45678, USA
 <span class="nt">---</span> PASS: TestOrderFSM <span class="o">(</span>0.00s<span class="o">)</span>
 </code></pre></div></div>
 
-<p>This implementation passes in appropriate contexts (i.e. <code class="highlighter-rouge">OrderCreationContext</code> and
-<code class="highlighter-rouge">OrderShipmentContext</code>) along with the event during the call to <code class="highlighter-rouge">SendEvent</code>. Note that the event
+<p>This implementation passes in appropriate contexts (i.e. <code class="language-plaintext highlighter-rouge">OrderCreationContext</code> and
+<code class="language-plaintext highlighter-rouge">OrderShipmentContext</code>) along with the event during the call to <code class="language-plaintext highlighter-rouge">SendEvent</code>. Note that the event
 actions called as a part of the loop for a single event all get the same context and can reuse
-fields (for example, see the usage of the <code class="highlighter-rouge">items</code> field in both <code class="highlighter-rouge">CreatingOrderAction</code> and the
-<code class="highlighter-rouge">OrderPlacedAction</code>). One key situation that was very easily handled by the framework is a duplicate
+fields (for example, see the usage of the <code class="language-plaintext highlighter-rouge">items</code> field in both <code class="language-plaintext highlighter-rouge">CreatingOrderAction</code> and the
+<code class="language-plaintext highlighter-rouge">OrderPlacedAction</code>). One key situation that was very easily handled by the framework is a duplicate
 call for charging the card (see the last part of the test above). Since the state machine had
-already transitioned over to the <code class="highlighter-rouge">OrderShipped</code> state, the <code class="highlighter-rouge">ChargeCard</code> event was rejected straight
+already transitioned over to the <code class="language-plaintext highlighter-rouge">OrderShipped</code> state, the <code class="language-plaintext highlighter-rouge">ChargeCard</code> event was rejected straight
 away and we prevented the system from getting into an inconsistent state just by the help of the
 declarative state machine configuration.</p>
 
@@ -818,6 +818,15 @@ can nicely handle simple use-cases that you may come across in everyday life.</p
                                 
                                   
                                     
+                                        
+                                        
+                                            <li><a href="/a-beginners-guide-to-authn-and-authz-with-istio">A Beginner's Guide to AuthN and AuthZ with Istio</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
                                   
                                 
                                   
@@ -841,8 +850,6 @@ can nicely handle simple use-cases that you may come across in everyday life.</p
                                   
                                     
                                         
-                                        
-                                            <li><a href="/seamless-cloud-native-apps-with-grpc-web-and-istio">Seamless Cloud-Native Apps with gRPC-Web and Istio</a></li>
                                         
                                     
                                   
@@ -901,7 +908,7 @@ can nicely handle simple use-cases that you may come across in everyday life.</p
                         <footer class="read-next-card-footer">
                             <a href="/tag/distributed-systems/">
                                 
-                                    See all 11 posts  →
+                                    See all 12 posts  →
                                 
                             </a>
                         </footer>
@@ -910,6 +917,48 @@ can nicely handle simple use-cases that you may come across in everyday life.</p
             
 
             <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+    <article class="post-card post-template">
+        
+            <a class="post-card-image-link" href="/a-beginners-guide-to-authn-and-authz-with-istio">
+                <div class="post-card-image" style="background-image: url(/assets/images/2021-03-02-a-beginners-guide-to-authn-and-authz-with-istio/banner.jpg)"></div>
+            </a>
+        
+        <div class="post-card-content">
+            <a class="post-card-content-link" href="/a-beginners-guide-to-authn-and-authz-with-istio">
+                <header class="post-card-header">
+                    
+                        
+                            
+                                <span class="post-card-tags">Distributed systems</span>
+                            
+                        
+                    
+
+                    <h2 class="post-card-title">A Beginner's Guide to AuthN and AuthZ with Istio</h2>
+                </header>
+                <section class="post-card-excerpt">
+                    <p>Service meshes solve some of the key challenges in the cloud-native world today, and in this post I'll be discussing about security. The [Istio][istio] service mesh provides several security features including identity assignment</p>
+                </section>
+            </a>
+            <footer class="post-card-meta">
+                
+                    
+                        
+                        <img class="author-profile-image" src="/assets/images/venilnoronha.jpg" alt="Venil Noronha" />
+                        
+                        <span class="post-card-author">
+                            
+                                <a href="/about/">Venil Noronha</a>
+                            
+                        </span>
+                    
+                
+            </footer>
+        </div>
+    </article>
+
             
 
             <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
@@ -1008,7 +1057,7 @@ can nicely handle simple use-cases that you may come across in everyday life.</p
         <!-- The footer at the very bottom of the screen -->
         <footer class="site-footer outer">
             <div class="site-footer-content inner">
-                <section class="copyright"><a href="https://venilnoronha.io/">Venil Noronha</a> &copy; 2020</section>
+                <section class="copyright"><a href="https://venilnoronha.io/">Venil Noronha</a> &copy; 2021</section>
                 <section class="poweredby">Proudly published with <a href="https://jekyllrb.com/">Jekyll</a> &
                     <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> using
                     <a href="https://github.com/jekyller/jasper2" target="_blank" rel="noopener">Jasper2</a></section>

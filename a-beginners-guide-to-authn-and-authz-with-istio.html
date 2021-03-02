@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Document Settings -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Base Meta -->
+    <!-- dynamically fixing the title for tag/author pages -->
+
+
+
+    <title>A Beginner's Guide to AuthN and AuthZ with Istio</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Styles'n'Scripts -->
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.edited.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/syntax.css" />
+    <!-- highlight.js -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+    <style>.hljs { background: none; }</style>
+
+    <!-- This tag outputs SEO meta+structured data and other important settings -->
+    <meta name="description" content="Service mesh, distributed systems, software design, and more..." />
+    <link rel="shortcut icon" href="https://venilnoronha.io/assets/images/favicon.png" type="image/png" />
+    <link rel="canonical" href="https://venilnoronha.io/a-beginners-guide-to-authn-and-authz-with-istio" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+
+     <!--title below is coming from _includes/dynamic_title-->
+    <meta property="og:site_name" content="Venil Noronha" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="A Beginner's Guide to AuthN and AuthZ with Istio" />
+    <meta property="og:description" content="Service meshes solve some of the key challenges in the cloud-native world today, and in this post I’ll be discussing about security. The Istio service mesh provides several security features including identity assignment for workloads, TLS encryption, AuthN (Authentication), AuthZ (Authorization), and more. In this article, I’ll be focusing mainly" />
+    <meta property="og:url" content="https://venilnoronha.io/a-beginners-guide-to-authn-and-authz-with-istio" />
+    <meta property="og:image" content="https://venilnoronha.io/assets/images/2021-03-02-a-beginners-guide-to-authn-and-authz-with-istio/banner.jpg" />
+    <meta property="article:publisher" content="https://www.facebook.com/false" />
+    <meta property="article:author" content="https://www.facebook.com/false" />
+    <meta property="article:published_time" content="2021-03-01T16:04:00-08:00" />
+    <meta property="article:modified_time" content="2021-03-01T16:04:00-08:00" />
+    <meta property="article:tag" content="Distributed Systems" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="A Beginner's Guide to AuthN and AuthZ with Istio" />
+    <meta name="twitter:description" content="Service meshes solve some of the key challenges in the cloud-native world today, and in this post I’ll be discussing about security. The Istio service mesh provides several security features including identity assignment for workloads, TLS encryption, AuthN (Authentication), AuthZ (Authorization), and more. In this article, I’ll be focusing mainly" />
+    <meta name="twitter:url" content="https://venilnoronha.io/" />
+    <meta name="twitter:image" content="https://venilnoronha.io/assets/images/2021-03-02-a-beginners-guide-to-authn-and-authz-with-istio/banner.jpg" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Venil Noronha" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="Distributed Systems" />
+    <meta name="twitter:site" content="@venilnoronha" />
+    <meta name="twitter:creator" content="@venilnoronha" />
+    <meta property="og:image:width" content="1400" />
+    <meta property="og:image:height" content="933" />
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Website",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Venil Noronha",
+        "logo": "https://venilnoronha.io/false"
+    },
+    "url": "https://venilnoronha.io/a-beginners-guide-to-authn-and-authz-with-istio",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://venilnoronha.io/assets/images/2021-03-02-a-beginners-guide-to-authn-and-authz-with-istio/banner.jpg",
+        "width": 2000,
+        "height": 666
+    },
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://venilnoronha.io/a-beginners-guide-to-authn-and-authz-with-istio"
+    },
+    "description": "Service meshes solve some of the key challenges in the cloud-native world today, and in this post I’ll be discussing about security. The Istio service mesh provides several security features including identity assignment for workloads, TLS encryption, AuthN (Authentication), AuthZ (Authorization), and more. In this article, I’ll be focusing mainly"
+}
+    </script>
+
+    <!-- <script type="text/javascript" src="https://demo.ghost.io/public/ghost-sdk.min.js?v=724281a32e"></script>
+    <script type="text/javascript">
+    ghost.init({
+    	clientId: "ghost-frontend",
+    	clientSecret: "f84a07a72b17"
+    });
+    </script> -->
+
+    <meta name="generator" content="Jekyll 3.6.2" />
+    <link rel="alternate" type="application/rss+xml" title="A Beginner's Guide to AuthN and AuthZ with Istio" href="/feed.xml" />
+
+
+</head>
+<body class="post-template">
+
+    <div class="site-wrapper">
+        <!-- All the main content gets inserted here, index.hbs, post.hbs, etc -->
+        <!-- default -->
+
+<!-- The tag above means: insert everything in this file
+into the {body} of the default.hbs template -->
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+        
+            
+                <a class="site-nav-logo" href="https://venilnoronha.io/">Venil Noronha</a>
+            
+        
+        
+            <ul class="nav" role="menu">
+    <li class="nav-home" role="menuitem"><a href="/">Home</a></li>
+    <li class="nav-talks" role="menuitem"><a href="/talks/">Talks</a></li>
+    <li class="nav-about" role="menuitem"><a href="/about/">About</a></li>
+    <li class="nav-feed" role="menuitem"><a href="https://venilnoronha.io/feed.xml">Feed</a></li>
+</ul>
+
+        
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+            
+                <a class="social-link" href="https://github.com/venilnoronha" target="_blank" rel="noopener"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M896 128q209 0 385.5 103t279.5 279.5 103 385.5q0 251-146.5 451.5t-378.5 277.5q-27 5-40-7t-13-30q0-3 .5-76.5t.5-134.5q0-97-52-142 57-6 102.5-18t94-39 81-66.5 53-105 20.5-150.5q0-119-79-206 37-91-8-204-28-9-81 11t-92 44l-38 24q-93-26-192-26t-192 26q-16-11-42.5-27t-83.5-38.5-85-13.5q-45 113-8 204-79 87-79 206 0 85 20.5 150t52.5 105 80.5 67 94 39 102.5 18q-39 36-49 103-21 10-45 15t-57 5-65.5-21.5-55.5-62.5q-19-32-48.5-52t-49.5-24l-20-3q-21 0-29 4.5t-5 11.5 9 14 13 12l7 5q22 10 43.5 38t31.5 51l10 23q13 38 44 61.5t67 30 69.5 7 55.5-3.5l23-4q0 38 .5 88.5t.5 54.5q0 18-13 30t-40 7q-232-77-378.5-277.5t-146.5-451.5q0-209 103-385.5t279.5-279.5 385.5-103zm-477 1103q3-7-7-12-10-3-13 2-3 7 7 12 9 6 13-2zm31 34q7-5-2-16-10-9-16-3-7 5 2 16 10 10 16 3zm30 45q9-7 0-19-8-13-17-6-9 5 0 18t17 7zm42 42q8-8-4-19-12-12-20-3-9 8 4 19 12 12 20 3zm57 25q3-11-13-16-15-4-19 7t13 15q15 6 19-6zm63 5q0-13-17-11-16 0-16 11 0 13 17 11 16 0 16-11zm58-10q-2-11-18-9-16 3-14 15t18 8 14-14z"/></svg>
+</a>
+            
+            
+            
+                <a class="social-link social-link-tw" href="https://twitter.com/venilnoronha" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+</a>
+            
+            
+                <a class="social-link" href="https://instagram.com/venilnoronha" target="_blank" rel="noopener"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1152 896q0-106-75-181t-181-75-181 75-75 181 75 181 181 75 181-75 75-181zm138 0q0 164-115 279t-279 115-279-115-115-279 115-279 279-115 279 115 115 279zm108-410q0 38-27 65t-65 27-65-27-27-65 27-65 65-27 65 27 27 65zm-502-220q-7 0-76.5-.5t-105.5 0-96.5 3-103 10-71.5 18.5q-50 20-88 58t-58 88q-11 29-18.5 71.5t-10 103-3 96.5 0 105.5.5 76.5-.5 76.5 0 105.5 3 96.5 10 103 18.5 71.5q20 50 58 88t88 58q29 11 71.5 18.5t103 10 96.5 3 105.5 0 76.5-.5 76.5.5 105.5 0 96.5-3 103-10 71.5-18.5q50-20 88-58t58-88q11-29 18.5-71.5t10-103 3-96.5 0-105.5-.5-76.5.5-76.5 0-105.5-3-96.5-10-103-18.5-71.5q-20-50-58-88t-88-58q-29-11-71.5-18.5t-103-10-96.5-3-105.5 0-76.5.5zm768 630q0 229-5 317-10 208-124 322t-322 124q-88 5-317 5t-317-5q-208-10-322-124t-124-322q-5-88-5-317t5-317q10-208 124-322t322-124q88-5 317-5t317 5q208 10 322 124t124 322q5 88 5 317z"/></svg>
+</a>
+            
+            
+                <a class="social-link" href="https://linkedin.com/in/venilnoronha" target="_blank" rel="noopener"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M365 1414h231v-694h-231v694zm246-908q-1-52-36-86t-93-34-94.5 34-36.5 86q0 51 35.5 85.5t92.5 34.5h1q59 0 95-34.5t36-85.5zm585 908h231v-398q0-154-73-233t-193-79q-136 0-209 117h2v-101h-231q3 66 0 694h231v-388q0-38 7-56 15-35 45-59.5t74-24.5q116 0 116 157v371zm468-998v960q0 119-84.5 203.5t-203.5 84.5h-960q-119 0-203.5-84.5t-84.5-203.5v-960q0-119 84.5-203.5t203.5-84.5h960q119 0 203.5 84.5t84.5 203.5z"/></svg>
+</a>
+            
+        </div>
+        
+    </div>
+</nav>
+
+    </div>
+</header>
+
+<!-- Everything inside the #post tags pulls data from the post -->
+<!-- #post -->
+
+<main id="site-main" class="site-main outer" role="main">
+    <div class="inner">
+
+        <article class="post-full post tag-distributed-systems ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime=" 1 March 2021"> 1 March 2021</time>
+                    
+                        <span class="date-divider">/</span>
+                        
+                            
+                               <a href='/tag/distributed-systems/'>DISTRIBUTED SYSTEMS</a>
+                            
+                        
+                    
+                </section>
+                <h1 class="post-full-title">A Beginner's Guide to AuthN and AuthZ with Istio</h1>
+            </header>
+
+            
+            <figure class="post-full-image" style="background-image: url(/assets/images/2021-03-02-a-beginners-guide-to-authn-and-authz-with-istio/banner.jpg)">
+            </figure>
+            
+
+            <section class="post-full-content">
+                <div class="kg-card-markdown">
+                    <p>Service meshes solve some of the key challenges in the cloud-native world today, and in this post
+I’ll be discussing about security.</p>
+
+<p>The <a href="https://istio.io" title="Istio">Istio</a> service mesh provides several security features including identity assignment for
+workloads, TLS encryption, AuthN (Authentication), AuthZ (Authorization), and more. In this article,
+I’ll be focusing mainly on the aspect of AuthN and AuthZ policies.</p>
+
+<h2 id="introduction">Introduction</h2>
+
+<p>In our day-to-day lives we provide some form of identification to avail services such as healthcare,
+access services like email, etc. <a href="https://en.wikipedia.org/wiki/Authentication" title="Authentication">Authentication</a> is the process of verifying these
+identities in order for one to be granted access to a system.</p>
+
+<p>In the example of a healthcare system, providers may have access to a wide array of patient data,
+while patients would have limited access i.e. typically to their own data. Both entities here have
+access to the same system, but it’s their role that determines the kind of data available to them.
+Simply put, <a href="https://en.wikipedia.org/wiki/Authorization" title="Authorization">Authorization</a> is the process of protecting a system by granting users
+permissions to access only the resources they’re entitled to.</p>
+
+<h2 id="sessions">Sessions</h2>
+
+<p>Web applications leverage the concept of <a href="https://en.wikipedia.org/wiki/Session_(computer_science)" title="Sessions">sessions</a> for the purpose of AuthN and AuthZ. A
+session is used to identify and store temporary information related to a user over several requests
+as the user interacts with the system. Typically, a session is established at the time of login and
+is torn down when the user logs out.</p>
+
+<p>There are mainly 2 types of sessions:</p>
+
+<ol>
+  <li>Server-side sessions</li>
+  <li>Client-side sessions</li>
+</ol>
+
+<h3 id="server-side-sessions">Server-Side Sessions</h3>
+
+<p>Server-side session implementations typically generate a random ID for the authenticating user and
+it is stored in the browser in the form of a <a href="https://en.wikipedia.org/wiki/HTTP_cookie" title="Cookie">cookie</a>. The cookie is then presented to the
+server on each request made by the user, thereby allowing it to identify and store information
+related to the user.</p>
+
+<p style="text-align: center;">
+  <img src="assets/images/2021-03-02-a-beginners-guide-to-authn-and-authz-with-istio/server-side-session.png" alt="Server-Side Session" style="width: 60%; display: inline-block;" />
+</p>
+
+<p>One of the main challenges with server-side sessions is that it makes scaling difficult. If you need
+to scale the number of web server instances, you’d either need to replicate session information
+across all the instances, or ensure that a given user’s requests always land on the same instance.</p>
+
+<h3 id="client-side-sessions">Client-Side Sessions</h3>
+
+<p>Client-side session implementations also make use of cookies; however, instead of storing just a
+random ID, useful user information is embedded in the cookie.</p>
+
+<p style="text-align: center;">
+  <img src="assets/images/2021-03-02-a-beginners-guide-to-authn-and-authz-with-istio/client-side-session.png" alt="Client-Side Session" style="width: 60%; display: inline-block;" />
+</p>
+
+<p>Client-side sessions allow for better scalability on the server side as the overhead of mapping an
+ID to a user entity disappears. This also means that we don’t need to replicate user session
+information across web server instances, and each instance can be stateless i.e. a request could be
+routed to any instance and it should be able to easily identify the user using the details directly
+available in the cookie.</p>
+
+<p>In this article I’ll be focusing on one such implementation called JWT. You can read more about
+sessions in <a href="http://www.rodsonluo.com/client-session-vs-server-session" title="Sessions Article">this article</a>.</p>
+
+<h2 id="jwts-json-web-tokens">JWTs (JSON Web Tokens)</h2>
+
+<p><a href="https://tools.ietf.org/html/rfc7519" title="JWTs (JSON Web Tokens)">JWTs (JSON Web Tokens)</a>, pronounced <em>jot</em>, are essentially JSON objects that are encoded and
+digitally signed to protect their integrity. JWTs are made up of 3 Base64-URL segments (header,
+payload, and signature) separated by dots. The header specifies the algorithm used for signing. The
+payload holds claims i.e. information about the user. The signature can be generated using an
+alogrithm like HMAC with a secret, or RSA using a pair of public/private keys.</p>
+
+<p>For more information on JWTs you can refer to <a href="https://jwt.io/introduction" title="JWT Introduction">this article</a>.</p>
+
+<h3 id="a-sample-jwt">A Sample JWT</h3>
+
+<p>Let’s look at the sample JWT below. There are 3 segments, separated by the 2 white dots. The first
+segment in green is the header, the second one in pink is the payload, and the third one in blue is
+the signature. This JWT is signed using the HS256 HMAC algorithm.</p>
+
+<p style="background-color: #0f1012; border-radius: 6px; padding: 20px; font-family: monospace; font-size: 14px; line-height: 22pt; max-width: 100%; margin-bottom: 3em;">
+<span style="color: #8bee24;">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9</span><span style="color: #fff; margin-left: 4px;">.</span><span style="color: #fe3a9e; white-space: nowrap; display: inline-block;">eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ</span><span style="color: #fff; margin-left: 4px;">.</span><span style="color: #12a4d9; white-space: nowrap; display: inline-block;">SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</span>
+</p>
+
+<p>You can decode this JWT using the following commands.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Export the JWT string into a variable.</span>
+<span class="nv">$ </span><span class="nb">export </span><span class="nv">JWT</span><span class="o">=</span><span class="s1">'eyJhbGc....dQssw5c'</span>
+
+<span class="c"># Decode the header.</span>
+<span class="nv">$ </span><span class="nb">echo</span> <span class="nv">$JWT</span> <span class="nt">-s</span> | <span class="nb">cut</span> <span class="nt">-d</span> <span class="s1">'.'</span> <span class="nt">-f</span> 1 | <span class="nb">base64</span> <span class="nt">-d</span>
+<span class="o">{</span><span class="s2">"alg"</span>:<span class="s2">"HS256"</span>,<span class="s2">"typ"</span>:<span class="s2">"JWT"</span><span class="o">}</span>
+
+<span class="c"># Decode the payload.</span>
+<span class="nv">$ </span><span class="nb">echo</span> <span class="nv">$JWT</span> <span class="nt">-s</span> | <span class="nb">cut</span> <span class="nt">-d</span> <span class="s1">'.'</span> <span class="nt">-f</span> 2 | <span class="nb">base64</span> <span class="nt">-d</span>
+<span class="o">{</span><span class="s2">"sub"</span>:<span class="s2">"1234567890"</span>,<span class="s2">"name"</span>:<span class="s2">"John Doe"</span>,<span class="s2">"iat"</span>:1516239022<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="generating-a-jwt">Generating a JWT</h3>
+
+<p>Let’s now look at how you could generate your own JWT and sign it. In this example, I’ll be using a
+pair of public/private keys and sign the JWT using the RSA256 RSA algorithm.</p>
+
+<p>To generate an RSA256 signature for the JWT, we first need to generate a pair of public/private
+keys. This can be done like so:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>openssl genrsa <span class="nt">-des3</span> <span class="nt">-out</span> private_encrypted.pem 2048
+<span class="nv">$ </span>openssl rsa <span class="nt">-pubout</span> <span class="nt">-in</span> private_encrypted.pem <span class="nt">-out</span> public.pem
+<span class="nv">$ </span>openssl rsa <span class="nt">-in</span> private_encrypted.pem <span class="nt">-out</span> private.pem <span class="nt">-outform</span> PEM
+</code></pre></div></div>
+
+<p>Next, we can generate the JWT using the Python <a href="https://authlib.org/" title="Authlib">Authlib</a> library.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Code to generate the JWT.
+</span><span class="err">$</span> <span class="n">cat</span> <span class="o">&lt;&lt;</span><span class="n">EOF</span> <span class="o">|</span> <span class="n">python3</span> <span class="o">-</span>
+<span class="kn">from</span> <span class="nn">authlib.jose</span> <span class="kn">import</span> <span class="n">jwt</span>
+<span class="n">header</span> <span class="o">=</span> <span class="p">{</span><span class="s">'alg'</span><span class="p">:</span> <span class="s">'RS256'</span><span class="p">}</span>
+<span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s">'iss'</span><span class="p">:</span> <span class="s">'venilnoronha.io'</span><span class="p">,</span> <span class="s">'sub'</span><span class="p">:</span> <span class="s">'user1'</span><span class="p">,</span> <span class="s">'exp'</span><span class="p">:</span> <span class="mi">1257894000</span><span class="p">}</span>
+<span class="n">private_key</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s">'private.pem'</span><span class="p">,</span> <span class="s">'r'</span><span class="p">).</span><span class="n">read</span><span class="p">()</span>
+<span class="nb">bytes</span> <span class="o">=</span> <span class="n">jwt</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">private_key</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="nb">bytes</span><span class="p">.</span><span class="n">decode</span><span class="p">(</span><span class="s">'utf-8'</span><span class="p">))</span>
+<span class="n">EOF</span>
+
+<span class="c1"># The generated JWT.
+</span><span class="n">eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9</span><span class="p">.</span><span class="n">eyJpc3MiOiJ2ZW5pbG5vcm9uaGEuaW8iLCJzdWIiOiJ1c2VyMSIsImV4cCI6MTI1Nzg5NDAwMH0</span><span class="p">.</span><span class="n">fmMlvXcDrDw1_yCVUSxTFP0ptOEr94</span><span class="o">-</span><span class="n">Yo2QXGUc19qitYg8zpVWUkEBvty1dlsWw9nRkQUFzFoq6plYly_UbKQIbIFwoRepiicrqLDBFuNEnknks8c9</span><span class="o">-</span><span class="n">b5AMTZl6IrY7uWhjHquMR7zTRnLVjHaJYI_dH</span><span class="o">-</span><span class="n">wlMZpet5snGbGFl2HxfUm03HrdjVP0ICapPUUt5L0MZzu1CoJ1eoS0fceWf2nORZeIwhl45g4edlrHc3GwoTDa4GilS88W8UEFZxPs_GDYKpnv6Z5eMdccwa2H0FQEWxb717bBQHS2_C6oX3_MLkm86wXetg9_GVWQudHicI0x90BDRdX8GLrrU3rG1A</span>
+</code></pre></div></div>
+
+<p>Note that I have set the following 3 claims in the JWT payload.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">iss</code> identifies the issuer of the JWT.</li>
+  <li><code class="language-plaintext highlighter-rouge">sub</code> refers to the subject of the JWT.</li>
+  <li><code class="language-plaintext highlighter-rouge">exp</code> is the expiration time after which the JWT shouldn’t be accepted in the system.</li>
+</ul>
+
+<p>To learn more about JWT claims, you can refer <a href="https://tools.ietf.org/html/rfc7519" title="JWT RFC">this RFC</a>.</p>
+
+<h3 id="verifying-a-jwt">Verifying a JWT</h3>
+
+<p>We can use the same Authlib library to parse and validate the generated JWT as shown below.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Export the JWT to a variable.
+</span><span class="err">$</span> <span class="n">export</span> <span class="n">JWT</span><span class="o">=</span><span class="s">"eyJhbGc....rU3rG1A"</span>
+
+<span class="c1"># Code to verify the JWT.
+</span><span class="err">$</span> <span class="n">cat</span> <span class="o">&lt;&lt;</span><span class="n">EOF</span> <span class="o">|</span> <span class="n">python3</span> <span class="o">-</span>
+<span class="kn">from</span> <span class="nn">authlib.jose</span> <span class="kn">import</span> <span class="n">jwt</span>
+<span class="n">public_key</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s">'public.pem'</span><span class="p">,</span> <span class="s">'r'</span><span class="p">).</span><span class="n">read</span><span class="p">()</span>
+<span class="n">claims</span> <span class="o">=</span> <span class="n">jwt</span><span class="p">.</span><span class="n">decode</span><span class="p">(</span><span class="s">'$JWT'</span><span class="p">,</span> <span class="n">public_key</span><span class="p">)</span>
+<span class="n">claims</span><span class="p">.</span><span class="n">validate</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="n">claims</span><span class="p">)</span>
+<span class="n">EOF</span>
+
+<span class="c1"># The parsed claims from the JWT.
+</span><span class="p">{</span><span class="s">'iss'</span><span class="p">:</span> <span class="s">'venilnoronha.io'</span><span class="p">,</span> <span class="s">'sub'</span><span class="p">:</span> <span class="s">'user1'</span><span class="p">,</span> <span class="s">'exp'</span><span class="p">:</span> <span class="mi">1257894000</span><span class="p">}</span>
+</code></pre></div></div>
+
+<p>Web applications typically run these validations and process JWT claims for providing users access
+to resources. Although straightforward, this adds overhead on application developers and we can
+simplify this to a large extent using AuthN/AuthZ policies in Istio.</p>
+
+<h2 id="authnauthz-policies-in-istio">AuthN/AuthZ Policies in Istio</h2>
+
+<p>Istio supports mainly 2 Kubernetes CRDs (Custom Resource Definitions) in the context of AuthZ/AuthZ.</p>
+
+<ul>
+  <li><a href="https://istio.io/latest/docs/reference/config/security/request_authentication/#RequestAuthentication" title="RequestAuthentication"><code class="language-plaintext highlighter-rouge">RequestAuthentication</code></a> enables authentication of requests based on
+authentication information in requests, and configured rules.</li>
+  <li><a href="https://istio.io/latest/docs/reference/config/security/authorization-policy/#AuthorizationPolicy" title="AuthorizationPolicy"><code class="language-plaintext highlighter-rouge">AuthorizationPolicy</code></a> enables authorization of requests based on apply/deny
+rules configured for a workload.</li>
+</ul>
+
+<h3 id="requestauthentication-in-istio">RequestAuthentication in Istio</h3>
+
+<p>Let’s now look at a <code class="language-plaintext highlighter-rouge">RequestAuthentication</code> policy in action. To do that I’ll first deploy the
+<em>httpbin</em> and <em>sleep</em> applications into my cluster and make a few HTTP requests to observe the
+behavior.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Deploy the httpbin and sleep applications.</span>
+<span class="nv">$ </span>kubectl apply <span class="nt">-f</span> istio-1.9.0/samples/httpbin/httpbin.yaml
+<span class="nv">$ </span>kubectl apply <span class="nt">-f</span> istio-1.9.0/samples/sleep/sleep.yaml
+
+<span class="c"># Create an alias for executing the curl command from within the sleep pod.</span>
+<span class="nv">$ </span><span class="nb">alias </span><span class="nv">kcurl</span><span class="o">=</span><span class="s2">"kubectl exec sleep-67d8bf54cb-fh5x2 -- curl"</span>
+
+<span class="c"># Send an HTTP GET request from the sleep pod to the httpbin service.</span>
+<span class="nv">$ </span>kcurl <span class="nt">-sI</span> <span class="nt">-X</span> GET httpbin:8000/get | <span class="nb">head</span> <span class="nt">-n1</span>
+HTTP/1.1 200 OK
+
+<span class="c"># Send an HTTP POST request from the sleep pod to the httpbin service.</span>
+<span class="nv">$ </span>kcurl <span class="nt">-sI</span> <span class="nt">-X</span> POST httpbin:8000/post | <span class="nb">head</span> <span class="nt">-n1</span>
+HTTP/1.1 200 OK
+</code></pre></div></div>
+
+<p>Next, we can apply a <code class="language-plaintext highlighter-rouge">RequestAuthentication</code> policy to validate JWTs that are sent in the requests
+to perform authentication. To do that, we’ll first generate a JWK (JSON Web Key) from the public key
+we previously generated.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Code to generate the JWK.
+</span><span class="err">$</span> <span class="n">cat</span> <span class="o">&lt;&lt;</span><span class="n">EOF</span> <span class="o">|</span> <span class="n">python3</span> <span class="o">-</span>
+<span class="kn">from</span> <span class="nn">authlib.jose</span> <span class="kn">import</span> <span class="n">jwk</span>
+<span class="n">public_key</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s">'public.pem'</span><span class="p">,</span> <span class="s">'r'</span><span class="p">).</span><span class="n">read</span><span class="p">()</span>
+<span class="n">key</span> <span class="o">=</span> <span class="n">jwk</span><span class="p">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">public_key</span><span class="p">,</span> <span class="n">kty</span><span class="o">=</span><span class="s">'RSA'</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="n">EOF</span>
+
+<span class="c1"># The generated JWK.
+</span><span class="p">{</span><span class="s">'n'</span><span class="p">:</span> <span class="s">'ueebNpkIO0Jxog3U9NEQbgix8BV0MQZAvjIFnGs4OpL8_W2xJBFORcDJFE58bR0MMfnrD342hQMkOmGKoBoBzu01D5aoPR0TIusLk8JeLwa7x8uC5gSCOAbpkIhRrYGhMs0LtsQP481p5mdZuzIbLpWn7yHf1KV1Tq7wsWlT7y1xA52msa2rN_z7loUaaRJ2OBSIeFzkhD8IS2kRLCjGdove3kUXtTy2KzlyNMVo_2GjK0lrydZwlXlD8CUDMVYSpQUOOeH_LMFf2otu92UAUsEEcxvHaTPJ1GWCp7qhyy5q6V1GA5K-1ZfUUZr_CuChmITeXF9lV2701fwWCfhILQ'</span><span class="p">,</span> <span class="s">'e'</span><span class="p">:</span> <span class="s">'AQAB'</span><span class="p">,</span> <span class="s">'kty'</span><span class="p">:</span> <span class="s">'RSA'</span><span class="p">}</span>
+</code></pre></div></div>
+
+<p>At this point, we can create the Istio <code class="language-plaintext highlighter-rouge">RequestAuthentication</code> policy to validate JWTs in incoming
+requests to <em>httpbin</em>. Note that you could also provide the JWK by setting the <code class="language-plaintext highlighter-rouge">jwksUri</code> instead of
+passing in the JSON object in the <code class="language-plaintext highlighter-rouge">jwks</code> field.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">cat</span> <span class="o">&lt;&lt;</span><span class="no">EOF</span><span class="sh"> | kubectl apply -f -
+apiVersion: security.istio.io/v1beta1
+kind: RequestAuthentication
+metadata:
+  name: request-auth
+spec:
+  selector:
+    matchLabels:
+      app: httpbin
+  jwtRules:
+  - forwardOriginalToken: true
+    issuer: venilnoronha.io
+    jwks: |
+      {'keys': [{'n': 'ueebNpk....WCfhILQ', 'e': 'AQAB', 'kty': 'RSA'}]}
+</span><span class="no">EOF
+</span></code></pre></div></div>
+
+<p>To verify that the authentication policy is in effect, we can send 2 requests from the <em>sleep</em>
+application to the <em>httpbin</em> application, one with an expired JWT and one with a valid JWT. You can
+easily generate these JWTs using the code snippet from the <a href="#generating-a-jwt">Generating a JWT</a>
+section and using the payload as described below.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Payload for generating an expired JWT.
+</span><span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s">'iss'</span><span class="p">:</span> <span class="s">'venilnoronha.io'</span><span class="p">,</span> <span class="s">'sub'</span><span class="p">:</span> <span class="s">'user1'</span><span class="p">,</span> <span class="s">'exp'</span><span class="p">:</span> <span class="mi">1257894000</span><span class="p">}</span>
+
+<span class="c1"># Payload for generating a JWT without expiry.
+</span><span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s">'iss'</span><span class="p">:</span> <span class="s">'venilnoronha.io'</span><span class="p">,</span> <span class="s">'sub'</span><span class="p">:</span> <span class="s">'user1'</span><span class="p">}</span>
+</code></pre></div></div>
+
+<p>We can now send requests and verify the behavior.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># JWT verification fails.</span>
+<span class="nv">$ </span><span class="nb">export </span><span class="nv">EXPIRED_JWT</span><span class="o">=</span>eyJhbGc...rU3rG1A
+<span class="nv">$ </span>kcurl <span class="nt">-sI</span> <span class="nt">-H</span> <span class="s2">"Authorization: Bearer </span><span class="nv">$EXPIRED_JWT</span><span class="s2">"</span> <span class="nt">-X</span> GET httpbin:8000/get | <span class="nb">head</span> <span class="nt">-n1</span>
+HTTP/1.1 401 Unauthorized
+
+<span class="c"># JWT verification succeeds.</span>
+<span class="nv">$ </span><span class="nb">export </span><span class="nv">VALID_JWT</span><span class="o">=</span>eyJhbGc...8qLwfAA
+<span class="nv">$ </span>kcurl <span class="nt">-sI</span> <span class="nt">-H</span> <span class="s2">"Authorization: Bearer </span><span class="nv">$VALID_JWT</span><span class="s2">"</span> <span class="nt">-X</span> GET httpbin:8000/get | <span class="nb">head</span> <span class="nt">-n1</span>
+HTTP/1.1 200 OK
+</code></pre></div></div>
+
+<p>Note that by default Istio will validate the JWT only if the <code class="language-plaintext highlighter-rouge">Authorization</code> header is specified. If
+not, it will allow the request unless there’s also a <code class="language-plaintext highlighter-rouge">AuthorizationPolicy</code> defined to reject it.</p>
+
+<h3 id="authorizationpolicy-in-istio">AuthorizationPolicy in Istio</h3>
+
+<p>Now that we understand how Istio performs authorization, we can go one step further and define a
+<code class="language-plaintext highlighter-rouge">AuthorizationPolicy</code> to perform access control using JWT claims. We can begin by creating a new
+valid JWT for another user <code class="language-plaintext highlighter-rouge">user2</code> using the following payload.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s">'iss'</span><span class="p">:</span> <span class="s">'venilnoronha.io'</span><span class="p">,</span> <span class="s">'sub'</span><span class="p">:</span> <span class="s">'user2'</span><span class="p">}</span>
+</code></pre></div></div>
+
+<p>We can now apply a simple <code class="language-plaintext highlighter-rouge">AuthorizationPolicy</code> to allow <code class="language-plaintext highlighter-rouge">user1</code> to only make <code class="language-plaintext highlighter-rouge">GET</code> calls, and for
+<code class="language-plaintext highlighter-rouge">user2</code> to make calls only to the <code class="language-plaintext highlighter-rouge">/status/*</code> endpoints.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">cat</span> <span class="o">&lt;&lt;</span><span class="no">EOF</span><span class="sh"> | kubectl apply -f -
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: auth-policy
+spec:
+  selector:
+    matchLabels:
+      app: httpbin
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        requestPrincipals: ["venilnoronha.io/user1"]
+    to:
+    - operation:
+        methods: ["GET"]
+  - from:
+    - source:
+        requestPrincipals: ["venilnoronha.io/user2"]
+    to:
+    - operation:
+        paths: ["/status/*"]
+</span><span class="no">EOF
+</span></code></pre></div></div>
+
+<p>In this example, I’ve set <code class="language-plaintext highlighter-rouge">action</code> to <code class="language-plaintext highlighter-rouge">ALLOW</code>, but you could specify policies with <code class="language-plaintext highlighter-rouge">action</code> set
+to <code class="language-plaintext highlighter-rouge">DENY</code> in which case those rules will be evaluated prior to rules that have it set to <code class="language-plaintext highlighter-rouge">ALLOW</code>.</p>
+
+<p>Let’s make a few requests and observe the behavior of Istio with this authorization policy.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Export the JWT for user2 into a variable.</span>
+<span class="nv">$ </span><span class="nb">export </span><span class="nv">VALID_JWT2</span><span class="o">=</span>eyJhbGc....AWO0LZw
+
+<span class="c"># GET /headers returns a valid response for the JWT token for user1.</span>
+<span class="nv">$ </span>kcurl <span class="nt">-sI</span> <span class="nt">-H</span> <span class="s2">"Authorization: Bearer </span><span class="nv">$VALID_JWT</span><span class="s2">"</span> <span class="nt">-X</span> GET httpbin:8000/headers | <span class="nb">head</span> <span class="nt">-n1</span>
+HTTP/1.1 200 OK
+
+<span class="c"># GET /get returns a valid response for the JWT token for user1.</span>
+<span class="nv">$ </span>kcurl <span class="nt">-sI</span> <span class="nt">-H</span> <span class="s2">"Authorization: Bearer </span><span class="nv">$VALID_JWT</span><span class="s2">"</span> <span class="nt">-X</span> GET httpbin:8000/get | <span class="nb">head</span> <span class="nt">-n1</span>
+HTTP/1.1 200 OK
+
+<span class="c"># POST /post returns an error for the JWT token for user1.</span>
+<span class="nv">$ </span>kcurl <span class="nt">-sI</span> <span class="nt">-H</span> <span class="s2">"Authorization: Bearer </span><span class="nv">$VALID_JWT</span><span class="s2">"</span> <span class="nt">-X</span> POST httpbin:8000/post | <span class="nb">head</span> <span class="nt">-n1</span>
+HTTP/1.1 403 Forbidden
+
+<span class="c"># GET /get returns an error for the JWT token for user2.</span>
+<span class="nv">$ </span>kcurl <span class="nt">-sI</span> <span class="nt">-H</span> <span class="s2">"Authorization: Bearer </span><span class="nv">$VALID_JWT2</span><span class="s2">"</span> <span class="nt">-X</span> GET httpbin:8000/get | <span class="nb">head</span> <span class="nt">-n1</span>
+HTTP/1.1 403 Forbidden
+
+<span class="c"># GET /status/418 returns a valid response for the JWT token for user2.</span>
+<span class="nv">$ </span>kcurl <span class="nt">-s</span> <span class="nt">-H</span> <span class="s2">"Authorization: Bearer </span><span class="nv">$VALID_JWT2</span><span class="s2">"</span> <span class="nt">-X</span> GET httpbin:8000/status/418
+
+    -<span class="o">=[</span> teapot <span class="o">]=</span>-
+
+       _...._
+     .<span class="s1">'  _ _ `.
+    | ."` ^ `". _,
+    \_;`"---"`|//
+      |       ;/
+      \_     _/
+        `"""`
+</span></code></pre></div></div>
+
+<p>In my examples above, policies were specifically applied to the <em>httpbin</em> application using the
+<code class="language-plaintext highlighter-rouge">selector</code> attribute, but you could apply such policies to the Istio gateways too.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Istio can easily perform AuthN and AuthZ using simple policies as we observed in the examples above.
+This can greatly simplify the life of application developers as access control is taken care of by
+the service mesh itself. I used a simple HTTP application to showcase the power of policies in
+Istio; however, you could apply similar policies for <a href="https://grpc.io/" title="gRPC">gRPC</a> traffic too. These policies can be
+further customized by specifying conditions using other supported attributes defined
+<a href="https://istio.io/latest/docs/reference/config/security/conditions/#supported-conditions" title="Supported Conditions">on this page</a>.</p>
+
+<hr />
+
+<p>I’d love to hear your feedback!</p>
+
+<p><strong>Disclaimer:</strong> My postings are my own and don’t necessarily represent VMware’s positions, strategies or opinions.</p>
+
+                </div>
+            </section>
+
+            <!-- Email subscribe form at the bottom of the page -->
+            
+
+            <footer class="post-full-footer">
+                <!-- Everything inside the #author tags pulls data from the author -->
+                <!-- #author-->
+                
+                    
+                        <section class="author-card">
+                            
+                                <img class="author-profile-image" src="/assets/images/venilnoronha.jpg" alt="venilnoronha" />
+                            
+                            <section class="author-card-content">
+                                <h4 class="author-card-name">
+                                    
+                                        <a href="/about/">Venil Noronha</a>
+                                    
+                                </h4>
+                                
+                                    <p>Open Source Enthusiast</p>
+                                
+                                <p style="margin-top: 2px;">
+                                    <a href="https://github.com/venilnoronha" target="_blank" rel="noopener">GitHub</a> |
+                                    
+                                    <a href="https://twitter.com/venilnoronha" target="_blank" rel="noopener">Twitter</a> |
+                                    <a href="https://instagram.com/venilnoronha" target="_blank" rel="noopener">Instagram</a> |
+                                    <a href="https://linkedin.com/in/venilnoronha" target="_blank" rel="noopener">LinkedIn</a>
+                                </p>
+                            </section>
+                        </section>
+                        <div class="post-full-footer-right">
+                            <a class="author-card-button" href="/author/venilnoronha">Read More</a>
+                        </div>
+                    
+                
+                <!-- /author  -->
+            </footer>
+
+            <!-- If you use Disqus comments, just uncomment this block.
+            The only thing you need to change is "test-apkdzgmqhj" - which
+            should be replaced with your own Disqus site-id. -->
+            
+                <section class="post-full-comments">
+                    <div id="disqus_thread"></div>
+                    <script>
+                        var disqus_config = function () {
+                            this.page.url = 'https://venilnoronha.io/a-beginners-guide-to-authn-and-authz-with-istio';
+                            this.page.identifier = 'A Beginner's Guide to AuthN and AuthZ with Istio';
+                        };
+                        (function() {
+                            var d = document, s = d.createElement('script');
+                            s.src = 'https://venilnoronha-io.disqus.com/embed.js';
+                            s.setAttribute('data-timestamp', +new Date());
+                            (d.head || d.body).appendChild(s);
+                        })();
+                    </script>
+                </section>
+            
+
+        </article>
+
+    </div>
+</main>
+
+<!-- Links to Previous/Next posts -->
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+            
+                
+                
+                
+                
+                    <article class="read-next-card"
+                        
+                            style="background-image: url(/assets/images/blog-cover.jpg)"
+                        
+                    >
+                        <header class="read-next-card-header">
+                            <small class="read-next-card-header-sitetitle">&mdash; Venil Noronha &mdash;</small>
+                            
+                                <h3 class="read-next-card-header-title"><a href="/tag/distributed-systems/">Distributed systems</a></h3>
+                            
+                        </header>
+                        <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
+</div>
+                        <div class="read-next-card-content">
+                            <ul>
+                                
+                                
+                                  
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/a-simple-state-machine-framework-in-go">A Simple State Machine Framework in Go</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/how-to-write-envoy-filters-like-a-ninja">How to Write Envoy Filters Like a Ninja!</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/hand-crafting-a-sidecar-proxy-and-demystifying-istio">Hand-crafting a Sidecar Proxy and Demystifying Istio</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                            </ul>
+                        </div>
+                        <footer class="read-next-card-footer">
+                            <a href="/tag/distributed-systems/">
+                                
+                                    See all 12 posts  →
+                                
+                            </a>
+                        </footer>
+                    </article>
+                
+            
+
+            <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
+            
+
+            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+    <article class="post-card post-template">
+        
+            <a class="post-card-image-link" href="/a-simple-state-machine-framework-in-go">
+                <div class="post-card-image" style="background-image: url(/assets/images/2020-05-24-a-simple-state-machine-framework-in-go/banner.jpg)"></div>
+            </a>
+        
+        <div class="post-card-content">
+            <a class="post-card-content-link" href="/a-simple-state-machine-framework-in-go">
+                <header class="post-card-header">
+                    
+                        
+                            
+                                <span class="post-card-tags">Distributed systems</span>
+                            
+                        
+                    
+
+                    <h2 class="post-card-title">A Simple State Machine Framework in Go</h2>
+                </header>
+                <section class="post-card-excerpt">
+                    <p>The concept of State Machines is not new, and they form the core of a lot of systems that we come across daily, for example, elevators and traffic lights. State machines make it</p>
+                </section>
+            </a>
+            <footer class="post-card-meta">
+                
+                    
+                        
+                        <img class="author-profile-image" src="/assets/images/venilnoronha.jpg" alt="Venil Noronha" />
+                        
+                        <span class="post-card-author">
+                            
+                                <a href="/about/">Venil Noronha</a>
+                            
+                        </span>
+                    
+                
+            </footer>
+        </div>
+    </article>
+
+            
+
+        </div>
+    </div>
+</aside>
+
+<!-- Floating header which appears on-scroll, included from includes/floating-header.hbs -->
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="https://venilnoronha.io/">
+            
+                <img src="/assets/images/favicon.png" alt="Venil Noronha icon" />
+            
+            <span>Venil Noronha</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">&mdash;</span>
+    <div class="floating-header-title">A Beginner's Guide to AuthN and AuthZ with Istio</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
+</svg>
+</div>
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=A+Beginner%27s+Guide+to+AuthN+and+AuthZ+with+Istio&amp;url=https://venilnoronha.io/a-beginners-guide-to-authn-and-authz-with-istio"
+            onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+
+        </a>
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://venilnoronha.io/a-beginners-guide-to-authn-and-authz-with-istio"
+            onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
+
+        </a>
+    </div>
+    <progress class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+<!-- /post -->
+
+<!-- The #contentFor helper here will send everything inside it up to the matching #block helper found in default.hbs -->
+
+
+        <!-- Previous/next page links - displayed on every page -->
+        
+
+        <!-- The footer at the very bottom of the screen -->
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="https://venilnoronha.io/">Venil Noronha</a> &copy; 2021</section>
+                <section class="poweredby">Proudly published with <a href="https://jekyllrb.com/">Jekyll</a> &
+                    <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> using
+                    <a href="https://github.com/jekyller/jasper2" target="_blank" rel="noopener">Jasper2</a></section>
+                <nav class="site-footer-nav">
+                    <a href="https://github.com/venilnoronha" target="_blank" rel="noopener">GitHub</a>
+                    
+                    <a href="https://twitter.com/venilnoronha" target="_blank" rel="noopener">Twitter</a>
+                    <a href="https://instagram.com/venilnoronha" target="_blank" rel="noopener">Instagram</a>
+                    <a href="https://linkedin.com/in/venilnoronha" target="_blank" rel="noopener">LinkedIn</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- The big email subscribe modal content -->
+    
+
+    <!-- highlight.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.10.0/components/prism-abap.min.js"></script>
+    <script>$(document).ready(function() {
+      $('pre code').each(function(i, block) {
+        hljs.highlightBlock(block);
+      });
+    });</script>
+
+    <!-- jQuery + Fitvids, which makes all video embeds responsive -->
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="https://demo.ghost.io/assets/js/jquery.fitvids.js?v=724281a32e"></script>
+
+
+    <!-- Paginator increased to "infinit" in _config.yml -->
+    <!-- if paginator.posts  -->
+    <!-- <script>
+        var maxPages = parseInt('');
+    </script>
+    <script src="/assets/js/infinitescroll.js"></script> -->
+    <!-- /endif -->
+
+    
+
+
+    <!-- Add Google Analytics  -->
+    <!-- Google Analytics Tracking code -->
+ <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-109280867-1', 'auto');
+  ga('send', 'pageview');
+
+ </script>
+
+
+    <!-- The #block helper will pull in data from the #contentFor other template files. In this case, there's some JavaScript which we only want to use in post.hbs, but it needs to be included down here, after jQuery has already loaded. -->
+    
+        <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+});
+</script>
+
+    
+
+    <!-- Ghost outputs important scripts and data with this tag - it should always be the very last thing before the closing body tag -->
+    <!-- ghost_foot -->
+
+</body>
+</html>

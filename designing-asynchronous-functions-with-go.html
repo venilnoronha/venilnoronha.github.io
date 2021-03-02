@@ -187,97 +187,97 @@ into the {body} of the default.hbs template -->
 
 <h2 id="the-design">The Design</h2>
 
-<p>Let’s dive right in to the asynchronous design. The following function promises to return <code class="highlighter-rouge">Flight</code> or <code class="highlighter-rouge">error</code> instances via the returned channels. The <code class="highlighter-rouge">Context</code> object can be used to explicitly stop the asynchronous function.</p>
+<p>Let’s dive right in to the asynchronous design. The following function promises to return <code class="language-plaintext highlighter-rouge">Flight</code> or <code class="language-plaintext highlighter-rouge">error</code> instances via the returned channels. The <code class="language-plaintext highlighter-rouge">Context</code> object can be used to explicitly stop the asynchronous function.</p>
 
-<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span><span class="x"> </span><span class="n">AsyncListFlights</span><span class="p">(</span><span class="n">ctx</span><span class="x"> </span><span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span><span class="x"> </span><span class="n">q</span><span class="x"> </span><span class="n">SimpleQuery</span><span class="p">)</span><span class="x"> </span><span class="p">(</span><span class="o">&lt;-</span><span class="k">chan</span><span class="x"> </span><span class="n">Flight</span><span class="p">,</span><span class="x"> </span><span class="o">&lt;-</span><span class="k">chan</span><span class="x"> </span><span class="kt">error</span><span class="p">)</span><span class="x"> </span><span class="p">{</span><span class="x">
-    </span><span class="n">flightsChan</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="nb">make</span><span class="p">(</span><span class="k">chan</span><span class="x"> </span><span class="n">Flight</span><span class="p">,</span><span class="x"> </span><span class="m">10</span><span class="p">)</span><span class="x"> </span><span class="c">// Channel buffers 10 Flight objects</span><span class="x">
-    </span><span class="n">errorsChan</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="nb">make</span><span class="p">(</span><span class="k">chan</span><span class="x"> </span><span class="kt">error</span><span class="p">,</span><span class="x"> </span><span class="m">1</span><span class="p">)</span><span class="x"> </span><span class="c">// Channel buffers only a single error</span><span class="x">
-    </span><span class="k">go</span><span class="x"> </span><span class="n">asyncListFlights</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span><span class="x"> </span><span class="n">q</span><span class="p">,</span><span class="x"> </span><span class="n">flightsChan</span><span class="p">,</span><span class="x"> </span><span class="n">errorsChan</span><span class="p">)</span><span class="x"> </span><span class="c">// Create a goroutine here</span><span class="x">
-    </span><span class="k">return</span><span class="x"> </span><span class="n">flightsChan</span><span class="p">,</span><span class="x"> </span><span class="n">errorsChan</span><span class="x"> </span><span class="c">// Return immediately</span><span class="x">
-</span><span class="p">}</span><span class="x">
-</span></code></pre></div></div>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">AsyncListFlights</span><span class="p">(</span><span class="n">ctx</span> <span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span> <span class="n">q</span> <span class="n">SimpleQuery</span><span class="p">)</span> <span class="p">(</span><span class="o">&lt;-</span><span class="k">chan</span> <span class="n">Flight</span><span class="p">,</span> <span class="o">&lt;-</span><span class="k">chan</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">flightsChan</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="k">chan</span> <span class="n">Flight</span><span class="p">,</span> <span class="m">10</span><span class="p">)</span> <span class="c">// Channel buffers 10 Flight objects</span>
+    <span class="n">errorsChan</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="k">chan</span> <span class="kt">error</span><span class="p">,</span> <span class="m">1</span><span class="p">)</span> <span class="c">// Channel buffers only a single error</span>
+    <span class="k">go</span> <span class="n">asyncListFlights</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">flightsChan</span><span class="p">,</span> <span class="n">errorsChan</span><span class="p">)</span> <span class="c">// Create a goroutine here</span>
+    <span class="k">return</span> <span class="n">flightsChan</span><span class="p">,</span> <span class="n">errorsChan</span> <span class="c">// Return immediately</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <p>Fetching flights from third-party APIs could be done as below.</p>
 
-<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span><span class="x"> </span><span class="n">asyncListFlights</span><span class="p">(</span><span class="n">ctx</span><span class="x"> </span><span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span><span class="x"> </span><span class="n">q</span><span class="x"> </span><span class="n">SimpleQuery</span><span class="p">,</span><span class="x">
-        </span><span class="n">flightsChan</span><span class="x"> </span><span class="k">chan</span><span class="o">&lt;-</span><span class="x"> </span><span class="n">Flight</span><span class="p">,</span><span class="x"> </span><span class="n">errorsChan</span><span class="x"> </span><span class="k">chan</span><span class="o">&lt;-</span><span class="x"> </span><span class="kt">error</span><span class="p">)</span><span class="x"> </span><span class="p">{</span><span class="x">
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">asyncListFlights</span><span class="p">(</span><span class="n">ctx</span> <span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span> <span class="n">q</span> <span class="n">SimpleQuery</span><span class="p">,</span>
+        <span class="n">flightsChan</span> <span class="k">chan</span><span class="o">&lt;-</span> <span class="n">Flight</span><span class="p">,</span> <span class="n">errorsChan</span> <span class="k">chan</span><span class="o">&lt;-</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
 
-    </span><span class="k">defer</span><span class="x"> </span><span class="nb">close</span><span class="p">(</span><span class="n">flightsChan</span><span class="p">)</span><span class="x"> </span><span class="c">// Signal the end of stream</span><span class="x">
-    </span><span class="k">defer</span><span class="x"> </span><span class="nb">close</span><span class="p">(</span><span class="n">errorsChan</span><span class="p">)</span><span class="x"> </span><span class="c">// Signal the end of stream</span><span class="x">
+    <span class="k">defer</span> <span class="nb">close</span><span class="p">(</span><span class="n">flightsChan</span><span class="p">)</span> <span class="c">// Signal the end of stream</span>
+    <span class="k">defer</span> <span class="nb">close</span><span class="p">(</span><span class="n">errorsChan</span><span class="p">)</span> <span class="c">// Signal the end of stream</span>
 
-    </span><span class="k">for</span><span class="x"> </span><span class="p">{</span><span class="x"> </span><span class="c">// Fetch third-party results as long as is necessary</span><span class="x">
-        </span><span class="k">select</span><span class="x"> </span><span class="p">{</span><span class="x">
-        </span><span class="k">case</span><span class="x"> </span><span class="o">&lt;-</span><span class="n">ctx</span><span class="o">.</span><span class="n">Done</span><span class="p">()</span><span class="o">:</span><span class="x"> </span><span class="c">// Context was done (timeout, cancel, etc.)</span><span class="x">
-            </span><span class="n">errorschan</span><span class="x"> </span><span class="o">&lt;-</span><span class="x"> </span><span class="n">ctx</span><span class="o">.</span><span class="n">Err</span><span class="p">()</span><span class="x"> </span><span class="c">// If canceled, ctx.Err() would return the context.Canceled error</span><span class="x">
-            </span><span class="k">return</span><span class="x">
-        </span><span class="k">default</span><span class="o">:</span><span class="x">
-        </span><span class="p">}</span><span class="x">
+    <span class="k">for</span> <span class="p">{</span> <span class="c">// Fetch third-party results as long as is necessary</span>
+        <span class="k">select</span> <span class="p">{</span>
+        <span class="k">case</span> <span class="o">&lt;-</span><span class="n">ctx</span><span class="o">.</span><span class="n">Done</span><span class="p">()</span><span class="o">:</span> <span class="c">// Context was done (timeout, cancel, etc.)</span>
+            <span class="n">errorschan</span> <span class="o">&lt;-</span> <span class="n">ctx</span><span class="o">.</span><span class="n">Err</span><span class="p">()</span> <span class="c">// If canceled, ctx.Err() would return the context.Canceled error</span>
+            <span class="k">return</span>
+        <span class="k">default</span><span class="o">:</span>
+        <span class="p">}</span>
 
-        </span><span class="n">flights</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">fetchResultsFromThirdParty</span><span class="p">(</span><span class="n">q</span><span class="p">,</span><span class="x"> </span><span class="m">5</span><span class="p">)</span><span class="x"> </span><span class="c">// Fetch 5 results from third-party</span><span class="x">
-        </span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
-            </span><span class="n">errorsChan</span><span class="x"> </span><span class="o">&lt;-</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="c">// Publish any error</span><span class="x">
-            </span><span class="k">return</span><span class="x">
-        </span><span class="p">}</span><span class="x">
-        </span><span class="k">if</span><span class="x"> </span><span class="nb">len</span><span class="p">(</span><span class="n">flights</span><span class="p">)</span><span class="x"> </span><span class="o">==</span><span class="x"> </span><span class="m">0</span><span class="x"> </span><span class="p">{</span><span class="x"> </span><span class="c">// Close channels and exit</span><span class="x">
-            </span><span class="k">return</span><span class="x">
-        </span><span class="p">}</span><span class="x">
-        </span><span class="k">for</span><span class="x"> </span><span class="n">_</span><span class="p">,</span><span class="x"> </span><span class="n">flight</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="k">range</span><span class="x"> </span><span class="n">flights</span><span class="x"> </span><span class="p">{</span><span class="x"> </span><span class="c">// Publish Flight instances</span><span class="x">
-            </span><span class="n">flightsChan</span><span class="x"> </span><span class="o">&lt;-</span><span class="x"> </span><span class="n">flight</span><span class="x">
-        </span><span class="p">}</span><span class="x">
-    </span><span class="p">}</span><span class="x">
-</span><span class="p">}</span><span class="x">
-</span></code></pre></div></div>
+        <span class="n">flights</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">fetchResultsFromThirdParty</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="m">5</span><span class="p">)</span> <span class="c">// Fetch 5 results from third-party</span>
+        <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+            <span class="n">errorsChan</span> <span class="o">&lt;-</span> <span class="n">err</span> <span class="c">// Publish any error</span>
+            <span class="k">return</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">flights</span><span class="p">)</span> <span class="o">==</span> <span class="m">0</span> <span class="p">{</span> <span class="c">// Close channels and exit</span>
+            <span class="k">return</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">flight</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">flights</span> <span class="p">{</span> <span class="c">// Publish Flight instances</span>
+            <span class="n">flightsChan</span> <span class="o">&lt;-</span> <span class="n">flight</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
-<p>Briefly, the <code class="highlighter-rouge">asyncListFlights</code> function is fetching <code class="highlighter-rouge">Flight</code> instances from third-party APIs in small batches, and publishing results/errors over channels. It’s also listening to the <code class="highlighter-rouge">ctx.Done()</code> channel, and would stop fetching more results if the <code class="highlighter-rouge">Context</code> was explicitly canceled.</p>
+<p>Briefly, the <code class="language-plaintext highlighter-rouge">asyncListFlights</code> function is fetching <code class="language-plaintext highlighter-rouge">Flight</code> instances from third-party APIs in small batches, and publishing results/errors over channels. It’s also listening to the <code class="language-plaintext highlighter-rouge">ctx.Done()</code> channel, and would stop fetching more results if the <code class="language-plaintext highlighter-rouge">Context</code> was explicitly canceled.</p>
 
-<p>That’s it! We’ve already addressed challenge 1. Let’s apply the complex filters to these <code class="highlighter-rouge">Flight</code> instances, and publish them to the user now.</p>
+<p>That’s it! We’ve already addressed challenge 1. Let’s apply the complex filters to these <code class="language-plaintext highlighter-rouge">Flight</code> instances, and publish them to the user now.</p>
 
-<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span><span class="x"> </span><span class="n">streamFlights</span><span class="p">(</span><span class="n">q</span><span class="x"> </span><span class="n">ComplexQuery</span><span class="p">,</span><span class="x"> </span><span class="n">numFlights</span><span class="x"> </span><span class="kt">int</span><span class="p">)</span><span class="x"> </span><span class="p">{</span><span class="x">
-    </span><span class="n">ctx</span><span class="p">,</span><span class="x"> </span><span class="n">cancel</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">context</span><span class="o">.</span><span class="n">WithCancel</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">Background</span><span class="p">())</span><span class="x"> </span><span class="c">// Create a cancelable context</span><span class="x">
-    </span><span class="k">defer</span><span class="x"> </span><span class="n">cancel</span><span class="p">()</span><span class="x"> </span><span class="c">// Prevent context from leaking</span><span class="x">
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">streamFlights</span><span class="p">(</span><span class="n">q</span> <span class="n">ComplexQuery</span><span class="p">,</span> <span class="n">numFlights</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">ctx</span><span class="p">,</span> <span class="n">cancel</span> <span class="o">:=</span> <span class="n">context</span><span class="o">.</span><span class="n">WithCancel</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">Background</span><span class="p">())</span> <span class="c">// Create a cancelable context</span>
+    <span class="k">defer</span> <span class="n">cancel</span><span class="p">()</span> <span class="c">// Prevent context from leaking</span>
 
-    </span><span class="n">flightsChan</span><span class="p">,</span><span class="x"> </span><span class="n">errorsChan</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">AsyncListFlights</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span><span class="x"> </span><span class="n">simplifyQuery</span><span class="p">(</span><span class="n">q</span><span class="p">))</span><span class="x"> </span><span class="c">// Start the async func</span><span class="x">
+    <span class="n">flightsChan</span><span class="p">,</span> <span class="n">errorsChan</span> <span class="o">:=</span> <span class="n">AsyncListFlights</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">simplifyQuery</span><span class="p">(</span><span class="n">q</span><span class="p">))</span> <span class="c">// Start the async func</span>
 
-    </span><span class="k">var</span><span class="x"> </span><span class="n">numPublished</span><span class="x"> </span><span class="kt">int32</span><span class="x"> </span><span class="c">// Counter to count published flights</span><span class="x">
-    </span><span class="k">var</span><span class="x"> </span><span class="n">wg</span><span class="x"> </span><span class="n">sync</span><span class="o">.</span><span class="n">WorkGroup</span><span class="x"> </span><span class="c">// Create a synchronizing WorkGroup</span><span class="x">
+    <span class="k">var</span> <span class="n">numPublished</span> <span class="kt">int32</span> <span class="c">// Counter to count published flights</span>
+    <span class="k">var</span> <span class="n">wg</span> <span class="n">sync</span><span class="o">.</span><span class="n">WorkGroup</span> <span class="c">// Create a synchronizing WorkGroup</span>
 
-    </span><span class="k">for</span><span class="x"> </span><span class="n">i</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="m">0</span><span class="p">;</span><span class="x"> </span><span class="n">i</span><span class="x"> </span><span class="o">&lt;</span><span class="x"> </span><span class="n">numWorkers</span><span class="p">;</span><span class="x"> </span><span class="n">i</span><span class="o">++</span><span class="x"> </span><span class="p">{</span><span class="x"> </span><span class="c">// Spawn worker goroutines</span><span class="x">
-        </span><span class="n">wg</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="m">1</span><span class="p">)</span><span class="x"> </span><span class="c">// Increment WorkGroup counter</span><span class="x">
-        </span><span class="k">go</span><span class="x"> </span><span class="k">func</span><span class="p">()</span><span class="x"> </span><span class="p">{</span><span class="x">
-            </span><span class="k">defer</span><span class="x"> </span><span class="n">wg</span><span class="o">.</span><span class="n">Done</span><span class="p">()</span><span class="x"> </span><span class="c">// Decrement WorkGroup counter</span><span class="x">
+    <span class="k">for</span> <span class="n">i</span> <span class="o">:=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">numWorkers</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span> <span class="p">{</span> <span class="c">// Spawn worker goroutines</span>
+        <span class="n">wg</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="m">1</span><span class="p">)</span> <span class="c">// Increment WorkGroup counter</span>
+        <span class="k">go</span> <span class="k">func</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">defer</span> <span class="n">wg</span><span class="o">.</span><span class="n">Done</span><span class="p">()</span> <span class="c">// Decrement WorkGroup counter</span>
 
-            </span><span class="k">for</span><span class="x"> </span><span class="p">{</span><span class="x"> </span><span class="c">// Until desired number of Flights are fetched, or the channels are closed</span><span class="x">
-                </span><span class="k">select</span><span class="x"> </span><span class="p">{</span><span class="x">
-                </span><span class="k">case</span><span class="x"> </span><span class="n">err</span><span class="p">,</span><span class="x"> </span><span class="n">ok</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="o">&lt;-</span><span class="n">errorsChan</span><span class="o">:</span><span class="x">
-                    </span><span class="k">if</span><span class="x"> </span><span class="o">!</span><span class="n">ok</span><span class="x"> </span><span class="p">{</span><span class="x"> </span><span class="c">// AsyncListFlights finished, so exit</span><span class="x">
-                        </span><span class="k">return</span><span class="x">
-                    </span><span class="p">}</span><span class="x">
-                    </span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">==</span><span class="x"> </span><span class="n">context</span><span class="o">.</span><span class="n">Canceled</span><span class="x"> </span><span class="p">{</span><span class="x"> </span><span class="c">// Another goroutine instance canceled, so exit</span><span class="x">
-                        </span><span class="k">return</span><span class="x">
-                    </span><span class="p">}</span><span class="x">
-                    </span><span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="x"> </span><span class="c">// Log the error and continue</span><span class="x">
+            <span class="k">for</span> <span class="p">{</span> <span class="c">// Until desired number of Flights are fetched, or the channels are closed</span>
+                <span class="k">select</span> <span class="p">{</span>
+                <span class="k">case</span> <span class="n">err</span><span class="p">,</span> <span class="n">ok</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="n">errorsChan</span><span class="o">:</span>
+                    <span class="k">if</span> <span class="o">!</span><span class="n">ok</span> <span class="p">{</span> <span class="c">// AsyncListFlights finished, so exit</span>
+                        <span class="k">return</span>
+                    <span class="p">}</span>
+                    <span class="k">if</span> <span class="n">err</span> <span class="o">==</span> <span class="n">context</span><span class="o">.</span><span class="n">Canceled</span> <span class="p">{</span> <span class="c">// Another goroutine instance canceled, so exit</span>
+                        <span class="k">return</span>
+                    <span class="p">}</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span> <span class="c">// Log the error and continue</span>
 
-                </span><span class="k">case</span><span class="x"> </span><span class="n">flight</span><span class="p">,</span><span class="x"> </span><span class="n">ok</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="o">&lt;-</span><span class="n">flightsChan</span><span class="o">:</span><span class="x">
-                    </span><span class="k">if</span><span class="x"> </span><span class="o">!</span><span class="n">ok</span><span class="x"> </span><span class="p">{</span><span class="x"> </span><span class="c">// AsyncListFlights finished, so exit</span><span class="x">
-                        </span><span class="k">return</span><span class="x">
-                    </span><span class="p">}</span><span class="x">
-                    </span><span class="k">if</span><span class="x"> </span><span class="n">matchesComplexQuery</span><span class="p">(</span><span class="n">flight</span><span class="p">,</span><span class="x"> </span><span class="n">q</span><span class="p">)</span><span class="x"> </span><span class="p">{</span><span class="x"> </span><span class="c">// If flight matches complex query</span><span class="x">
-                        </span><span class="n">publishFlightToUser</span><span class="p">(</span><span class="n">flight</span><span class="p">)</span><span class="x"> </span><span class="c">// Publish the flight to user</span><span class="x">
-                        </span><span class="n">atomic</span><span class="o">.</span><span class="n">AddInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="n">numPublished</span><span class="p">,</span><span class="x"> </span><span class="m">1</span><span class="p">)</span><span class="x"> </span><span class="c">// Increment counter atomically</span><span class="x">
-                        </span><span class="k">if</span><span class="x"> </span><span class="n">atomic</span><span class="o">.</span><span class="n">LoadInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="n">numPublished</span><span class="p">)</span><span class="x"> </span><span class="o">==</span><span class="x">  </span><span class="n">numFlights</span><span class="x"> </span><span class="p">{</span><span class="x"> </span><span class="c">// Published enough flights</span><span class="x">
-                            </span><span class="n">cancel</span><span class="p">()</span><span class="x"> </span><span class="c">// Stop fetching flights</span><span class="x">
-                            </span><span class="k">return</span><span class="x">
-                        </span><span class="p">}</span><span class="x">
-                    </span><span class="p">}</span><span class="x">
-                </span><span class="p">}</span><span class="x">
-            </span><span class="p">}</span><span class="x">
-        </span><span class="p">}()</span><span class="x">
-    </span><span class="p">}</span><span class="x">
-    </span><span class="n">wg</span><span class="o">.</span><span class="n">Wait</span><span class="p">()</span><span class="x"> </span><span class="c">// Wait for all worker goroutines to finish</span><span class="x">
-</span><span class="p">}</span><span class="x">
-</span></code></pre></div></div>
+                <span class="k">case</span> <span class="n">flight</span><span class="p">,</span> <span class="n">ok</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="n">flightsChan</span><span class="o">:</span>
+                    <span class="k">if</span> <span class="o">!</span><span class="n">ok</span> <span class="p">{</span> <span class="c">// AsyncListFlights finished, so exit</span>
+                        <span class="k">return</span>
+                    <span class="p">}</span>
+                    <span class="k">if</span> <span class="n">matchesComplexQuery</span><span class="p">(</span><span class="n">flight</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span> <span class="p">{</span> <span class="c">// If flight matches complex query</span>
+                        <span class="n">publishFlightToUser</span><span class="p">(</span><span class="n">flight</span><span class="p">)</span> <span class="c">// Publish the flight to user</span>
+                        <span class="n">atomic</span><span class="o">.</span><span class="n">AddInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="n">numPublished</span><span class="p">,</span> <span class="m">1</span><span class="p">)</span> <span class="c">// Increment counter atomically</span>
+                        <span class="k">if</span> <span class="n">atomic</span><span class="o">.</span><span class="n">LoadInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="n">numPublished</span><span class="p">)</span> <span class="o">==</span>  <span class="n">numFlights</span> <span class="p">{</span> <span class="c">// Published enough flights</span>
+                            <span class="n">cancel</span><span class="p">()</span> <span class="c">// Stop fetching flights</span>
+                            <span class="k">return</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}()</span>
+    <span class="p">}</span>
+    <span class="n">wg</span><span class="o">.</span><span class="n">Wait</span><span class="p">()</span> <span class="c">// Wait for all worker goroutines to finish</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
-<p>The <code class="highlighter-rouge">streamFlights</code> function calls <code class="highlighter-rouge">AsyncListFlights</code> to start the third-party querying. It then spawns a few worker goroutines, which use <code class="highlighter-rouge">sync.WaitGroup</code> to synchronize themselves in <code class="highlighter-rouge">wg.Wait()</code> when finishing. Each worker listens to <code class="highlighter-rouge">flightsChan</code> and <code class="highlighter-rouge">errorsChan</code> channels, and exit when these channels are closed. If a <code class="highlighter-rouge">Flight</code> instance is received, it is further matched with the <code class="highlighter-rouge">ComplexQuery</code> and published via <code class="highlighter-rouge">publishFlightToUser</code> if it does match. Once published, the <code class="highlighter-rouge">numPublished</code> counter is incremented atomically, and once it equals the desired <code class="highlighter-rouge">numFlights</code>, the <code class="highlighter-rouge">Context</code> is canceled. Once the <code class="highlighter-rouge">Context</code> is canceled, no more third-party API calls are made by <code class="highlighter-rouge">asyncListFlights</code>, and it exits after closing the channels, which, in turn, causes the workers to stop.</p>
+<p>The <code class="language-plaintext highlighter-rouge">streamFlights</code> function calls <code class="language-plaintext highlighter-rouge">AsyncListFlights</code> to start the third-party querying. It then spawns a few worker goroutines, which use <code class="language-plaintext highlighter-rouge">sync.WaitGroup</code> to synchronize themselves in <code class="language-plaintext highlighter-rouge">wg.Wait()</code> when finishing. Each worker listens to <code class="language-plaintext highlighter-rouge">flightsChan</code> and <code class="language-plaintext highlighter-rouge">errorsChan</code> channels, and exit when these channels are closed. If a <code class="language-plaintext highlighter-rouge">Flight</code> instance is received, it is further matched with the <code class="language-plaintext highlighter-rouge">ComplexQuery</code> and published via <code class="language-plaintext highlighter-rouge">publishFlightToUser</code> if it does match. Once published, the <code class="language-plaintext highlighter-rouge">numPublished</code> counter is incremented atomically, and once it equals the desired <code class="language-plaintext highlighter-rouge">numFlights</code>, the <code class="language-plaintext highlighter-rouge">Context</code> is canceled. Once the <code class="language-plaintext highlighter-rouge">Context</code> is canceled, no more third-party API calls are made by <code class="language-plaintext highlighter-rouge">asyncListFlights</code>, and it exits after closing the channels, which, in turn, causes the workers to stop.</p>
 
 <p>And, there you have it - fully controllable asynchronous functions in Golang.</p>
 
@@ -386,6 +386,15 @@ into the {body} of the default.hbs template -->
                                     
                                         
                                         
+                                            <li><a href="/a-beginners-guide-to-authn-and-authz-with-istio">A Beginner's Guide to AuthN and AuthZ with Istio</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
                                             <li><a href="/a-simple-state-machine-framework-in-go">A Simple State Machine Framework in Go</a></li>
                                         
                                     
@@ -403,8 +412,6 @@ into the {body} of the default.hbs template -->
                                   
                                     
                                         
-                                        
-                                            <li><a href="/hand-crafting-a-sidecar-proxy-and-demystifying-istio">Hand-crafting a Sidecar Proxy and Demystifying Istio</a></li>
                                         
                                     
                                   
@@ -467,7 +474,7 @@ into the {body} of the default.hbs template -->
                         <footer class="read-next-card-footer">
                             <a href="/tag/distributed-systems/">
                                 
-                                    See all 11 posts  →
+                                    See all 12 posts  →
                                 
                             </a>
                         </footer>
@@ -616,7 +623,7 @@ into the {body} of the default.hbs template -->
         <!-- The footer at the very bottom of the screen -->
         <footer class="site-footer outer">
             <div class="site-footer-content inner">
-                <section class="copyright"><a href="https://venilnoronha.io/">Venil Noronha</a> &copy; 2020</section>
+                <section class="copyright"><a href="https://venilnoronha.io/">Venil Noronha</a> &copy; 2021</section>
                 <section class="poweredby">Proudly published with <a href="https://jekyllrb.com/">Jekyll</a> &
                     <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> using
                     <a href="https://github.com/jekyller/jasper2" target="_blank" rel="noopener">Jasper2</a></section>

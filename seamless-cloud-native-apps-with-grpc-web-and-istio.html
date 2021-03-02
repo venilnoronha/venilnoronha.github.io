@@ -240,34 +240,34 @@ filter.</p>
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>We define a simple <code class="highlighter-rouge">service</code> named <code class="highlighter-rouge">EmojiService</code> that understands a <code class="highlighter-rouge">rpc</code> call
-named <code class="highlighter-rouge">Emojize</code> which accepts an <code class="highlighter-rouge">EmojizeRequest</code> object and returns an instance
-of <code class="highlighter-rouge">EmojizeReply</code>.</p>
+<p>We define a simple <code class="language-plaintext highlighter-rouge">service</code> named <code class="language-plaintext highlighter-rouge">EmojiService</code> that understands a <code class="language-plaintext highlighter-rouge">rpc</code> call
+named <code class="language-plaintext highlighter-rouge">Emojize</code> which accepts an <code class="language-plaintext highlighter-rouge">EmojizeRequest</code> object and returns an instance
+of <code class="language-plaintext highlighter-rouge">EmojizeReply</code>.</p>
 
-<p>The <code class="highlighter-rouge">message</code> named <code class="highlighter-rouge">EmojizeRequest</code> holds a <code class="highlighter-rouge">string</code> field named <code class="highlighter-rouge">text</code> to
-represent user-entered text. Also, <code class="highlighter-rouge">EmojizeReply</code> holds a <code class="highlighter-rouge">string</code> named
-<code class="highlighter-rouge">emojized_text</code> to represent the final output string wherein the server will
+<p>The <code class="language-plaintext highlighter-rouge">message</code> named <code class="language-plaintext highlighter-rouge">EmojizeRequest</code> holds a <code class="language-plaintext highlighter-rouge">string</code> field named <code class="language-plaintext highlighter-rouge">text</code> to
+represent user-entered text. Also, <code class="language-plaintext highlighter-rouge">EmojizeReply</code> holds a <code class="language-plaintext highlighter-rouge">string</code> named
+<code class="language-plaintext highlighter-rouge">emojized_text</code> to represent the final output string wherein the server will
 have replaced known emoji keywords with an actual emoji character.</p>
 
 <h2 id="compiling-the-protobuf-definition">Compiling The Protobuf Definition</h2>
 
-<p>Let’s first create the project directory structure like <code class="highlighter-rouge">grpc-web-emoji/emoji/</code>
-and put the above definition in a file named <code class="highlighter-rouge">emoji.proto</code>.</p>
+<p>Let’s first create the project directory structure like <code class="language-plaintext highlighter-rouge">grpc-web-emoji/emoji/</code>
+and put the above definition in a file named <code class="language-plaintext highlighter-rouge">emoji.proto</code>.</p>
 
-<p>We can now compile the <code class="highlighter-rouge">emoji.proto</code> file and generate the necessary Go files.</p>
+<p>We can now compile the <code class="language-plaintext highlighter-rouge">emoji.proto</code> file and generate the necessary Go files.</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> protoc <span class="nt">-I</span> emoji/ emoji/emoji.proto <span class="nt">--go_out</span><span class="o">=</span><span class="nv">plugins</span><span class="o">=</span>grpc:emoji
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>protoc <span class="nt">-I</span> emoji/ emoji/emoji.proto <span class="nt">--go_out</span><span class="o">=</span><span class="nv">plugins</span><span class="o">=</span>grpc:emoji
 </code></pre></div></div>
 
 <p>Similarly, we also generate the JavaScript files.</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> protoc <span class="nt">-I</span> emoji/ emoji/emoji.proto <span class="nt">--js_out</span><span class="o">=</span><span class="nv">import_style</span><span class="o">=</span>commonjs:emoji <span class="se">\</span>
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>protoc <span class="nt">-I</span> emoji/ emoji/emoji.proto <span class="nt">--js_out</span><span class="o">=</span><span class="nv">import_style</span><span class="o">=</span>commonjs:emoji <span class="se">\</span>
          <span class="nt">--grpc-web_out</span><span class="o">=</span><span class="nv">import_style</span><span class="o">=</span>commonjs,mode<span class="o">=</span>grpcwebtext:emoji
 </code></pre></div></div>
 
 <p>At this point, you should land up with a directory structure like below.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>── grpc-web-emoji
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>── grpc-web-emoji
    └── emoji
        ├── emoji.pb.go
        ├── emoji.proto
@@ -277,100 +277,100 @@ and put the above definition in a file named <code class="highlighter-rouge">emo
 
 <h2 id="building-and-testing-the-go-backend">Building And Testing The Go Backend</h2>
 
-<p>Let’s now create a go program that implements the <code class="highlighter-rouge">EmojiService</code> API. To do so,
-we create a file named <code class="highlighter-rouge">main.go</code> with the following contents.</p>
+<p>Let’s now create a go program that implements the <code class="language-plaintext highlighter-rouge">EmojiService</code> API. To do so,
+we create a file named <code class="language-plaintext highlighter-rouge">main.go</code> with the following contents.</p>
 
-<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span><span class="x"> </span><span class="n">main</span><span class="x">
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
 
-</span><span class="k">import</span><span class="x"> </span><span class="p">(</span><span class="x">
-	</span><span class="s">"context"</span><span class="x">
-	</span><span class="s">"log"</span><span class="x">
-	</span><span class="s">"net"</span><span class="x">
+<span class="k">import</span> <span class="p">(</span>
+	<span class="s">"context"</span>
+	<span class="s">"log"</span>
+	<span class="s">"net"</span>
 
-	</span><span class="n">proto</span><span class="x"> </span><span class="s">"github.com/venilnoronha/grpc-web-emoji/emoji"</span><span class="x">
-	</span><span class="s">"google.golang.org/grpc"</span><span class="x">
-	</span><span class="s">"google.golang.org/grpc/reflection"</span><span class="x">
-	</span><span class="n">emoji</span><span class="x"> </span><span class="s">"gopkg.in/kyokomi/emoji.v1"</span><span class="x">
-</span><span class="p">)</span><span class="x">
+	<span class="n">proto</span> <span class="s">"github.com/venilnoronha/grpc-web-emoji/emoji"</span>
+	<span class="s">"google.golang.org/grpc"</span>
+	<span class="s">"google.golang.org/grpc/reflection"</span>
+	<span class="n">emoji</span> <span class="s">"gopkg.in/kyokomi/emoji.v1"</span>
+<span class="p">)</span>
 
-</span><span class="c">// server is used to implement the EmojiService interface</span><span class="x">
-</span><span class="k">type</span><span class="x"> </span><span class="n">server</span><span class="x"> </span><span class="k">struct</span><span class="p">{}</span><span class="x">
+<span class="c">// server is used to implement the EmojiService interface</span>
+<span class="k">type</span> <span class="n">server</span> <span class="k">struct</span><span class="p">{}</span>
 
-</span><span class="c">// Emojize takes a input string via EmojizeRequest, replaces known keywords with</span><span class="x">
-</span><span class="c">// actual emoji characters and returns it via a EmojizeReply instance.</span><span class="x">
-</span><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">s</span><span class="x"> </span><span class="o">*</span><span class="n">server</span><span class="p">)</span><span class="x"> </span><span class="n">Emojize</span><span class="p">(</span><span class="n">c</span><span class="x"> </span><span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span><span class="x"> </span><span class="n">r</span><span class="x"> </span><span class="o">*</span><span class="n">proto</span><span class="o">.</span><span class="n">EmojizeRequest</span><span class="p">)</span><span class="x">
-			</span><span class="p">(</span><span class="o">*</span><span class="n">proto</span><span class="o">.</span><span class="n">EmojizeReply</span><span class="p">,</span><span class="x"> </span><span class="kt">error</span><span class="p">)</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="k">return</span><span class="x"> </span><span class="o">&amp;</span><span class="n">proto</span><span class="o">.</span><span class="n">EmojizeReply</span><span class="p">{</span><span class="n">EmojizedText</span><span class="o">:</span><span class="x"> </span><span class="n">emoji</span><span class="o">.</span><span class="n">Sprint</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">Text</span><span class="p">)},</span><span class="x"> </span><span class="no">nil</span><span class="x">
-</span><span class="p">}</span><span class="x">
+<span class="c">// Emojize takes a input string via EmojizeRequest, replaces known keywords with</span>
+<span class="c">// actual emoji characters and returns it via a EmojizeReply instance.</span>
+<span class="k">func</span> <span class="p">(</span><span class="n">s</span> <span class="o">*</span><span class="n">server</span><span class="p">)</span> <span class="n">Emojize</span><span class="p">(</span><span class="n">c</span> <span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span> <span class="n">r</span> <span class="o">*</span><span class="n">proto</span><span class="o">.</span><span class="n">EmojizeRequest</span><span class="p">)</span>
+			<span class="p">(</span><span class="o">*</span><span class="n">proto</span><span class="o">.</span><span class="n">EmojizeReply</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="o">&amp;</span><span class="n">proto</span><span class="o">.</span><span class="n">EmojizeReply</span><span class="p">{</span><span class="n">EmojizedText</span><span class="o">:</span> <span class="n">emoji</span><span class="o">.</span><span class="n">Sprint</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">Text</span><span class="p">)},</span> <span class="no">nil</span>
+<span class="p">}</span>
 
-</span><span class="k">func</span><span class="x"> </span><span class="n">main</span><span class="p">()</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="c">// listen to TCP requests over port 9000</span><span class="x">
-	</span><span class="n">lis</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">net</span><span class="o">.</span><span class="n">Listen</span><span class="p">(</span><span class="s">"tcp"</span><span class="p">,</span><span class="x"> </span><span class="s">":9000"</span><span class="p">)</span><span class="x">
-	</span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="n">log</span><span class="o">.</span><span class="n">Fatalf</span><span class="p">(</span><span class="s">"failed to listen: %v"</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="p">)</span><span class="x">
-	</span><span class="p">}</span><span class="x">
-	</span><span class="n">log</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"listening on %s"</span><span class="p">,</span><span class="x"> </span><span class="n">lis</span><span class="o">.</span><span class="n">Addr</span><span class="p">())</span><span class="x">
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="c">// listen to TCP requests over port 9000</span>
+	<span class="n">lis</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">net</span><span class="o">.</span><span class="n">Listen</span><span class="p">(</span><span class="s">"tcp"</span><span class="p">,</span> <span class="s">":9000"</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="n">log</span><span class="o">.</span><span class="n">Fatalf</span><span class="p">(</span><span class="s">"failed to listen: %v"</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="n">log</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"listening on %s"</span><span class="p">,</span> <span class="n">lis</span><span class="o">.</span><span class="n">Addr</span><span class="p">())</span>
 
-	</span><span class="c">// register the EmojiService implementation with the gRPC server</span><span class="x">
-	</span><span class="n">s</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">grpc</span><span class="o">.</span><span class="n">NewServer</span><span class="p">()</span><span class="x">
-	</span><span class="n">proto</span><span class="o">.</span><span class="n">RegisterEmojiServiceServer</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="x"> </span><span class="o">&amp;</span><span class="n">server</span><span class="p">{})</span><span class="x">
-	</span><span class="n">reflection</span><span class="o">.</span><span class="n">Register</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="x">
-	</span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">s</span><span class="o">.</span><span class="n">Serve</span><span class="p">(</span><span class="n">lis</span><span class="p">);</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="n">log</span><span class="o">.</span><span class="n">Fatalf</span><span class="p">(</span><span class="s">"failed to serve: %v"</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="p">)</span><span class="x">
-	</span><span class="p">}</span><span class="x">
-</span><span class="p">}</span><span class="x">
-</span></code></pre></div></div>
+	<span class="c">// register the EmojiService implementation with the gRPC server</span>
+	<span class="n">s</span> <span class="o">:=</span> <span class="n">grpc</span><span class="o">.</span><span class="n">NewServer</span><span class="p">()</span>
+	<span class="n">proto</span><span class="o">.</span><span class="n">RegisterEmojiServiceServer</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">server</span><span class="p">{})</span>
+	<span class="n">reflection</span><span class="o">.</span><span class="n">Register</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">s</span><span class="o">.</span><span class="n">Serve</span><span class="p">(</span><span class="n">lis</span><span class="p">);</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="n">log</span><span class="o">.</span><span class="n">Fatalf</span><span class="p">(</span><span class="s">"failed to serve: %v"</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <p>I’ve used the <a href="https://github.com/kyokomi/emoji">kyokomi/emoji</a> library to do
 the heavy lifting i.e. converting keywords from input text into emojis.</p>
 
 <p>Let’s start the server, like so:</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> go run <span class="nt">-v</span> main.go
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>go run <span class="nt">-v</span> main.go
 <span class="go">2018/11/12 10:45:12 listening on [::]:9000
 </span></code></pre></div></div>
 
 <p>It’s now time to test the emoji service programmatically. We’ll do so by
-creating a new client implementation named <code class="highlighter-rouge">emoji_client.go</code> with the following
+creating a new client implementation named <code class="language-plaintext highlighter-rouge">emoji_client.go</code> with the following
 contents.</p>
 
-<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span><span class="x"> </span><span class="n">main</span><span class="x">
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
 
-</span><span class="k">import</span><span class="x"> </span><span class="p">(</span><span class="x">
-	</span><span class="s">"log"</span><span class="x">
-	</span><span class="s">"time"</span><span class="x">
+<span class="k">import</span> <span class="p">(</span>
+	<span class="s">"log"</span>
+	<span class="s">"time"</span>
 
-	</span><span class="n">proto</span><span class="x"> </span><span class="s">"github.com/venilnoronha/grpc-web-emoji/emoji"</span><span class="x">
-	</span><span class="s">"golang.org/x/net/context"</span><span class="x">
-	</span><span class="s">"google.golang.org/grpc"</span><span class="x">
-</span><span class="p">)</span><span class="x">
+	<span class="n">proto</span> <span class="s">"github.com/venilnoronha/grpc-web-emoji/emoji"</span>
+	<span class="s">"golang.org/x/net/context"</span>
+	<span class="s">"google.golang.org/grpc"</span>
+<span class="p">)</span>
 
-</span><span class="k">func</span><span class="x"> </span><span class="n">main</span><span class="p">()</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="c">// connect to the server</span><span class="x">
-	</span><span class="n">conn</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">grpc</span><span class="o">.</span><span class="n">Dial</span><span class="p">(</span><span class="s">"localhost:9000"</span><span class="p">,</span><span class="x"> </span><span class="n">grpc</span><span class="o">.</span><span class="n">WithInsecure</span><span class="p">())</span><span class="x">
-	</span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="n">log</span><span class="o">.</span><span class="n">Fatalf</span><span class="p">(</span><span class="s">"could not connect to the service: %v"</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="p">)</span><span class="x">
-	</span><span class="p">}</span><span class="x">
-	</span><span class="k">defer</span><span class="x"> </span><span class="n">conn</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span><span class="x">
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="c">// connect to the server</span>
+	<span class="n">conn</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">grpc</span><span class="o">.</span><span class="n">Dial</span><span class="p">(</span><span class="s">"localhost:9000"</span><span class="p">,</span> <span class="n">grpc</span><span class="o">.</span><span class="n">WithInsecure</span><span class="p">())</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="n">log</span><span class="o">.</span><span class="n">Fatalf</span><span class="p">(</span><span class="s">"could not connect to the service: %v"</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">defer</span> <span class="n">conn</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
 
-	</span><span class="c">// send a request to the server</span><span class="x">
-	</span><span class="n">ctx</span><span class="p">,</span><span class="x"> </span><span class="n">cancel</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">context</span><span class="o">.</span><span class="n">WithTimeout</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">Background</span><span class="p">(),</span><span class="x"> </span><span class="n">time</span><span class="o">.</span><span class="n">Second</span><span class="p">)</span><span class="x">
-	</span><span class="k">defer</span><span class="x"> </span><span class="n">cancel</span><span class="p">()</span><span class="x">
+	<span class="c">// send a request to the server</span>
+	<span class="n">ctx</span><span class="p">,</span> <span class="n">cancel</span> <span class="o">:=</span> <span class="n">context</span><span class="o">.</span><span class="n">WithTimeout</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">Background</span><span class="p">(),</span> <span class="n">time</span><span class="o">.</span><span class="n">Second</span><span class="p">)</span>
+	<span class="k">defer</span> <span class="n">cancel</span><span class="p">()</span>
 
-	</span><span class="n">c</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">proto</span><span class="o">.</span><span class="n">NewEmojiServiceClient</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span><span class="x">
-	</span><span class="n">resp</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">c</span><span class="o">.</span><span class="n">Emojize</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span><span class="x"> </span><span class="o">&amp;</span><span class="n">proto</span><span class="o">.</span><span class="n">EmojizeRequest</span><span class="p">{</span><span class="x">
-		</span><span class="n">Text</span><span class="o">:</span><span class="x"> </span><span class="s">"I like :pizza: and :sushi:!"</span><span class="p">,</span><span class="x">
-	</span><span class="p">})</span><span class="x">
-	</span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
-		</span><span class="n">log</span><span class="o">.</span><span class="n">Fatalf</span><span class="p">(</span><span class="s">"could not call service: %v"</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="p">)</span><span class="x">
-	</span><span class="p">}</span><span class="x">
-	</span><span class="n">log</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"server says: %s"</span><span class="p">,</span><span class="x"> </span><span class="n">resp</span><span class="o">.</span><span class="n">GetEmojizedText</span><span class="p">())</span><span class="x">
-</span><span class="p">}</span><span class="x">
-</span></code></pre></div></div>
+	<span class="n">c</span> <span class="o">:=</span> <span class="n">proto</span><span class="o">.</span><span class="n">NewEmojiServiceClient</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+	<span class="n">resp</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">c</span><span class="o">.</span><span class="n">Emojize</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">proto</span><span class="o">.</span><span class="n">EmojizeRequest</span><span class="p">{</span>
+		<span class="n">Text</span><span class="o">:</span> <span class="s">"I like :pizza: and :sushi:!"</span><span class="p">,</span>
+	<span class="p">})</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="n">log</span><span class="o">.</span><span class="n">Fatalf</span><span class="p">(</span><span class="s">"could not call service: %v"</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="n">log</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"server says: %s"</span><span class="p">,</span> <span class="n">resp</span><span class="o">.</span><span class="n">GetEmojizedText</span><span class="p">())</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <p>We can now run the emoji service client as shown below.</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> go run emoji_client.go
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>go run emoji_client.go
 <span class="go">2018/11/12 10:55:52 server says: I like 🍕  and 🍣 !
 </span></code></pre></div></div>
 
@@ -379,9 +379,9 @@ web frontend up and running.</p>
 
 <h2 id="creating-the-web-interface-using-grpc-web">Creating The Web Interface Using gRPC-Web</h2>
 
-<p>First, let’s create a HTML page named <code class="highlighter-rouge">index.html</code>. The page displays a text
-editor to the user and calls a <code class="highlighter-rouge">emojize</code> function (which we’ll define later) to
-send the user-input to the backend emoji service. The <code class="highlighter-rouge">emojize</code> function will
+<p>First, let’s create a HTML page named <code class="language-plaintext highlighter-rouge">index.html</code>. The page displays a text
+editor to the user and calls a <code class="language-plaintext highlighter-rouge">emojize</code> function (which we’ll define later) to
+send the user-input to the backend emoji service. The <code class="language-plaintext highlighter-rouge">emojize</code> function will
 also consume the gRPC response from the backend service and update the user
 input field with the data given out by the server.</p>
 
@@ -394,14 +394,14 @@ input field with the data given out by the server.</p>
 <span class="nt">&lt;/html&gt;</span>
 </code></pre></div></div>
 
-<p>Let’s put the JavaScript code for the web frontend in a file named <code class="highlighter-rouge">client.js</code>
+<p>Let’s put the JavaScript code for the web frontend in a file named <code class="language-plaintext highlighter-rouge">client.js</code>
 as shown below.</p>
 
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="p">{</span><span class="nx">EmojizeRequest</span><span class="p">,</span> <span class="nx">EmojizeReply</span><span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'emoji/emoji_pb.js'</span><span class="p">);</span>
-<span class="kd">const</span> <span class="p">{</span><span class="nx">EmojiServiceClient</span><span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'emoji/emoji_grpc_web_pb.js'</span><span class="p">);</span>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="p">{</span><span class="nx">EmojizeRequest</span><span class="p">,</span> <span class="nx">EmojizeReply</span><span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">emoji/emoji_pb.js</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">const</span> <span class="p">{</span><span class="nx">EmojiServiceClient</span><span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">emoji/emoji_grpc_web_pb.js</span><span class="dl">'</span><span class="p">);</span>
 
-<span class="kd">var</span> <span class="nx">client</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">EmojiServiceClient</span><span class="p">(</span><span class="s1">'http://192.168.99.100:31380'</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">editor</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">'editor'</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">client</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">EmojiServiceClient</span><span class="p">(</span><span class="dl">'</span><span class="s1">http://192.168.99.100:31380</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">editor</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">editor</span><span class="dl">'</span><span class="p">);</span>
 
 <span class="nb">window</span><span class="p">.</span><span class="nx">emojize</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
   <span class="kd">var</span> <span class="nx">request</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">EmojizeRequest</span><span class="p">();</span>
@@ -413,47 +413,47 @@ as shown below.</p>
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>Notice that the <code class="highlighter-rouge">EmojiServiceClient</code> connects with the backend emoji service at
-<code class="highlighter-rouge">http://192.168.99.100:31380</code> and not <code class="highlighter-rouge">http://localhost:9000</code>. This is because
+<p>Notice that the <code class="language-plaintext highlighter-rouge">EmojiServiceClient</code> connects with the backend emoji service at
+<code class="language-plaintext highlighter-rouge">http://192.168.99.100:31380</code> and not <code class="language-plaintext highlighter-rouge">http://localhost:9000</code>. This is because
 the web application can’t directly speak with a gRPC backend, and, therefore,
 we’ll be deploying our backend emoji service over Istio. The Istio deployment
 will be running on <a href="https://kubernetes.io/docs/setup/minikube/">Minikube</a> with
-the IP address of <code class="highlighter-rouge">192.168.99.100</code> and the default Istio Ingress port exposed
-for HTTP is <code class="highlighter-rouge">31380</code>.</p>
+the IP address of <code class="language-plaintext highlighter-rouge">192.168.99.100</code> and the default Istio Ingress port exposed
+for HTTP is <code class="language-plaintext highlighter-rouge">31380</code>.</p>
 
-<p>We’ll now need a couple of libraries to generate the final <code class="highlighter-rouge">dist/main.js</code> which
-we reference in <code class="highlighter-rouge">index.html</code>. To do so, we use the following <a href="https://www.npmjs.com/">npm</a>
-<code class="highlighter-rouge">package.json</code> configuration.</p>
+<p>We’ll now need a couple of libraries to generate the final <code class="language-plaintext highlighter-rouge">dist/main.js</code> which
+we reference in <code class="language-plaintext highlighter-rouge">index.html</code>. To do so, we use the following <a href="https://www.npmjs.com/">npm</a>
+<code class="language-plaintext highlighter-rouge">package.json</code> configuration.</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
-  </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"grpc-web-emoji"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.1.0"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"gRPC-Web Emoji Sample"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"devDependencies"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"@grpc/proto-loader"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^0.3.0"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"google-protobuf"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^3.6.1"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"grpc"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^1.15.0"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"grpc-web"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^1.0.0"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"webpack"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^4.16.5"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"webpack-cli"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^3.1.0"</span><span class="w">
+  </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"grpc-web-emoji"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.1.0"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"gRPC-Web Emoji Sample"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"devDependencies"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"@grpc/proto-loader"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^0.3.0"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"google-protobuf"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^3.6.1"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"grpc"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^1.15.0"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"grpc-web"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^1.0.0"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"webpack"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^4.16.5"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"webpack-cli"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^3.1.0"</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
 
-<p>At this point, we can install the libraries and generate <code class="highlighter-rouge">dist/main.js</code> using
+<p>At this point, we can install the libraries and generate <code class="language-plaintext highlighter-rouge">dist/main.js</code> using
 the following commands.</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> npm install
-<span class="gp">$</span> npx webpack client.js
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>npm <span class="nb">install</span>
+<span class="gp">$</span><span class="w"> </span>npx webpack client.js
 </code></pre></div></div>
 
 <h2 id="deploying-the-backend-over-istio">Deploying The Backend Over Istio</h2>
 
 <p>We can now package the backend emoji service into a container and deploy it over
-Istio. We’d need to install the gRPC-Web <code class="highlighter-rouge">EnvoyFilter</code> here so that calls to the
+Istio. We’d need to install the gRPC-Web <code class="language-plaintext highlighter-rouge">EnvoyFilter</code> here so that calls to the
 backend gRPC service can be translated to/from gRPC and HTTP.</p>
 
-<p>Let’s start off by building the Docker image with the following <code class="highlighter-rouge">Dockerfile</code>.</p>
+<p>Let’s start off by building the Docker image with the following <code class="language-plaintext highlighter-rouge">Dockerfile</code>.</p>
 
 <div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> golang:1.11 as builder</span>
 <span class="k">WORKDIR</span><span class="s"> /root/go/src/github.com/venilnoronha/grpc-web-emoji/</span>
@@ -470,12 +470,12 @@ backend gRPC service can be translated to/from gRPC and HTTP.</p>
 
 <p>We can build and push the image to Docker Hub like so:</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> docker build <span class="nt">-t</span> vnoronha/grpc-web-emoji <span class="nb">.</span>
-<span class="gp">$</span> docker push vnoronha/grpc-web-emoji
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>docker build <span class="nt">-t</span> vnoronha/grpc-web-emoji <span class="nb">.</span>
+<span class="gp">$</span><span class="w"> </span>docker push vnoronha/grpc-web-emoji
 </code></pre></div></div>
 
-<p>Next, we define the Kubernetes <code class="highlighter-rouge">Service</code> and <code class="highlighter-rouge">Deployment</code> configuration as shown
-below. Let’s call this <code class="highlighter-rouge">backend.yaml</code>.</p>
+<p>Next, we define the Kubernetes <code class="language-plaintext highlighter-rouge">Service</code> and <code class="language-plaintext highlighter-rouge">Deployment</code> configuration as shown
+below. Let’s call this <code class="language-plaintext highlighter-rouge">backend.yaml</code>.</p>
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
 <span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
@@ -486,7 +486,7 @@ below. Let’s call this <code class="highlighter-rouge">backend.yaml</code>.</p
 <span class="na">spec</span><span class="pi">:</span>
   <span class="na">ports</span><span class="pi">:</span>
   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">grpc-port</span>
-    <span class="na">port</span><span class="pi">:</span> <span class="s">9000</span>
+    <span class="na">port</span><span class="pi">:</span> <span class="m">9000</span>
   <span class="na">selector</span><span class="pi">:</span>
     <span class="na">app</span><span class="pi">:</span> <span class="s">backend</span>
 <span class="nn">---</span>
@@ -495,7 +495,7 @@ below. Let’s call this <code class="highlighter-rouge">backend.yaml</code>.</p
 <span class="na">metadata</span><span class="pi">:</span>
   <span class="na">name</span><span class="pi">:</span> <span class="s">backend</span>
 <span class="na">spec</span><span class="pi">:</span>
-  <span class="na">replicas</span><span class="pi">:</span> <span class="s">1</span>
+  <span class="na">replicas</span><span class="pi">:</span> <span class="m">1</span>
   <span class="na">template</span><span class="pi">:</span>
     <span class="na">metadata</span><span class="pi">:</span>
       <span class="na">labels</span><span class="pi">:</span>
@@ -507,15 +507,15 @@ below. Let’s call this <code class="highlighter-rouge">backend.yaml</code>.</p
         <span class="na">image</span><span class="pi">:</span> <span class="s">vnoronha/grpc-web-emoji</span>
         <span class="na">imagePullPolicy</span><span class="pi">:</span> <span class="s">Always</span>
         <span class="na">ports</span><span class="pi">:</span>
-        <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="s">9000</span>
+        <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">9000</span>
 </code></pre></div></div>
 
-<p>Note that once we deploy this service over Istio, the <code class="highlighter-rouge">grpc-</code> prefix in the
-<code class="highlighter-rouge">Service</code> port <code class="highlighter-rouge">name</code> will allow Istio to recognize this as a gRPC service.</p>
+<p>Note that once we deploy this service over Istio, the <code class="language-plaintext highlighter-rouge">grpc-</code> prefix in the
+<code class="language-plaintext highlighter-rouge">Service</code> port <code class="language-plaintext highlighter-rouge">name</code> will allow Istio to recognize this as a gRPC service.</p>
 
-<p>Since we want the gRPC-Web filter to be installed on the <code class="highlighter-rouge">backend</code> sidecar
-proxy, we need to install it prior to deploying the <code class="highlighter-rouge">backend</code> service. The
-<code class="highlighter-rouge">EnvoyFilter</code> configuration is shown below. We name this <code class="highlighter-rouge">filter.yaml</code>.</p>
+<p>Since we want the gRPC-Web filter to be installed on the <code class="language-plaintext highlighter-rouge">backend</code> sidecar
+proxy, we need to install it prior to deploying the <code class="language-plaintext highlighter-rouge">backend</code> service. The
+<code class="language-plaintext highlighter-rouge">EnvoyFilter</code> configuration is shown below. We name this <code class="language-plaintext highlighter-rouge">filter.yaml</code>.</p>
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">networking.istio.io/v1alpha3</span>
 <span class="na">kind</span><span class="pi">:</span> <span class="s">EnvoyFilter</span>
@@ -535,9 +535,9 @@ proxy, we need to install it prior to deploying the <code class="highlighter-rou
     <span class="na">filterConfig</span><span class="pi">:</span> <span class="pi">{}</span>
 </code></pre></div></div>
 
-<p>Next, we need to define an Istio <code class="highlighter-rouge">Gateway</code> to route HTTP traffic over to the
+<p>Next, we need to define an Istio <code class="language-plaintext highlighter-rouge">Gateway</code> to route HTTP traffic over to the
 backend service. To do so, we write the following configuration to a file named
-<code class="highlighter-rouge">gateway.yaml</code>.</p>
+<code class="language-plaintext highlighter-rouge">gateway.yaml</code>.</p>
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">networking.istio.io/v1alpha3</span>
 <span class="na">kind</span><span class="pi">:</span> <span class="s">DestinationRule</span>
@@ -559,7 +559,7 @@ backend service. To do so, we write the following configuration to a file named
     <span class="na">istio</span><span class="pi">:</span> <span class="s">ingressgateway</span>
   <span class="na">servers</span><span class="pi">:</span>
   <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span>
-      <span class="na">number</span><span class="pi">:</span> <span class="s">80</span>
+      <span class="na">number</span><span class="pi">:</span> <span class="m">80</span>
       <span class="na">name</span><span class="pi">:</span> <span class="s">http</span>
       <span class="na">protocol</span><span class="pi">:</span> <span class="s">HTTP</span>
     <span class="na">hosts</span><span class="pi">:</span>
@@ -576,12 +576,12 @@ backend service. To do so, we write the following configuration to a file named
   <span class="pi">-</span> <span class="s">gateway</span>
   <span class="na">http</span><span class="pi">:</span>
   <span class="pi">-</span> <span class="na">match</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="s">80</span>
+    <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">80</span>
     <span class="na">route</span><span class="pi">:</span>
     <span class="pi">-</span> <span class="na">destination</span><span class="pi">:</span>
         <span class="na">host</span><span class="pi">:</span> <span class="s">backend</span>
         <span class="na">port</span><span class="pi">:</span>
-          <span class="na">number</span><span class="pi">:</span> <span class="s">9000</span>
+          <span class="na">number</span><span class="pi">:</span> <span class="m">9000</span>
         <span class="na">subset</span><span class="pi">:</span> <span class="s">v1</span>
     <span class="na">corsPolicy</span><span class="pi">:</span>
       <span class="na">allowOrigin</span><span class="pi">:</span>
@@ -613,20 +613,20 @@ backend service. To do so, we write the following configuration to a file named
       <span class="na">allowCredentials</span><span class="pi">:</span> <span class="no">true</span>
 </code></pre></div></div>
 
-<p>Notice that we’ve defined a complex <code class="highlighter-rouge">corsPolicy</code> here, and it’s required for
+<p>Notice that we’ve defined a complex <code class="language-plaintext highlighter-rouge">corsPolicy</code> here, and it’s required for
 gRPC-Web to work correctly.</p>
 
 <p>We can now simply deploy the above configurations in the following order.</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> kubectl apply <span class="nt">-f</span> filter.yaml
-<span class="gp">$</span> kubectl apply <span class="nt">-f</span> &lt;<span class="o">(</span>istioctl kube-inject <span class="nt">-f</span> backend.yaml<span class="o">)</span>
-<span class="gp">$</span> kubectl apply <span class="nt">-f</span> gateway.yaml
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>kubectl apply <span class="nt">-f</span> filter.yaml
+<span class="gp">$</span><span class="w"> </span>kubectl apply <span class="nt">-f</span> &lt;<span class="o">(</span>istioctl kube-inject <span class="nt">-f</span> backend.yaml<span class="o">)</span>
+<span class="gp">$</span><span class="w"> </span>kubectl apply <span class="nt">-f</span> gateway.yaml
 </code></pre></div></div>
 
-<p>Once the <code class="highlighter-rouge">backend</code> pod has started, we can verify that the gRPC-Web filter was
+<p>Once the <code class="language-plaintext highlighter-rouge">backend</code> pod has started, we can verify that the gRPC-Web filter was
 correctly configured in its sidecar proxy like so:</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> istioctl proxy-config listeners backend-7bf6c8f67c-8lbm7 <span class="nt">--port</span> 9000 <span class="nt">-o</span> json
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>istioctl proxy-config listeners backend-7bf6c8f67c-8lbm7 <span class="nt">--port</span> 9000 <span class="nt">-o</span> json
 <span class="c">...
 </span><span class="go">    "http_filters": [
         {
@@ -641,11 +641,11 @@ correctly configured in its sidecar proxy like so:</p>
 <p>We’ve now reached the final stage of the experiment. We serve the web
 application using a HTTP server via Python.</p>
 
-<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span> python2 <span class="nt">-m</span> SimpleHTTPServer 8080
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>python2 <span class="nt">-m</span> SimpleHTTPServer 8080
 <span class="go">Serving HTTP on 0.0.0.0 port 8080 ...
 </span></code></pre></div></div>
 
-<p>Let’s head over to <code class="highlighter-rouge">http://localhost:8080</code> to play with the emoji web interface.</p>
+<p>Let’s head over to <code class="language-plaintext highlighter-rouge">http://localhost:8080</code> to play with the emoji web interface.</p>
 
 <p>If everything went well, you should have a fully functional gRPC-Web based web
 application, as shown below.</p>
@@ -775,6 +775,15 @@ become a seamless experience for developers when working with gRPC.</p>
                                     
                                         
                                         
+                                            <li><a href="/a-beginners-guide-to-authn-and-authz-with-istio">A Beginner's Guide to AuthN and AuthZ with Istio</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
                                             <li><a href="/a-simple-state-machine-framework-in-go">A Simple State Machine Framework in Go</a></li>
                                         
                                     
@@ -792,8 +801,6 @@ become a seamless experience for developers when working with gRPC.</p>
                                   
                                     
                                         
-                                        
-                                            <li><a href="/hand-crafting-a-sidecar-proxy-and-demystifying-istio">Hand-crafting a Sidecar Proxy and Demystifying Istio</a></li>
                                         
                                     
                                   
@@ -856,7 +863,7 @@ become a seamless experience for developers when working with gRPC.</p>
                         <footer class="read-next-card-footer">
                             <a href="/tag/distributed-systems/">
                                 
-                                    See all 11 posts  →
+                                    See all 12 posts  →
                                 
                             </a>
                         </footer>
@@ -1005,7 +1012,7 @@ become a seamless experience for developers when working with gRPC.</p>
         <!-- The footer at the very bottom of the screen -->
         <footer class="site-footer outer">
             <div class="site-footer-content inner">
-                <section class="copyright"><a href="https://venilnoronha.io/">Venil Noronha</a> &copy; 2020</section>
+                <section class="copyright"><a href="https://venilnoronha.io/">Venil Noronha</a> &copy; 2021</section>
                 <section class="poweredby">Proudly published with <a href="https://jekyllrb.com/">Jekyll</a> &
                     <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> using
                     <a href="https://github.com/jekyller/jasper2" target="_blank" rel="noopener">Jasper2</a></section>

@@ -219,11 +219,11 @@ into the {body} of the default.hbs template -->
 <p>For brevity, I’m relying on the Istio <a href="https://github.com/istio/istio/wiki/Mixer-Out-of-Tree-Adapter-Walkthrough">Mixer Out Of Tree Adapter Walkthrough</a> for you to follow and build a working out-of-tree mixer adapter. Below is an outline of the steps you’re required to follow to create a working out-of-tree Istio Mixer Adapter that consumes metric data.</p>
 
 <ol>
-  <li>Create <code class="highlighter-rouge">config.proto</code> to represent the Adapter configuration</li>
-  <li>Create the <code class="highlighter-rouge">mygrpcadapter.go</code> implementation which handles the <code class="highlighter-rouge">HandleMetric(context.Context, *metric.HandleMetricRequest) (*v1beta11.ReportResult, error)</code> gRPC API call</li>
-  <li>Generate the configuration files via <code class="highlighter-rouge">go generate ./...</code></li>
-  <li>Create <code class="highlighter-rouge">main.go</code> which creates the gRPC server and listens to API calls</li>
-  <li>Write the <code class="highlighter-rouge">sample_operator_config.yaml</code> for the adapter</li>
+  <li>Create <code class="language-plaintext highlighter-rouge">config.proto</code> to represent the Adapter configuration</li>
+  <li>Create the <code class="language-plaintext highlighter-rouge">mygrpcadapter.go</code> implementation which handles the <code class="language-plaintext highlighter-rouge">HandleMetric(context.Context, *metric.HandleMetricRequest) (*v1beta11.ReportResult, error)</code> gRPC API call</li>
+  <li>Generate the configuration files via <code class="language-plaintext highlighter-rouge">go generate ./...</code></li>
+  <li>Create <code class="language-plaintext highlighter-rouge">main.go</code> which creates the gRPC server and listens to API calls</li>
+  <li>Write the <code class="language-plaintext highlighter-rouge">sample_operator_config.yaml</code> for the adapter</li>
   <li>Test and validate your adapter by starting a local Mixer process</li>
   <li>Configure the out-of-tree project</li>
   <li>Vendor the necessary dependencies (using <a href="https://github.com/golang/go/wiki/Modules">Go Modules</a>, <a href="https://glide.sh/">Glide</a>, <a href="https://golang.github.io/dep/">Dep</a>, etc. this time)</li>
@@ -232,12 +232,12 @@ into the {body} of the default.hbs template -->
 
 <h2 id="publishing-the-adapter-to-docker-hub">Publishing The Adapter To Docker Hub</h2>
 
-<p>Once you have the <code class="highlighter-rouge">myootadapter</code> project set up and tested locally, it’s time to build and publish the Adapter to a repository like <a href="https://hub.docker.com/">Docker Hub</a>. Please perform the following steps before proceeding.</p>
+<p>Once you have the <code class="language-plaintext highlighter-rouge">myootadapter</code> project set up and tested locally, it’s time to build and publish the Adapter to a repository like <a href="https://hub.docker.com/">Docker Hub</a>. Please perform the following steps before proceeding.</p>
 
 <ol>
-  <li>Move the contents of the <code class="highlighter-rouge">mygrpcadapter/testdata/</code> directory to under <code class="highlighter-rouge">operatorconfig/</code></li>
-  <li>Create a file named <code class="highlighter-rouge">Dockerfile</code> to hold the steps to create the Docker image</li>
-  <li>Finally, create a file named <code class="highlighter-rouge">mygrpcadapter-k8s.yaml</code> under <code class="highlighter-rouge">operatorconfig/</code> which we’ll use later to deploy the Adapter via Kubernetes</li>
+  <li>Move the contents of the <code class="language-plaintext highlighter-rouge">mygrpcadapter/testdata/</code> directory to under <code class="language-plaintext highlighter-rouge">operatorconfig/</code></li>
+  <li>Create a file named <code class="language-plaintext highlighter-rouge">Dockerfile</code> to hold the steps to create the Docker image</li>
+  <li>Finally, create a file named <code class="language-plaintext highlighter-rouge">mygrpcadapter-k8s.yaml</code> under <code class="language-plaintext highlighter-rouge">operatorconfig/</code> which we’ll use later to deploy the Adapter via Kubernetes</li>
 </ol>
 
 <p>Once you’ve followed these steps, you should have a project structure like below.</p>
@@ -268,7 +268,7 @@ into the {body} of the default.hbs template -->
 
 <h3 id="building-the-docker-image">Building The Docker Image</h3>
 
-<p>The <a href="https://docs.docker.com/develop/develop-images/multistage-build/">multi-stage builds</a> pattern can be used to build the Docker image. Copy the following contents to your <code class="highlighter-rouge">Dockerfile</code>.</p>
+<p>The <a href="https://docs.docker.com/develop/develop-images/multistage-build/">multi-stage builds</a> pattern can be used to build the Docker image. Copy the following contents to your <code class="language-plaintext highlighter-rouge">Dockerfile</code>.</p>
 
 <div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> golang:1.11 as builder</span>
 <span class="k">WORKDIR</span><span class="s"> /go/src/github.com/username/myootadapter/</span>
@@ -285,9 +285,9 @@ into the {body} of the default.hbs template -->
 <span class="k">EXPOSE</span><span class="s"> 8000</span>
 </code></pre></div></div>
 
-<p>The <code class="highlighter-rouge">CMD [ "8000" ]</code> line tells Docker to pass <code class="highlighter-rouge">8000</code> as an argument to <code class="highlighter-rouge">/bin/mygrpcadapter</code> which is defined by the <code class="highlighter-rouge">ENTRYPOINT [ "/bin/mygrpcadapter" ]</code> line. Since we fix the gRPC listener port to <code class="highlighter-rouge">8000</code> here, we must also update the <code class="highlighter-rouge">sample_operator_config.yaml</code> to reflect the same. We do that by replacing <code class="highlighter-rouge">address: "{ADDRESS}"</code> with <code class="highlighter-rouge">address: mygrpcadapter:8000</code>.</p>
+<p>The <code class="language-plaintext highlighter-rouge">CMD [ "8000" ]</code> line tells Docker to pass <code class="language-plaintext highlighter-rouge">8000</code> as an argument to <code class="language-plaintext highlighter-rouge">/bin/mygrpcadapter</code> which is defined by the <code class="language-plaintext highlighter-rouge">ENTRYPOINT [ "/bin/mygrpcadapter" ]</code> line. Since we fix the gRPC listener port to <code class="language-plaintext highlighter-rouge">8000</code> here, we must also update the <code class="language-plaintext highlighter-rouge">sample_operator_config.yaml</code> to reflect the same. We do that by replacing <code class="language-plaintext highlighter-rouge">address: "{ADDRESS}"</code> with <code class="language-plaintext highlighter-rouge">address: mygrpcadapter:8000</code>.</p>
 
-<p>Let’s also update the <code class="highlighter-rouge">file_path</code> to store the output on a volume which we’ll create later. Update <code class="highlighter-rouge">file_path: "out.txt"</code> to <code class="highlighter-rouge">file_path: "/volume/out.txt"</code>. You’d then land up with a Handler configuration like below.</p>
+<p>Let’s also update the <code class="language-plaintext highlighter-rouge">file_path</code> to store the output on a volume which we’ll create later. Update <code class="language-plaintext highlighter-rouge">file_path: "out.txt"</code> to <code class="language-plaintext highlighter-rouge">file_path: "/volume/out.txt"</code>. You’d then land up with a Handler configuration like below.</p>
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s2">"</span><span class="s">config.istio.io/v1alpha2"</span>
 <span class="na">kind</span><span class="pi">:</span> <span class="s">handler</span>
@@ -302,7 +302,7 @@ into the {body} of the default.hbs template -->
    <span class="na">file_path</span><span class="pi">:</span> <span class="s2">"</span><span class="s">/volume/out.txt"</span>
 </code></pre></div></div>
 
-<p>Now, we run the following command from the <code class="highlighter-rouge">myootadapter</code> directory to build and tag the Docker image.</p>
+<p>Now, we run the following command from the <code class="language-plaintext highlighter-rouge">myootadapter</code> directory to build and tag the Docker image.</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build <span class="nt">-t</span> dockerhub-username/mygrpcadapter:latest <span class="nb">.</span>
 </code></pre></div></div>
@@ -321,7 +321,7 @@ into the {body} of the default.hbs template -->
 
 <h2 id="writing-kubernetes-config-for-the-adapter">Writing Kubernetes Config For The Adapter</h2>
 
-<p>Let’s now fill out the configuration for deploying the adapter via Kubernetes. Copy the following configuration to the <code class="highlighter-rouge">mygrpcadapter-k8s.yaml</code> file which we created earlier.</p>
+<p>Let’s now fill out the configuration for deploying the adapter via Kubernetes. Copy the following configuration to the <code class="language-plaintext highlighter-rouge">mygrpcadapter-k8s.yaml</code> file which we created earlier.</p>
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
 <span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
@@ -335,8 +335,8 @@ into the {body} of the default.hbs template -->
   <span class="na">ports</span><span class="pi">:</span>
   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">grpc</span>
     <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
-    <span class="na">port</span><span class="pi">:</span> <span class="s">8000</span>
-    <span class="na">targetPort</span><span class="pi">:</span> <span class="s">8000</span>
+    <span class="na">port</span><span class="pi">:</span> <span class="m">8000</span>
+    <span class="na">targetPort</span><span class="pi">:</span> <span class="m">8000</span>
   <span class="na">selector</span><span class="pi">:</span>
     <span class="na">app</span><span class="pi">:</span> <span class="s">mygrpcadapter</span>
 <span class="nn">---</span>
@@ -348,7 +348,7 @@ into the {body} of the default.hbs template -->
   <span class="na">labels</span><span class="pi">:</span>
     <span class="na">app</span><span class="pi">:</span> <span class="s">mygrpcadapter</span>
 <span class="na">spec</span><span class="pi">:</span>
-  <span class="na">replicas</span><span class="pi">:</span> <span class="s">1</span>
+  <span class="na">replicas</span><span class="pi">:</span> <span class="m">1</span>
   <span class="na">template</span><span class="pi">:</span>
     <span class="na">metadata</span><span class="pi">:</span>
       <span class="na">labels</span><span class="pi">:</span>
@@ -362,7 +362,7 @@ into the {body} of the default.hbs template -->
         <span class="na">image</span><span class="pi">:</span> <span class="s">dockerhub-username/mygrpcadapter:latest</span>
         <span class="na">imagePullPolicy</span><span class="pi">:</span> <span class="s">Always</span>
         <span class="na">ports</span><span class="pi">:</span>
-        <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="s">8000</span>
+        <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">8000</span>
         <span class="na">volumeMounts</span><span class="pi">:</span>
         <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">transient-storage</span>
           <span class="na">mountPath</span><span class="pi">:</span> <span class="s">/volume</span>
@@ -371,7 +371,7 @@ into the {body} of the default.hbs template -->
         <span class="na">emptyDir</span><span class="pi">:</span> <span class="pi">{}</span>
 </code></pre></div></div>
 
-<p>The above configuration defines a simple service with just a single replica which is created out of the image at <code class="highlighter-rouge">dockerhub-username/mygrpcadapter:latest</code>. The service can be referred to by name as <code class="highlighter-rouge">mygrpcadapter</code> and can be addressed to via port <code class="highlighter-rouge">8000</code>. That’s how the <code class="highlighter-rouge">address: "mygrpcadapter:8000"</code> configuration  in <code class="highlighter-rouge">sample_operator_config.yaml</code> refers to this particular deployment.</p>
+<p>The above configuration defines a simple service with just a single replica which is created out of the image at <code class="language-plaintext highlighter-rouge">dockerhub-username/mygrpcadapter:latest</code>. The service can be referred to by name as <code class="language-plaintext highlighter-rouge">mygrpcadapter</code> and can be addressed to via port <code class="language-plaintext highlighter-rouge">8000</code>. That’s how the <code class="language-plaintext highlighter-rouge">address: "mygrpcadapter:8000"</code> configuration  in <code class="language-plaintext highlighter-rouge">sample_operator_config.yaml</code> refers to this particular deployment.</p>
 
 <p>Also, notice these special annotations:</p>
 
@@ -382,7 +382,7 @@ into the {body} of the default.hbs template -->
 
 <p>This tells the Kubernetes scheduler to not inject the Istio Proxy sidecar if automatic injection is in place. We do that because we don’t really need a Proxy in front of our Adapter. Also, the second annotation marks this pod as <em>critical</em> for the system.</p>
 
-<p>We also create a transient volume named <code class="highlighter-rouge">transient-storage</code> which is used for storing the Adapter output i.e. the <code class="highlighter-rouge">out.txt</code> file. The following snippet from the above configuration enables us to do that.</p>
+<p>We also create a transient volume named <code class="language-plaintext highlighter-rouge">transient-storage</code> which is used for storing the Adapter output i.e. the <code class="language-plaintext highlighter-rouge">out.txt</code> file. The following snippet from the above configuration enables us to do that.</p>
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="na">volumeMounts</span><span class="pi">:</span>
     <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">transient-storage</span>
@@ -403,14 +403,14 @@ into the {body} of the default.hbs template -->
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl apply <span class="nt">-f</span> operatorconfig/
 </code></pre></div></div>
 
-<p>This should deploy the <code class="highlighter-rouge">mygrpcadapter</code> service under the <code class="highlighter-rouge">istio-system</code> namespace. You can verify this by executing the following command.</p>
+<p>This should deploy the <code class="language-plaintext highlighter-rouge">mygrpcadapter</code> service under the <code class="language-plaintext highlighter-rouge">istio-system</code> namespace. You can verify this by executing the following command.</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get pods <span class="nt">-n</span> istio-system
 </code></pre></div></div>
 
 <p>This would print a log like below.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>NAME                                       READY     STATUS        RESTARTS   AGE
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>NAME                                       READY     STATUS        RESTARTS   AGE
 istio-citadel-75c88f897f-zfw8b             1/1       Running       0          1m
 istio-egressgateway-7d8479c7-khjvk         1/1       Running       0          1m
 .
@@ -425,24 +425,24 @@ mygrpcadapter-86cb6dd77c-hwvqd             1/1       Running       0          1m
 
 <p>It should then print the following log.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>listening on "[::]:8000"
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>listening on "[::]:8000"
 </code></pre></div></div>
 
 <h3 id="testing-the-adapter">Testing The Adapter</h3>
 
-<p>Execute the following command in your terminal, or hit the <code class="highlighter-rouge">http://${GATEWAY_URL}/productpage</code> URL in your browser to send a request to the Bookinfo deployment.</p>
+<p>Execute the following command in your terminal, or hit the <code class="language-plaintext highlighter-rouge">http://${GATEWAY_URL}/productpage</code> URL in your browser to send a request to the Bookinfo deployment.</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-o</span> /dev/null <span class="nt">-s</span> <span class="nt">-w</span> <span class="s2">"%{http_code}</span><span class="se">\n</span><span class="s2">"</span> http://<span class="k">${</span><span class="nv">GATEWAY_URL</span><span class="k">}</span>/productpage
 </code></pre></div></div>
 
-<p>Verify the output in the <code class="highlighter-rouge">/volume/out.txt</code> file by accessing the Adapter container.</p>
+<p>Verify the output in the <code class="language-plaintext highlighter-rouge">/volume/out.txt</code> file by accessing the Adapter container.</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl <span class="nb">exec </span>mygrpcadapter-86cb6dd77c-hwvqd <span class="nb">cat</span> /volume/out.txt
 </code></pre></div></div>
 
 <p>You should see an output like below.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>HandleMetric invoked with:
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>HandleMetric invoked with:
   Adapter config: &amp;Params{FilePath:/volume/out.txt,}
   Instances: 'i1metric.instance.istio-system':
   {
@@ -560,6 +560,15 @@ mygrpcadapter-86cb6dd77c-hwvqd             1/1       Running       0          1m
                                     
                                         
                                         
+                                            <li><a href="/a-beginners-guide-to-authn-and-authz-with-istio">A Beginner's Guide to AuthN and AuthZ with Istio</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
                                             <li><a href="/a-simple-state-machine-framework-in-go">A Simple State Machine Framework in Go</a></li>
                                         
                                     
@@ -577,8 +586,6 @@ mygrpcadapter-86cb6dd77c-hwvqd             1/1       Running       0          1m
                                   
                                     
                                         
-                                        
-                                            <li><a href="/hand-crafting-a-sidecar-proxy-and-demystifying-istio">Hand-crafting a Sidecar Proxy and Demystifying Istio</a></li>
                                         
                                     
                                   
@@ -641,7 +648,7 @@ mygrpcadapter-86cb6dd77c-hwvqd             1/1       Running       0          1m
                         <footer class="read-next-card-footer">
                             <a href="/tag/distributed-systems/">
                                 
-                                    See all 11 posts  →
+                                    See all 12 posts  →
                                 
                             </a>
                         </footer>
@@ -790,7 +797,7 @@ mygrpcadapter-86cb6dd77c-hwvqd             1/1       Running       0          1m
         <!-- The footer at the very bottom of the screen -->
         <footer class="site-footer outer">
             <div class="site-footer-content inner">
-                <section class="copyright"><a href="https://venilnoronha.io/">Venil Noronha</a> &copy; 2020</section>
+                <section class="copyright"><a href="https://venilnoronha.io/">Venil Noronha</a> &copy; 2021</section>
                 <section class="poweredby">Proudly published with <a href="https://jekyllrb.com/">Jekyll</a> &
                     <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> using
                     <a href="https://github.com/jekyller/jasper2" target="_blank" rel="noopener">Jasper2</a></section>
