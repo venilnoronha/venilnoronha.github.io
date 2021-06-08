@@ -18,27 +18,37 @@ subclass: 'post page'
     {% if site.linkedin %}<a href="https://linkedin.com/in/{{ site.linkedin }}" target="_blank" rel="noopener">LinkedIn</a>{% endif %}
 </p>
 
-I'm a software engineer with over 6 years of industry experience in building
-cloud software. I currently work with the [Tanzu Service Mesh](https://pages.cloud.vmware.com/vmware-nsx-service-mesh)
-product team at [VMware, Inc.](https://www.vmware.com) I also contribute
-upstream to projects like [Istio](https://github.com/istio/istio) and [Envoy proxy](https://github.com/envoyproxy/envoy).
-Previously, I worked with the Open Source Technology Center at VMware after
-doing a couple of internships with VMware's Storage and Availability business
-unit. I also developed SaaS products for a Microsoft-backed Big Data startup in
-Bombay (Mumbai) named [Germin8](https://germin8.com).
+I'm a software engineer with over 7 years of industry experience in building
+cloud-based, distributed systems, and microservices. I currently work with the
+Service Networking team for Traffic Engineering at [Stripe, Inc.][stripe] I also
+contribute to open source projects like [Envoy][envoy] and [Istio][istio], and I
+really enjoy speaking at [technology conferences][talks]. Prior to joining
+Stripe, I was leading a few projects for the [Tanzu Service Mesh][tsm] product
+at [VMware, Inc.][vmware] Before VMware, I was developing SaaS products for a
+Microsoft-backed Big Data startup in Bombay (Mumbai) named [Germin8][g8].
+
+[stripe]: https://stripe.com
+[envoy]: https://github.com/envoyproxy/envoy
+[istio]: https://github.com/istio/istio
+[talks]: /talks
+[tsm]: https://pages.cloud.vmware.com/vmware-nsx-service-mesh
+[vmware]: https://www.vmware.com
+[g8]: https://germin8.com
 
 I hold a master's degree in Computer Science from the University of Southern
 California, and a bachelor's degree in Information Technology from the
 University of Mumbai. I love contributing to open source projects in my free
-time, and, so far, I've contributed to 25+ projects (like Istio, Envoy proxy,
-gRPC, Golang, Kubernetes, Spring Boot, Spring Cloud, Spring Kafka, RabbitMQ,
-etc.) on [GitHub](https://github.com/venilnoronha). I maintain a few subprojects
-under Istio and Envoy proxy, and I'm a member of the [Kubernetes](https://github.com/kubernetes)
-project. I've also donated one of my projects, [Spring Cloud Config Server MongoDB](https://github.com/spring-cloud-incubator/spring-cloud-config-server-mongodb),
-to Pivotal's Spring Cloud Incubator.
+time, and I've previously contributed to projects like Spring Boot, Spring
+Cloud, gRPC, Golang, Kubernetes, RabbitMQ, etc. on [GitHub][github]. I maintain
+a few subprojects in the Istio and Envoy communities, and I've donated one of my
+projects, [Spring Cloud Config Server MongoDB][spring], to Pivotal's Spring
+Cloud Incubator.
 
-I'm very passionate about Service Mesh, Distributed Systems, Cloud Computing,
-Microservices, Scalability, Fault Tolerance, High Availability and Software
-Architecture. I'm also greatly enthusiastic about Open Source Software, so if
-you have a cool idea and are looking for someone to collaborate with, feel free
-to hit me up on hello AT venilnoronha DOT io.
+[github]: https://github.com/venilnoronha
+[spring]: https://github.com/spring-cloud-incubator/spring-cloud-config-server-mongodb
+
+I'm very passionate about Cloud Computing, Service Mesh, Software Architecture,
+Microservices, Distributed Systems, Scalability, Fault Tolerance, and High
+Availability. If you'd like to chat, feel free to hit me up on hello AT
+venilnoronha DOT io.
+
