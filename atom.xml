@@ -8,6 +8,23 @@
     
       
       <item>
+        <title>Introduction to Original Destination in Envoy</title>
+        
+          <description>&lt;p&gt;&lt;a href=&quot;https://envoyproxy.io&quot;&gt;Envoy&lt;/a&gt; is a service mesh proxy with a ton of built-in
+capabilities. In this post, I’ll be discussing the Original Destination feature
+in Envoy.&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Sat, 26 Jun 2021 12:15:00 -0700</pubDate>
+        <link>
+        https://venilnoronha.io/introduction-to-original-destination-in-envoy</link>
+        <guid isPermaLink="true">https://venilnoronha.io/introduction-to-original-destination-in-envoy</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>A Beginner&apos;s Guide to AuthN and AuthZ with Istio</title>
         
           <description>&lt;p&gt;Service meshes solve some of the key challenges in the cloud-native world today, and in this post
