@@ -9,7 +9,17 @@ class: page-template
 subclass: 'post page'
 ---
 
-**Nov 2020 | ServiceMeshCon** &nbsp;
+**Oct 2021 | ServiceMeshCon North America** &nbsp;
+  [talk](https://servicemeshconna21.sched.com/event/mH1t/service-mesh-a-hole-in-the-pocket-venil-noronha-john-murray-stripe) \|
+  [deck](#) \|
+  [video](#)
+
+**Oct 2021 | EnvoyCon North America** &nbsp;
+  [talk](https://envoyconna21.sched.com/event/mI8t/health-checks-a-boon-or-a-curse-venil-noronha-john-murray-stripe) \|
+  [deck](#) \|
+  [video](#)
+
+**Nov 2020 | ServiceMeshCon North America** &nbsp;
   [talk](https://smcna20.sched.com/event/fJI4/service-mesh-security-in-a-nutshell-venil-noronha-manish-chugtu-vmware-inc) \|
   [deck](decks/Service%20Mesh%20Security%20in%20a%20Nutshell%20-%20ServiceMeshCon%20NA%202020.pdf) \|
   [video](https://www.youtube.com/watch?v=liu51fCC3N4)
