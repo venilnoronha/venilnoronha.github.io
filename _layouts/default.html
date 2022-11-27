@@ -23,6 +23,8 @@
     {% include head.html %}
 
 </head>
+<!-- Add Google Analytics  -->
+{% include analytics.html %}
 <body class="{% if paginator.page > 1 %}paged archive-template{% elsif page.class %}{{ page.class }}{% else %}home-template{% endif %}">
 
     <div class="site-wrapper">
@@ -110,10 +112,6 @@
     </script>
     <script src="{{ site.baseurl }}assets/js/infinitescroll.js"></script>
     {% endif %}
-
-
-    <!-- Add Google Analytics  -->
-    {% include analytics.html %}
 
     <!-- The #block helper will pull in data from the #contentFor other template files. In this case, there's some JavaScript which we only want to use in post.hbs, but it needs to be included down here, after jQuery has already loaded. -->
     {% if page.class == "post-template" %}
