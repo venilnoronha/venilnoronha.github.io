@@ -35,7 +35,7 @@ disqus: True
 disqus_shortname: venilnoronha-io
 
 # Google Analytics
-google_analytics: UA-109280867-1
+google_analytics: G-PP90X6NKJH
 
 # Permalinks
 permalink: /:title
