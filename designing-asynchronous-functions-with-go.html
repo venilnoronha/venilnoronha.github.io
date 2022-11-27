@@ -91,6 +91,17 @@
 
 
 </head>
+<!-- Add Google Analytics  -->
+ <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PP90X6NKJH"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-PP90X6NKJH');
+</script>
+
 <body class="post-template">
 
     <div class="site-wrapper">
@@ -673,19 +684,6 @@ into the {body} of the default.hbs template -->
     <!-- /endif -->
 
     
-
-
-    <!-- Add Google Analytics  -->
-     <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-PP90X6NKJH"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-PP90X6NKJH');
-</script>
-
 
     <!-- The #block helper will pull in data from the #contentFor other template files. In this case, there's some JavaScript which we only want to use in post.hbs, but it needs to be included down here, after jQuery has already loaded. -->
     
