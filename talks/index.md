@@ -4,7 +4,7 @@ current: talks
 cover: assets/images/talks.jpg
 title: Talks
 navigation: true
-logo: 'assets/images/venilnoronha.jpg'
+logo: 'assets/images/venilnoronha.png'
 class: page-template
 subclass: 'post page'
 ---
