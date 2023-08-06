@@ -9,7 +9,7 @@ baseurl: '/'
 
 # Website info
 title: Venil Noronha
-description: Service mesh, distributed systems, software design, and more...
+description: Software architeture, service mesh, microservices, and more...
 cover: assets/images/blog-cover.jpg
 logo: False # assets/images/blog-icon.png
 logo_dark: assets/images/favicon.png

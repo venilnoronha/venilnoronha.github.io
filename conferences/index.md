@@ -1,8 +1,8 @@
 ---
 layout: page
-current: talks
-cover: assets/images/talks.jpg
-title: Talks
+current: conferences
+cover: assets/images/conferences.jpg
+title: Conferences
 navigation: true
 logo: 'assets/images/venilnoronha.png'
 class: page-template
@@ -18,6 +18,9 @@ subclass: 'post page'
     font-weight: bold;
   }
 </style>
+
+<span class="date">Sep 2023 |</span> **Open Source Summit Europe** &nbsp;
+  [program committee](https://www.credly.com/badges/933e4913-e1d4-4b20-8acb-f5e47553cc4f)
 
 <span class="date">Oct 2021 |</span> **ServiceMeshCon North America** &nbsp;
   [talk](https://servicemeshconna21.sched.com/event/mH1t/service-mesh-a-hole-in-the-pocket-venil-noronha-john-murray-stripe) \|
@@ -38,6 +41,9 @@ subclass: 'post page'
   [talk](https://kccncna19.sched.com/event/UacZ/rethinking-the-k8s-dns-for-the-modern-enterprise-deepa-kalani-venil-noronha-vmware) \|
   [deck](decks/Rethinking%20the%20K8s%20DNS%20for%20the%20Modern%20Enterprise%20-%20KubeCon%20NA%202019.pdf) \|
   [video](https://www.youtube.com/watch?v=fLx78pSYFvw)
+
+<span class="date">Nov 2019 |</span> **EnvoyCon North America** &nbsp;
+  [program committee](#)
 
 <span class="date">Oct 2019 |</span> **All Things Open** &nbsp;
   [talk](https://allthingsopen.org/talk/seamless-cloud-native-apps-with-grpc-web-and-istio/) \|

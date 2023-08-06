@@ -9,7 +9,7 @@ builder:
 .PHONY: serve
 serve:
 	docker run -it --rm -v $$PWD:/site:rw -p 4000:4000 venilnoronha/site-builder:latest -- \
-		"bundle exec jekyll serve --host=0.0.0.0 --incremental"
+		"bundle exec jekyll serve --host=0.0.0.0"
 
 .PHONY: build-prod
 build-prod:

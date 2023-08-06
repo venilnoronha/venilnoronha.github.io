@@ -18,37 +18,39 @@ subclass: 'post page'
     {% if site.linkedin %}<a href="https://linkedin.com/in/{{ site.linkedin }}" target="_blank" rel="noopener">LinkedIn</a>{% endif %}
 </p>
 
-I'm a software engineer with over 8 years of industry experience in building
-cloud-based, distributed systems, and microservices. I'm currently focused on
-building payment products at [Stripe, Inc.][stripe], and I previously also
-contributed to Stripe's service mesh and service discovery platforms. I like
-contributing to open source projects like [Envoy][envoy] and [Istio][istio],
-and I really enjoy speaking at [technology conferences][talks]. Prior to joining
-Stripe, I lead a few projects for the [Tanzu Service Mesh][tsm] product at
-[VMware, Inc.][vmware] Before VMware, I developed SaaS products for a
-Microsoft-backed social media analytics startup in Bombay (Mumbai) called
-[Germin8][g8].
+Hi, I’m Venil Noronha, a software engineer with a passion for distributed
+systems and software architecture. I have a decade of industry experience in
+topics ranging service mesh, microservices, distributed systems, software
+design, platform engineering, and cloud computing. I enjoy contributing to open
+source projects and sharing my knowledge with the community.
+
+Currently, I work at [Stripe, Inc.][stripe], one of the leading payment
+platforms in the world. There, I'm building innovative products for online
+payments, and have also worked on the service mesh and service discovery
+platforms that power Stripe’s infrastructure. Before joining Stripe, I was a
+senior engineer at [VMware, Inc.][vmware], where I led several projects for the
+[Tanzu Service Mesh][tsm] product. Prior to that, I developed SaaS products at
+[Germin8][germin8], a Microsoft-backed social media analytics startup in Mumbai.
+
+I love contributing to open source projects and really enjoy speaking at
+[technology conferences][conferences]. I’ve contributed to projects like Spring 
+Boot, Spring Cloud, gRPC, Golang, Kubernetes, RabbitMQ, etc. on
+[GitHub][github]. I’ve been a maintainer of subprojects in the [Istio][istio]
+and [Envoy][envoy] communities, and I’ve donated one of my projects,
+[Spring Cloud Config Server MongoDB][spring], to Pivotal’s Spring Cloud
+Incubator. I hold a Master’s degree in Computer Science from the University of 
+Southern California, and a Bachelor’s degree in Information Technology from the
+University of Mumbai.
+
+If you want to chat with me about anything related to these topics or just say
+hi, feel free to email me at hello AT venilnoronha DOT io.
 
 [stripe]: https://stripe.com
 [envoy]: https://github.com/envoyproxy/envoy
 [istio]: https://github.com/istio/istio
-[talks]: /talks
+[conferences]: /conferences
 [tsm]: https://pages.cloud.vmware.com/vmware-nsx-service-mesh
 [vmware]: https://www.vmware.com
-[g8]: https://germin8.com
-
-I hold a Master's degree in Computer Science from the University of Southern
-California, and a Bachelor's degree in Information Technology from the
-University of Mumbai. I love contributing to open source projects in my free
-time, and I've previously contributed to projects like Spring Boot, Spring
-Cloud, gRPC, Golang, Kubernetes, RabbitMQ, etc. on [GitHub][github]. I've been
-a maintainer of a few subprojects in the Istio and Envoy communities, and I've
-donated one of my projects, [Spring Cloud Config Server MongoDB][spring], to
-Pivotal's Spring Cloud Incubator.
-
+[germin8]: https://germin8.com
 [github]: https://github.com/venilnoronha
 [spring]: https://github.com/spring-cloud-incubator/spring-cloud-config-server-mongodb
-
-I'm very passionate about Software Architecture, Platform Engineering, Service
-Mesh, Microservices, Distributed Systems, and Cloud Computing. If you'd like to
-chat, feel free to hit me up on hello AT venilnoronha DOT io.
