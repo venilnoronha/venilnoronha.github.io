@@ -33,6 +33,7 @@
 
     if(readCookie('cookie-notice-dismissed')=='true') {
         {% include analytics.js %}
+        {% include disqus.js %}
     } else {
         document.getElementById('cookie-notice').style.display = 'block';
     }
