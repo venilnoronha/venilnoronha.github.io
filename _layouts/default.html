@@ -23,8 +23,6 @@
     {% include head.html %}
 
 </head>
-<!-- Add Google Analytics  -->
-{% include analytics.html %}
 <body class="{% if paginator.page > 1 %}paged archive-template{% elsif page.class %}{{ page.class }}{% else %}home-template{% endif %}">
 
     <div class="site-wrapper">
@@ -123,5 +121,7 @@
     <!-- Ghost outputs important scripts and data with this tag - it should always be the very last thing before the closing body tag -->
     <!-- ghost_foot -->
 
+<!-- Add cookie consent  -->
+{% include cookie-consent.html %}
 </body>
 </html>
