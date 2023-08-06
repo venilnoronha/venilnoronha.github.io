@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title> - Articles</title>
-    <description>Service mesh, distributed systems, software design, and more...</description>
+    <description>Software architeture, service mesh, microservices, and more...</description>
     <link>
     https://venilnoronha.io</link>
     
