@@ -575,18 +575,6 @@ further customized by specifying conditions using other supported attributes def
             
                 <section class="post-full-comments">
                     <div id="disqus_thread"></div>
-                    <script>
-                        var disqus_config = function () {
-                            this.page.url = 'https://venilnoronha.io/a-beginners-guide-to-authn-and-authz-with-istio';
-                            this.page.identifier = 'A Beginner's Guide to AuthN and AuthZ with Istio';
-                        };
-                        (function() {
-                            var d = document, s = d.createElement('script');
-                            s.src = 'https://venilnoronha-io.disqus.com/embed.js';
-                            s.setAttribute('data-timestamp', +new Date());
-                            (d.head || d.body).appendChild(s);
-                        })();
-                    </script>
                 </section>
             
 
@@ -1031,6 +1019,21 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-PP90X6NKJH');
+
+        if (!!document.getElementById('disqus_thread')) {
+
+    var disqus_config = function () {
+        this.page.url = "https://venilnoronha.io/a-beginners-guide-to-authn-and-authz-with-istio";
+        this.page.identifier = "A Beginner's Guide to AuthN and AuthZ with Istio";
+    };
+
+    (function() {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://venilnoronha-io.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+}
 
     } else {
         document.getElementById('cookie-notice').style.display = 'block';

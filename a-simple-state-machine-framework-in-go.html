@@ -767,18 +767,6 @@ can nicely handle simple use-cases that you may come across in everyday life.</p
             
                 <section class="post-full-comments">
                     <div id="disqus_thread"></div>
-                    <script>
-                        var disqus_config = function () {
-                            this.page.url = 'https://venilnoronha.io/a-simple-state-machine-framework-in-go';
-                            this.page.identifier = 'A Simple State Machine Framework in Go';
-                        };
-                        (function() {
-                            var d = document, s = d.createElement('script');
-                            s.src = 'https://venilnoronha-io.disqus.com/embed.js';
-                            s.setAttribute('data-timestamp', +new Date());
-                            (d.head || d.body).appendChild(s);
-                        })();
-                    </script>
                 </section>
             
 
@@ -1223,6 +1211,21 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-PP90X6NKJH');
+
+        if (!!document.getElementById('disqus_thread')) {
+
+    var disqus_config = function () {
+        this.page.url = "https://venilnoronha.io/a-simple-state-machine-framework-in-go";
+        this.page.identifier = "A Simple State Machine Framework in Go";
+    };
+
+    (function() {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://venilnoronha-io.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+}
 
     } else {
         document.getElementById('cookie-notice').style.display = 'block';

@@ -616,18 +616,6 @@ then feel free to reach out to me.</p>
             
                 <section class="post-full-comments">
                     <div id="disqus_thread"></div>
-                    <script>
-                        var disqus_config = function () {
-                            this.page.url = 'https://venilnoronha.io/hand-crafting-a-sidecar-proxy-and-demystifying-istio';
-                            this.page.identifier = 'Hand-crafting a Sidecar Proxy and Demystifying Istio';
-                        };
-                        (function() {
-                            var d = document, s = d.createElement('script');
-                            s.src = 'https://venilnoronha-io.disqus.com/embed.js';
-                            s.setAttribute('data-timestamp', +new Date());
-                            (d.head || d.body).appendChild(s);
-                        })();
-                    </script>
                 </section>
             
 
@@ -1072,6 +1060,21 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-PP90X6NKJH');
+
+        if (!!document.getElementById('disqus_thread')) {
+
+    var disqus_config = function () {
+        this.page.url = "https://venilnoronha.io/hand-crafting-a-sidecar-proxy-and-demystifying-istio";
+        this.page.identifier = "Hand-crafting a Sidecar Proxy and Demystifying Istio";
+    };
+
+    (function() {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://venilnoronha-io.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+}
 
     } else {
         document.getElementById('cookie-notice').style.display = 'block';

@@ -817,6 +817,21 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-PP90X6NKJH');
 
+        if (!!document.getElementById('disqus_thread')) {
+
+    var disqus_config = function () {
+        this.page.url = "https://venilnoronha.io/author/venilnoronha/";
+        this.page.identifier = "Author Page";
+    };
+
+    (function() {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://venilnoronha-io.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+}
+
     } else {
         document.getElementById('cookie-notice').style.display = 'block';
     }

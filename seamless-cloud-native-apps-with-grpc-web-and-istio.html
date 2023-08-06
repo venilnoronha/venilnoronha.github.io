@@ -722,18 +722,6 @@ become a seamless experience for developers when working with gRPC.</p>
             
                 <section class="post-full-comments">
                     <div id="disqus_thread"></div>
-                    <script>
-                        var disqus_config = function () {
-                            this.page.url = 'https://venilnoronha.io/seamless-cloud-native-apps-with-grpc-web-and-istio';
-                            this.page.identifier = 'Seamless Cloud-Native Apps with gRPC-Web and Istio';
-                        };
-                        (function() {
-                            var d = document, s = d.createElement('script');
-                            s.src = 'https://venilnoronha-io.disqus.com/embed.js';
-                            s.setAttribute('data-timestamp', +new Date());
-                            (d.head || d.body).appendChild(s);
-                        })();
-                    </script>
                 </section>
             
 
@@ -1178,6 +1166,21 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-PP90X6NKJH');
+
+        if (!!document.getElementById('disqus_thread')) {
+
+    var disqus_config = function () {
+        this.page.url = "https://venilnoronha.io/seamless-cloud-native-apps-with-grpc-web-and-istio";
+        this.page.identifier = "Seamless Cloud-Native Apps with gRPC-Web and Istio";
+    };
+
+    (function() {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://venilnoronha-io.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+}
 
     } else {
         document.getElementById('cookie-notice').style.display = 'block';

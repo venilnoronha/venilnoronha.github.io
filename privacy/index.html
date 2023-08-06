@@ -154,18 +154,28 @@ into the {body} of the default.hbs template -->
             <section class="post-full-content">
                 <h4 id="how-we-process-your-data">How we process your data</h4>
 
-<p>This website is powered by Jekyll and is hosted on GitHub, with Cloudflare as a
-Content Delivery Network (CDN). Github, like any hosting company, can have full
-insight in visitor data, like connecting IP addresses, visited pages, etc. Note
-that Github is not known to actively profile visitors. By using a VPN you can
-(try to) prevent this.</p>
+<p>This website is powered by Jekyll, Google Analytics, Disqus, and is hosted on
+GitHub with Cloudflare as a Content Delivery Network (CDN). Github, like any
+hosting company, can have full insight in visitor data, like connecting IP
+addresses, visited pages, etc. Note that Github is not known to actively profile
+visitors. By using a VPN you can (try to) prevent this.</p>
 
 <h4 id="google-analytics">Google Analytics</h4>
 
 <p>This website uses Google Analytics. This happens only if you approve third party
 cookies and scripts. However, we have taken all actions we can to limit the
 power of Google. We have configured Google Analytics to anonymize IP addresses
-and use SSL at all times.</p>
+and use SSL at all times. Please refer to the
+<a href="https://policies.google.com/privacy">Google privacy policy</a> for details.</p>
+
+<h4 id="disqus">Disqus</h4>
+
+<p>This website uses Disqus for comments. This happens only if you approve third
+party cookies and scripts, and the comments have been enabled for a particular
+page. Please refer to the <a href="https://help.disqus.com/en/articles/1717103-disqus-privacy-policy">Disqus privacy policy</a> for details.
+You may additionally specifically opt out via Disqus’s
+<a href="https://disqus.com/data-sharing-settings/">data sharing settings</a>.</p>
+
 
             </section>
 
@@ -297,6 +307,21 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-PP90X6NKJH');
+
+        if (!!document.getElementById('disqus_thread')) {
+
+    var disqus_config = function () {
+        this.page.url = "https://venilnoronha.io/privacy/";
+        this.page.identifier = "Privacy Policy";
+    };
+
+    (function() {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://venilnoronha-io.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+}
 
     } else {
         document.getElementById('cookie-notice').style.display = 'block';
