@@ -27,8 +27,8 @@ source projects and sharing my knowledge with the community.
 Currently, I work at [Stripe, Inc.][stripe], one of the leading payment
 platforms in the world. There, I'm building innovative products for online
 payments, and have also worked on the service mesh and service discovery
-platforms that power Stripe’s infrastructure. Before joining Stripe, I was a
-senior engineer at [VMware, Inc.][vmware], where I led several projects for the
+platforms that power Stripe’s infrastructure. Before joining Stripe, I was at
+[VMware, Inc.][vmware], where I led several projects in relation with the
 [Tanzu Service Mesh][tsm] product. Prior to that, I developed SaaS products at
 [Germin8][germin8], a Microsoft-backed social media analytics startup in Mumbai.
 
