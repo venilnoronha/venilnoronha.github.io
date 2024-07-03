@@ -19,6 +19,9 @@ subclass: 'post page'
   }
 </style>
 
+<span class="date">Jul 2024 |</span> **Open Source Summit Europe** &nbsp;
+  [program committee](https://www.credly.com/badges/a0947519-818f-4b5a-9a64-8ec554382858)
+
 <span class="date">Apr 2024 |</span> **Stripe Fireside Chat** &nbsp;
 
 <span class="date">Feb 2024 |</span> **Open Source Summit North America** &nbsp;
