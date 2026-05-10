@@ -3,7 +3,7 @@ claude-code:
   name: Claude Code
   bio: AI coding assistant by Anthropic.
   url_full: https://claude.ai/code
-  picture: False
+  picture: assets/images/claude-code.png
 
 venilnoronha:
   username: venilnoronha
