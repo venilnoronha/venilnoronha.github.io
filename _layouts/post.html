@@ -64,38 +64,57 @@ into the {body} of the default.hbs template -->
             <footer class="post-full-footer">
                 <!-- Everything inside the #author tags pulls data from the author -->
                 <!-- #author-->
-                {% for author in site.data.authors %}
-                    {% if author[1].username == page.author %}
-                        <section class="author-card">
-                            {% if author[1].picture %}
-                                <img class="author-profile-image" src="{{ site.baseurl }}{{ author[1].picture }}" alt="{{ page.author }}" />
-                            {% endif %}
-                            <section class="author-card-content">
-                                <h4 class="author-card-name">
-                                    {% if author[1].username == site.default_author %}
-                                        <a href="{{ site.baseurl }}about/">{{ author[1].name }}</a>
-                                    {% else %}
-                                        <a href="{{ site.baseurl }}author/{{ page.author }}">{{ author[1].name }}</a>
-                                    {% endif %}
-                                </h4>
-                                {% if author[1].bio %}
-                                    <p>{{ author[1].bio }}</p>
-                                {% else %}
-                                    <p>Read <a href="{{ site.baseurl }}author/{{ page.author }}">more posts</a> by this author.</p>
+                {% if page.authors %}
+                    {% assign _post_authors = page.authors %}
+                {% else %}
+                    {% assign _post_authors = page.author | split: ',' %}
+                {% endif %}
+                {% for _username in _post_authors %}
+                    {% assign _username = _username | strip %}
+                    {% for author in site.data.authors %}
+                        {% if author[1].username == _username %}
+                            <section class="author-card">
+                                {% if author[1].picture %}
+                                    <img class="author-profile-image" src="{{ site.baseurl }}{{ author[1].picture }}" alt="{{ _username }}" />
                                 {% endif %}
-                                <p style="margin-top: 2px;">
-                                    {% if site.github %}<a href="https://github.com/{{ site.github }}" target="_blank" rel="noopener">GitHub</a>{% endif %} |
-                                    {% if site.facebook %}<a href="https://facebook.com/{{ site.facebook }}" target="_blank" rel="noopener">Facebook</a>{% endif %}
-                                    {% if site.twitter %}<a href="https://twitter.com/{{ site.twitter }}" target="_blank" rel="noopener">Twitter</a>{% endif %} |
-                                    {% if site.instagram %}<a href="https://instagram.com/{{ site.instagram }}" target="_blank" rel="noopener">Instagram</a> |{% endif %}
-                                    {% if site.linkedin %}<a href="https://linkedin.com/in/{{ site.linkedin }}" target="_blank" rel="noopener">LinkedIn</a>{% endif %}
-                                </p>
+                                <section class="author-card-content">
+                                    <h4 class="author-card-name">
+                                        {% if author[1].username == site.default_author %}
+                                            <a href="{{ site.baseurl }}about/">{{ author[1].name }}</a>
+                                        {% elsif author[1].url_full %}
+                                            <a href="{{ author[1].url_full }}" target="_blank" rel="noopener">{{ author[1].name }}</a>
+                                        {% else %}
+                                            <a href="{{ site.baseurl }}author/{{ _username }}">{{ author[1].name }}</a>
+                                        {% endif %}
+                                    </h4>
+                                    {% if author[1].bio %}
+                                        <p>{{ author[1].bio }}</p>
+                                    {% else %}
+                                        <p>Read <a href="{{ site.baseurl }}author/{{ _username }}">more posts</a> by this author.</p>
+                                    {% endif %}
+                                    {% if author[1].username == site.default_author %}
+                                        <p style="margin-top: 2px;">
+                                            {% if site.github %}<a href="https://github.com/{{ site.github }}" target="_blank" rel="noopener">GitHub</a>{% endif %} |
+                                            {% if site.facebook %}<a href="https://facebook.com/{{ site.facebook }}" target="_blank" rel="noopener">Facebook</a>{% endif %}
+                                            {% if site.twitter %}<a href="https://twitter.com/{{ site.twitter }}" target="_blank" rel="noopener">Twitter</a>{% endif %} |
+                                            {% if site.instagram %}<a href="https://instagram.com/{{ site.instagram }}" target="_blank" rel="noopener">Instagram</a> |{% endif %}
+                                            {% if site.linkedin %}<a href="https://linkedin.com/in/{{ site.linkedin }}" target="_blank" rel="noopener">LinkedIn</a>{% endif %}
+                                        </p>
+                                    {% endif %}
+                                </section>
                             </section>
-                        </section>
-                        <div class="post-full-footer-right">
-                            <a class="author-card-button" href="{{ site.baseurl }}author/{{ page.author }}">Read More</a>
-                        </div>
-                    {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+                {% for _username in _post_authors %}
+                    {% assign _username = _username | strip %}
+                    {% for author in site.data.authors %}
+                        {% if author[1].username == _username and author[1].username == site.default_author %}
+                            <div class="post-full-footer-right">
+                                <a class="author-card-button" href="{{ site.baseurl }}author/{{ _username }}">Read More</a>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
                 {% endfor %}
                 <!-- /author  -->
             </footer>

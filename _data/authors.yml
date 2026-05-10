@@ -1,3 +1,10 @@
+claude-code:
+  username: claude-code
+  name: Claude Code
+  bio: AI coding assistant by Anthropic.
+  url_full: https://claude.ai/code
+  picture: False
+
 venilnoronha:
   username: venilnoronha
   name: Venil Noronha
