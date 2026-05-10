@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Document Settings -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Base Meta -->
+    <!-- dynamically fixing the title for tag/author pages -->
+
+
+
+    <title>Dead Reckoning for Databases</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Styles'n'Scripts -->
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.edited.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/syntax.css" />
+    <!-- highlight.js -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+    <style>.hljs { background: none; }</style>
+
+    <!-- This tag outputs SEO meta+structured data and other important settings -->
+    <meta name="description" content="Software architecture, service mesh, microservices, and more..." />
+    <link rel="shortcut icon" href="https://venilnoronha.io/assets/images/favicon.png" type="image/png" />
+    <link rel="canonical" href="https://venilnoronha.io/dead-reckoning-for-databases" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+
+     <!--title below is coming from _includes/dynamic_title-->
+    <meta property="og:site_name" content="Venil Noronha" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Dead Reckoning for Databases" />
+    <meta property="og:description" content="One file. One source of truth. Write a .proto message, get a database table and type-safe Go bindings. The Core Idea Every Go service that touches a database ends up maintaining the same entity in at least two places: a Protobuf message for the API layer and a SQL table" />
+    <meta property="og:url" content="https://venilnoronha.io/dead-reckoning-for-databases" />
+    <meta property="og:image" content="https://venilnoronha.io/assets/images/2026-05-09-dead-reckoning-for-databases/banner.jpg" />
+    <meta property="article:publisher" content="https://www.facebook.com/false" />
+    <meta property="article:author" content="https://www.facebook.com/false" />
+    <meta property="article:published_time" content="2026-05-09T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2026-05-09T00:00:00+00:00" />
+    <meta property="article:tag" content="Distributed Systems" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Dead Reckoning for Databases" />
+    <meta name="twitter:description" content="One file. One source of truth. Write a .proto message, get a database table and type-safe Go bindings. The Core Idea Every Go service that touches a database ends up maintaining the same entity in at least two places: a Protobuf message for the API layer and a SQL table" />
+    <meta name="twitter:url" content="https://venilnoronha.io/" />
+    <meta name="twitter:image" content="https://venilnoronha.io/assets/images/2026-05-09-dead-reckoning-for-databases/banner.jpg" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Venil Noronha" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="Distributed Systems" />
+    <meta name="twitter:site" content="@venilnoronha" />
+    <meta name="twitter:creator" content="@venilnoronha" />
+    <meta property="og:image:width" content="1400" />
+    <meta property="og:image:height" content="933" />
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Website",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Venil Noronha",
+        "logo": "https://venilnoronha.io/false"
+    },
+    "url": "https://venilnoronha.io/dead-reckoning-for-databases",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://venilnoronha.io/assets/images/2026-05-09-dead-reckoning-for-databases/banner.jpg",
+        "width": 2000,
+        "height": 666
+    },
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://venilnoronha.io/dead-reckoning-for-databases"
+    },
+    "description": "One file. One source of truth. Write a .proto message, get a database table and type-safe Go bindings. The Core Idea Every Go service that touches a database ends up maintaining the same entity in at least two places: a Protobuf message for the API layer and a SQL table"
+}
+    </script>
+
+    <!-- <script type="text/javascript" src="https://demo.ghost.io/public/ghost-sdk.min.js?v=724281a32e"></script>
+    <script type="text/javascript">
+    ghost.init({
+    	clientId: "ghost-frontend",
+    	clientSecret: "f84a07a72b17"
+    });
+    </script> -->
+
+    <meta name="generator" content="Jekyll 3.6.2" />
+    <link rel="alternate" type="application/rss+xml" title="Dead Reckoning for Databases" href="/feed.xml" />
+
+
+</head>
+<body class="post-template">
+
+    <div class="site-wrapper">
+        <!-- All the main content gets inserted here, index.hbs, post.hbs, etc -->
+        <!-- default -->
+
+<!-- The tag above means: insert everything in this file
+into the {body} of the default.hbs template -->
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+        
+            
+                <a class="site-nav-logo" href="https://venilnoronha.io/">Venil Noronha</a>
+            
+        
+        
+            <ul class="nav" role="menu">
+    <li class="nav-home" role="menuitem"><a href="/">Home</a></li>
+    <li class="nav-conferences" role="menuitem"><a href="/conferences/">Conferences</a></li>
+    <li class="nav-about" role="menuitem"><a href="/about/">About</a></li>
+    <li class="nav-feed" role="menuitem"><a href="https://venilnoronha.io/feed.xml">Feed</a></li>
+</ul>
+
+        
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+            
+                <a class="social-link" href="https://github.com/venilnoronha" target="_blank" rel="noopener"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M896 128q209 0 385.5 103t279.5 279.5 103 385.5q0 251-146.5 451.5t-378.5 277.5q-27 5-40-7t-13-30q0-3 .5-76.5t.5-134.5q0-97-52-142 57-6 102.5-18t94-39 81-66.5 53-105 20.5-150.5q0-119-79-206 37-91-8-204-28-9-81 11t-92 44l-38 24q-93-26-192-26t-192 26q-16-11-42.5-27t-83.5-38.5-85-13.5q-45 113-8 204-79 87-79 206 0 85 20.5 150t52.5 105 80.5 67 94 39 102.5 18q-39 36-49 103-21 10-45 15t-57 5-65.5-21.5-55.5-62.5q-19-32-48.5-52t-49.5-24l-20-3q-21 0-29 4.5t-5 11.5 9 14 13 12l7 5q22 10 43.5 38t31.5 51l10 23q13 38 44 61.5t67 30 69.5 7 55.5-3.5l23-4q0 38 .5 88.5t.5 54.5q0 18-13 30t-40 7q-232-77-378.5-277.5t-146.5-451.5q0-209 103-385.5t279.5-279.5 385.5-103zm-477 1103q3-7-7-12-10-3-13 2-3 7 7 12 9 6 13-2zm31 34q7-5-2-16-10-9-16-3-7 5 2 16 10 10 16 3zm30 45q9-7 0-19-8-13-17-6-9 5 0 18t17 7zm42 42q8-8-4-19-12-12-20-3-9 8 4 19 12 12 20 3zm57 25q3-11-13-16-15-4-19 7t13 15q15 6 19-6zm63 5q0-13-17-11-16 0-16 11 0 13 17 11 16 0 16-11zm58-10q-2-11-18-9-16 3-14 15t18 8 14-14z"/></svg>
+</a>
+            
+            
+            
+                <a class="social-link social-link-tw" href="https://twitter.com/venilnoronha" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+</a>
+            
+            
+            
+                <a class="social-link" href="https://linkedin.com/in/venilnoronha" target="_blank" rel="noopener"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M365 1414h231v-694h-231v694zm246-908q-1-52-36-86t-93-34-94.5 34-36.5 86q0 51 35.5 85.5t92.5 34.5h1q59 0 95-34.5t36-85.5zm585 908h231v-398q0-154-73-233t-193-79q-136 0-209 117h2v-101h-231q3 66 0 694h231v-388q0-38 7-56 15-35 45-59.5t74-24.5q116 0 116 157v371zm468-998v960q0 119-84.5 203.5t-203.5 84.5h-960q-119 0-203.5-84.5t-84.5-203.5v-960q0-119 84.5-203.5t203.5-84.5h960q119 0 203.5 84.5t84.5 203.5z"/></svg>
+</a>
+            
+        </div>
+        
+    </div>
+</nav>
+
+    </div>
+</header>
+
+<!-- Everything inside the #post tags pulls data from the post -->
+<!-- #post -->
+
+<main id="site-main" class="site-main outer" role="main">
+    <div class="inner">
+
+        <article class="post-full post tag-distributed-systems ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime=" 9 May 2026"> 9 May 2026</time>
+                    
+                        <span class="date-divider">/</span>
+                        
+                            
+                               <a href='/tag/distributed-systems/'>DISTRIBUTED SYSTEMS</a>
+                            
+                        
+                    
+                </section>
+                <h1 class="post-full-title">Dead Reckoning for Databases</h1>
+            </header>
+
+            
+            <figure class="post-full-image" style="background-image: url(/assets/images/2026-05-09-dead-reckoning-for-databases/banner.jpg)">
+            </figure>
+            
+
+            <section class="post-full-content">
+                <div class="kg-card-markdown">
+                    <p>One file. One source of truth. Write a <code class="language-plaintext highlighter-rouge">.proto</code> message, get a database table and type-safe Go
+bindings.</p>
+
+<h2 id="the-core-idea">The Core Idea</h2>
+
+<p>Every Go service that touches a database ends up maintaining the same entity in at least two places:
+a Protobuf message for the API layer and a SQL table for persistence. Add a Go struct in between and
+you have three. They drift. You forget to migrate. You fat-finger a column rename.</p>
+
+<p>The fix is to make the <code class="language-plaintext highlighter-rouge">.proto</code> file <em>authoritative</em> and derive everything else from it. Concretely:</p>
+
+<ul>
+  <li><strong>A custom <code class="language-plaintext highlighter-rouge">protoc</code> plugin</strong> reads your message definition and emits a <code class="language-plaintext highlighter-rouge">CREATE TABLE</code> DDL file.</li>
+  <li><strong>A reflection-based scanner</strong> maps SQLite rows back onto your proto-generated Go structs at
+runtime — no hand-written <code class="language-plaintext highlighter-rouge">Scan(&amp;a, &amp;b, &amp;c)</code> calls.</li>
+</ul>
+
+<p>We’re using <strong>SQLite</strong> via <code class="language-plaintext highlighter-rouge">modernc.org/sqlite</code> (a pure-Go driver, zero CGo) to keep the demo
+self-contained. The same pattern ports cleanly to Postgres or MySQL.</p>
+
+<h2 id="the-pipeline">The Pipeline</h2>
+
+<p style="text-align: center;">
+  <img src="assets/images/2026-05-09-dead-reckoning-for-databases/pipeline.png" alt="The Pipeline" style="max-width: 100%; display: inline-block;" />
+</p>
+
+<p>The runtime has no knowledge of protoc or code generation — it just sees a regular Go struct and a
+<code class="language-plaintext highlighter-rouge">*sql.DB</code>. The generated DDL is applied once at startup via <code class="language-plaintext highlighter-rouge">db.Exec(ddlString)</code>. <code class="language-plaintext highlighter-rouge">reflectScan()</code>
+in the diagram refers to the <code class="language-plaintext highlighter-rouge">sqlreflect</code> package covered later: it uses Go’s <code class="language-plaintext highlighter-rouge">reflect</code> package to
+map SQL column names back to struct fields automatically, so query results land in your struct
+without a single hand-written <code class="language-plaintext highlighter-rouge">rows.Scan(...)</code> call.</p>
+
+<h2 id="annotating-your-proto">Annotating Your Proto</h2>
+
+<p>We use <strong>custom field options</strong> to embed storage hints directly in the message. This keeps column
+type overrides, primary key declarations, and index hints co-located with the field they describe.</p>
+
+<div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// proto/options/db.proto</span>
+<span class="na">syntax</span> <span class="o">=</span> <span class="s">"proto3"</span><span class="p">;</span>
+<span class="kn">package</span> <span class="nn">options</span><span class="p">;</span>
+
+<span class="k">import</span> <span class="s">"google/protobuf/descriptor.proto"</span><span class="p">;</span>
+
+<span class="k">option</span> <span class="na">go_package</span> <span class="o">=</span> <span class="s">"github.com/yourorg/app/gen/options"</span><span class="p">;</span>
+
+<span class="kd">message</span> <span class="nc">DbFieldOptions</span> <span class="p">{</span>
+  <span class="kt">string</span> <span class="na">column_type</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// e.g. "TEXT", "INTEGER", "REAL"</span>
+  <span class="kt">bool</span>   <span class="na">primary_key</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+  <span class="kt">bool</span>   <span class="na">unique</span>      <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+  <span class="kt">bool</span>   <span class="na">not_null</span>    <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+  <span class="kt">string</span> <span class="na">default_val</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+  <span class="kt">bool</span>   <span class="na">index</span>       <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">message</span> <span class="nc">DbMessageOptions</span> <span class="p">{</span>
+  <span class="kt">string</span> <span class="na">table_name</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">extend</span> <span class="nc">google</span><span class="o">.</span><span class="n">protobuf.FieldOptions</span>   <span class="p">{</span> <span class="n">DbFieldOptions</span>   <span class="na">db_field</span> <span class="o">=</span> <span class="mi">50001</span><span class="p">;</span> <span class="p">}</span>
+<span class="kd">extend</span> <span class="nc">google</span><span class="o">.</span><span class="n">protobuf.MessageOptions</span> <span class="p">{</span> <span class="n">DbMessageOptions</span> <span class="na">db_msg</span>   <span class="o">=</span> <span class="mi">50002</span><span class="p">;</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<p>Now the domain message. Notice how everything a DBA would want to know about storage is right here,
+next to the field definitions:</p>
+
+<div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// proto/user/v1/user.proto</span>
+<span class="na">syntax</span> <span class="o">=</span> <span class="s">"proto3"</span><span class="p">;</span>
+<span class="kn">package</span> <span class="nn">user</span><span class="o">.</span><span class="n">v1</span><span class="p">;</span>
+
+<span class="k">import</span> <span class="s">"proto/options/db.proto"</span><span class="p">;</span>
+
+<span class="k">option</span> <span class="na">go_package</span> <span class="o">=</span> <span class="s">"github.com/yourorg/app/gen/user/v1"</span><span class="p">;</span>
+
+<span class="kd">message</span> <span class="nc">User</span> <span class="p">{</span>
+  <span class="k">option</span> <span class="p">(</span><span class="n">options.db_msg</span><span class="p">)</span> <span class="o">=</span> <span class="p">{</span> <span class="n">table_name</span><span class="o">:</span> <span class="s">"users"</span> <span class="p">};</span>
+
+  <span class="kt">string</span> <span class="na">id</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">[(</span><span class="n">options.db_field</span><span class="p">)</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">primary_key</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="n">column_type</span><span class="o">:</span> <span class="s">"TEXT"</span>
+    <span class="n">not_null</span><span class="o">:</span>    <span class="kc">true</span>
+  <span class="p">}];</span>
+
+  <span class="kt">string</span> <span class="na">email</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">[(</span><span class="n">options.db_field</span><span class="p">)</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">unique</span><span class="o">:</span>   <span class="kc">true</span>
+    <span class="n">not_null</span><span class="o">:</span> <span class="kc">true</span>
+  <span class="p">}];</span>
+
+  <span class="kt">string</span> <span class="na">display_name</span> <span class="o">=</span> <span class="mi">3</span> <span class="p">[(</span><span class="n">options.db_field</span><span class="p">)</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">not_null</span><span class="o">:</span> <span class="kc">true</span>
+  <span class="p">}];</span>
+
+  <span class="kt">int64</span> <span class="na">created_at_unix</span> <span class="o">=</span> <span class="mi">4</span> <span class="p">[(</span><span class="n">options.db_field</span><span class="p">)</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">column_type</span><span class="o">:</span> <span class="s">"INTEGER"</span>
+    <span class="n">not_null</span><span class="o">:</span>    <span class="kc">true</span>
+    <span class="n">default_val</span><span class="o">:</span> <span class="s">"(unixepoch())"</span>
+  <span class="p">}];</span>
+
+  <span class="kt">string</span> <span class="na">org_id</span> <span class="o">=</span> <span class="mi">5</span> <span class="p">[(</span><span class="n">options.db_field</span><span class="p">)</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">not_null</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="n">index</span><span class="o">:</span>    <span class="kc">true</span>
+  <span class="p">}];</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="generating-ddl-with-a-protoc-plugin">Generating DDL with a protoc Plugin</h2>
+
+<p>A <code class="language-plaintext highlighter-rouge">protoc</code> plugin is just a binary that reads a <code class="language-plaintext highlighter-rouge">CodeGeneratorRequest</code> from stdin and writes a
+<code class="language-plaintext highlighter-rouge">CodeGeneratorResponse</code> to stdout. The <code class="language-plaintext highlighter-rouge">protogen</code> package wraps this protocol cleanly.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// cmd/protoc-gen-sql/main.go</span>
+<span class="k">package</span> <span class="n">main</span>
+
+<span class="k">import</span> <span class="p">(</span>
+  <span class="s">"fmt"</span>
+  <span class="s">"strings"</span>
+
+  <span class="s">"google.golang.org/protobuf/compiler/protogen"</span>
+  <span class="s">"google.golang.org/protobuf/proto"</span>
+  <span class="s">"google.golang.org/protobuf/reflect/protoreflect"</span>
+
+  <span class="n">options</span> <span class="s">"github.com/yourorg/app/gen/options"</span>
+<span class="p">)</span>
+
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">protogen</span><span class="o">.</span><span class="n">Options</span><span class="p">{}</span><span class="o">.</span><span class="n">Run</span><span class="p">(</span><span class="k">func</span><span class="p">(</span><span class="n">gen</span> <span class="o">*</span><span class="n">protogen</span><span class="o">.</span><span class="n">Plugin</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">f</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">gen</span><span class="o">.</span><span class="n">Files</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="o">!</span><span class="n">f</span><span class="o">.</span><span class="n">Generate</span> <span class="p">{</span> <span class="k">continue</span> <span class="p">}</span>
+      <span class="k">if</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">generateSQL</span><span class="p">(</span><span class="n">gen</span><span class="p">,</span> <span class="n">f</span><span class="p">);</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">err</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="no">nil</span>
+  <span class="p">})</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">generateSQL</span><span class="p">(</span><span class="n">gen</span> <span class="o">*</span><span class="n">protogen</span><span class="o">.</span><span class="n">Plugin</span><span class="p">,</span> <span class="n">f</span> <span class="o">*</span><span class="n">protogen</span><span class="o">.</span><span class="n">File</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+  <span class="k">var</span> <span class="n">out</span> <span class="n">strings</span><span class="o">.</span><span class="n">Builder</span>
+
+  <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">msg</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">f</span><span class="o">.</span><span class="n">Messages</span> <span class="p">{</span>
+    <span class="n">msgOpts</span><span class="p">,</span> <span class="n">_</span> <span class="o">:=</span> <span class="n">proto</span><span class="o">.</span><span class="n">GetExtension</span><span class="p">(</span>
+      <span class="n">msg</span><span class="o">.</span><span class="n">Desc</span><span class="o">.</span><span class="n">Options</span><span class="p">(),</span> <span class="n">options</span><span class="o">.</span><span class="n">E_DbMsg</span><span class="p">,</span>
+    <span class="p">)</span><span class="o">.</span><span class="p">(</span><span class="o">*</span><span class="n">options</span><span class="o">.</span><span class="n">DbMessageOptions</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">msgOpts</span> <span class="o">==</span> <span class="no">nil</span> <span class="p">{</span> <span class="k">continue</span> <span class="p">}</span>
+
+    <span class="n">table</span> <span class="o">:=</span> <span class="n">msgOpts</span><span class="o">.</span><span class="n">GetTableName</span><span class="p">()</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">WriteString</span><span class="p">(</span><span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"CREATE TABLE IF NOT EXISTS %s (</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">table</span><span class="p">))</span>
+
+    <span class="k">var</span> <span class="n">indexes</span> <span class="p">[]</span><span class="kt">string</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">field</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">msg</span><span class="o">.</span><span class="n">Fields</span> <span class="p">{</span>
+      <span class="n">fo</span><span class="p">,</span> <span class="n">_</span> <span class="o">:=</span> <span class="n">proto</span><span class="o">.</span><span class="n">GetExtension</span><span class="p">(</span>
+        <span class="n">field</span><span class="o">.</span><span class="n">Desc</span><span class="o">.</span><span class="n">Options</span><span class="p">(),</span> <span class="n">options</span><span class="o">.</span><span class="n">E_DbField</span><span class="p">,</span>
+      <span class="p">)</span><span class="o">.</span><span class="p">(</span><span class="o">*</span><span class="n">options</span><span class="o">.</span><span class="n">DbFieldOptions</span><span class="p">)</span>
+
+      <span class="n">col</span>  <span class="o">:=</span> <span class="n">toSnake</span><span class="p">(</span><span class="kt">string</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">Desc</span><span class="o">.</span><span class="n">Name</span><span class="p">()))</span>
+      <span class="n">typ</span>  <span class="o">:=</span> <span class="n">sqliteType</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">Desc</span><span class="o">.</span><span class="n">Kind</span><span class="p">(),</span> <span class="n">fo</span><span class="p">)</span>
+      <span class="n">line</span> <span class="o">:=</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"  %s %s"</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">typ</span><span class="p">)</span>
+
+      <span class="k">if</span> <span class="n">fo</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="n">fo</span><span class="o">.</span><span class="n">GetPrimaryKey</span><span class="p">()</span> <span class="p">{</span> <span class="n">line</span> <span class="o">+=</span> <span class="s">" PRIMARY KEY"</span> <span class="p">}</span>
+        <span class="k">if</span> <span class="n">fo</span><span class="o">.</span><span class="n">GetUnique</span><span class="p">()</span>     <span class="p">{</span> <span class="n">line</span> <span class="o">+=</span> <span class="s">" UNIQUE"</span> <span class="p">}</span>
+        <span class="k">if</span> <span class="n">fo</span><span class="o">.</span><span class="n">GetNotNull</span><span class="p">()</span>    <span class="p">{</span> <span class="n">line</span> <span class="o">+=</span> <span class="s">" NOT NULL"</span> <span class="p">}</span>
+        <span class="k">if</span> <span class="n">d</span> <span class="o">:=</span> <span class="n">fo</span><span class="o">.</span><span class="n">GetDefaultVal</span><span class="p">();</span> <span class="n">d</span> <span class="o">!=</span> <span class="s">""</span> <span class="p">{</span>
+          <span class="n">line</span> <span class="o">+=</span> <span class="s">" DEFAULT "</span> <span class="o">+</span> <span class="n">d</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">fo</span><span class="o">.</span><span class="n">GetIndex</span><span class="p">()</span> <span class="p">{</span>
+          <span class="n">indexes</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">indexes</span><span class="p">,</span>
+            <span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"CREATE INDEX IF NOT EXISTS idx_%s_%s ON %s (%s);"</span><span class="p">,</span>
+              <span class="n">table</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">col</span><span class="p">))</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+
+      <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">Fields</span><span class="p">)</span><span class="o">-</span><span class="m">1</span> <span class="p">{</span> <span class="n">line</span> <span class="o">+=</span> <span class="s">","</span> <span class="p">}</span>
+      <span class="n">out</span><span class="o">.</span><span class="n">WriteString</span><span class="p">(</span><span class="n">line</span> <span class="o">+</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="n">out</span><span class="o">.</span><span class="n">WriteString</span><span class="p">(</span><span class="s">");</span><span class="se">\n\n</span><span class="s">"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">idx</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">indexes</span> <span class="p">{</span>
+      <span class="n">out</span><span class="o">.</span><span class="n">WriteString</span><span class="p">(</span><span class="n">idx</span> <span class="o">+</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="n">g</span> <span class="o">:=</span> <span class="n">gen</span><span class="o">.</span><span class="n">NewGeneratedFile</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">GeneratedFilenamePrefix</span><span class="o">+</span><span class="s">"_schema.sql"</span><span class="p">,</span> <span class="s">""</span><span class="p">)</span>
+  <span class="n">g</span><span class="o">.</span><span class="n">P</span><span class="p">(</span><span class="n">out</span><span class="o">.</span><span class="n">String</span><span class="p">())</span>
+  <span class="k">return</span> <span class="no">nil</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">sqliteType</span><span class="p">(</span><span class="n">k</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">Kind</span><span class="p">,</span> <span class="n">fo</span> <span class="o">*</span><span class="n">options</span><span class="o">.</span><span class="n">DbFieldOptions</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="n">fo</span> <span class="o">!=</span> <span class="no">nil</span> <span class="o">&amp;&amp;</span> <span class="n">fo</span><span class="o">.</span><span class="n">GetColumnType</span><span class="p">()</span> <span class="o">!=</span> <span class="s">""</span> <span class="p">{</span> <span class="k">return</span> <span class="n">fo</span><span class="o">.</span><span class="n">GetColumnType</span><span class="p">()</span> <span class="p">}</span>
+  <span class="k">switch</span> <span class="n">k</span> <span class="p">{</span>
+  <span class="k">case</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">BoolKind</span><span class="p">,</span>
+       <span class="n">protoreflect</span><span class="o">.</span><span class="n">Int32Kind</span><span class="p">,</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">Int64Kind</span><span class="p">,</span>
+       <span class="n">protoreflect</span><span class="o">.</span><span class="n">Sint32Kind</span><span class="p">,</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">Sint64Kind</span><span class="o">:</span>
+    <span class="k">return</span> <span class="s">"INTEGER"</span>
+  <span class="k">case</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">FloatKind</span><span class="p">,</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">DoubleKind</span><span class="o">:</span>
+    <span class="k">return</span> <span class="s">"REAL"</span>
+  <span class="k">case</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">BytesKind</span><span class="o">:</span>
+    <span class="k">return</span> <span class="s">"BLOB"</span>
+  <span class="k">case</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">MessageKind</span><span class="o">:</span>
+    <span class="k">return</span> <span class="s">"TEXT"</span> <span class="c">// JSON-encode nested messages</span>
+  <span class="k">default</span><span class="o">:</span>
+    <span class="k">return</span> <span class="s">"TEXT"</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The plugin emits this DDL — which you apply at startup via a single <code class="language-plaintext highlighter-rouge">db.Exec()</code>:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- generated: proto/user/v1/user_schema.sql</span>
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">IF</span> <span class="k">NOT</span> <span class="k">EXISTS</span> <span class="n">users</span> <span class="p">(</span>
+  <span class="n">id</span>               <span class="nb">TEXT</span>    <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="n">email</span>            <span class="nb">TEXT</span>    <span class="k">UNIQUE</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="n">display_name</span>     <span class="nb">TEXT</span>    <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="n">created_at_unix</span>  <span class="nb">INTEGER</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">DEFAULT</span> <span class="p">(</span><span class="n">unixepoch</span><span class="p">()),</span>
+  <span class="n">org_id</span>           <span class="nb">TEXT</span>    <span class="k">NOT</span> <span class="k">NULL</span>
+<span class="p">);</span>
+
+<span class="k">CREATE</span> <span class="k">INDEX</span> <span class="n">IF</span> <span class="k">NOT</span> <span class="k">EXISTS</span> <span class="n">idx_users_org_id</span> <span class="k">ON</span> <span class="n">users</span> <span class="p">(</span><span class="n">org_id</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h2 id="scanning-rows-back-via-reflection">Scanning Rows Back via Reflection</h2>
+
+<p>Here’s where it gets interesting. Instead of writing <code class="language-plaintext highlighter-rouge">rows.Scan(&amp;u.Id, &amp;u.Email, ...)</code> for every
+query, we use Go’s <code class="language-plaintext highlighter-rouge">reflect</code> package to match column names to struct fields automatically. Because
+<code class="language-plaintext highlighter-rouge">protoc-gen-go</code> names struct fields in <code class="language-plaintext highlighter-rouge">PascalCase</code> and our columns are <code class="language-plaintext highlighter-rouge">snake_case</code>, a simple
+converter bridges the gap.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// internal/sqlreflect/scan.go</span>
+<span class="k">package</span> <span class="n">sqlreflect</span>
+
+<span class="k">import</span> <span class="p">(</span>
+  <span class="s">"database/sql"</span>
+  <span class="s">"fmt"</span>
+  <span class="s">"reflect"</span>
+  <span class="s">"strings"</span>
+  <span class="s">"unicode"</span>
+<span class="p">)</span>
+
+<span class="c">// ScanRow scans a single *sql.Rows into a proto-generated struct pointer.</span>
+<span class="c">// dst must be a non-nil pointer to a struct.</span>
+<span class="k">func</span> <span class="n">ScanRow</span><span class="p">[</span><span class="n">T</span> <span class="n">any</span><span class="p">](</span><span class="n">row</span> <span class="o">*</span><span class="n">sql</span><span class="o">.</span><span class="n">Rows</span><span class="p">,</span> <span class="n">dst</span> <span class="o">*</span><span class="n">T</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+  <span class="n">cols</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">row</span><span class="o">.</span><span class="n">Columns</span><span class="p">()</span>
+  <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span> <span class="k">return</span> <span class="n">err</span> <span class="p">}</span>
+
+  <span class="n">rv</span> <span class="o">:=</span> <span class="n">reflect</span><span class="o">.</span><span class="n">ValueOf</span><span class="p">(</span><span class="n">dst</span><span class="p">)</span><span class="o">.</span><span class="n">Elem</span><span class="p">()</span> <span class="c">// dereference pointer</span>
+  <span class="n">rt</span> <span class="o">:=</span> <span class="n">rv</span><span class="o">.</span><span class="n">Type</span><span class="p">()</span>
+
+  <span class="c">// Build col → field index map once per call</span>
+  <span class="n">fieldByCol</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="k">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">int</span><span class="p">,</span> <span class="n">rt</span><span class="o">.</span><span class="n">NumField</span><span class="p">())</span>
+  <span class="k">for</span> <span class="n">i</span> <span class="o">:=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">rt</span><span class="o">.</span><span class="n">NumField</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span> <span class="p">{</span>
+    <span class="n">fieldByCol</span><span class="p">[</span><span class="n">toSnake</span><span class="p">(</span><span class="n">rt</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">Name</span><span class="p">)]</span> <span class="o">=</span> <span class="n">i</span>
+  <span class="p">}</span>
+
+  <span class="n">ptrs</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="n">any</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">))</span>
+  <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">cols</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="n">idx</span><span class="p">,</span> <span class="n">ok</span> <span class="o">:=</span> <span class="n">fieldByCol</span><span class="p">[</span><span class="n">col</span><span class="p">];</span> <span class="n">ok</span> <span class="p">{</span>
+      <span class="n">ptrs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">rv</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span><span class="o">.</span><span class="n">Addr</span><span class="p">()</span><span class="o">.</span><span class="n">Interface</span><span class="p">()</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="k">var</span> <span class="n">discard</span> <span class="n">any</span>
+      <span class="n">ptrs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">discard</span> <span class="c">// unknown column — silently skip</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">row</span><span class="o">.</span><span class="n">Scan</span><span class="p">(</span><span class="n">ptrs</span><span class="o">...</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c">// ScanRows collects all rows into a slice.</span>
+<span class="k">func</span> <span class="n">ScanRows</span><span class="p">[</span><span class="n">T</span> <span class="n">any</span><span class="p">](</span><span class="n">rows</span> <span class="o">*</span><span class="n">sql</span><span class="o">.</span><span class="n">Rows</span><span class="p">)</span> <span class="p">([]</span><span class="n">T</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">var</span> <span class="n">out</span> <span class="p">[]</span><span class="n">T</span>
+  <span class="k">for</span> <span class="n">rows</span><span class="o">.</span><span class="n">Next</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">var</span> <span class="n">dst</span> <span class="n">T</span>
+    <span class="k">if</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">ScanRow</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">dst</span><span class="p">);</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span> <span class="k">return</span> <span class="no">nil</span><span class="p">,</span> <span class="n">err</span> <span class="p">}</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">dst</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="n">rows</span><span class="o">.</span><span class="n">Err</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="c">// toSnake converts "DisplayName" → "display_name"</span>
+<span class="k">func</span> <span class="n">toSnake</span><span class="p">(</span><span class="n">s</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+  <span class="k">var</span> <span class="n">b</span> <span class="n">strings</span><span class="o">.</span><span class="n">Builder</span>
+  <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">s</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="n">unicode</span><span class="o">.</span><span class="n">IsUpper</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="m">0</span> <span class="p">{</span> <span class="n">b</span><span class="o">.</span><span class="n">WriteByte</span><span class="p">(</span><span class="sc">'_'</span><span class="p">)</span> <span class="p">}</span>
+    <span class="n">b</span><span class="o">.</span><span class="n">WriteRune</span><span class="p">(</span><span class="n">unicode</span><span class="o">.</span><span class="n">ToLower</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">b</span><span class="o">.</span><span class="n">String</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p><strong>Performance note:</strong> The column→field map is rebuilt on every call here for clarity. In a hot
+path, cache it in a <code class="language-plaintext highlighter-rouge">sync.Map</code> keyed on <code class="language-plaintext highlighter-rouge">reflect.TypeOf(dst)</code>. The allocation cost is negligible
+for most workloads.</p>
+</blockquote>
+
+<h2 id="a-zero-boilerplate-repository">A Zero-Boilerplate Repository</h2>
+
+<p>We can go one step further: generate the repository itself. A second plugin, <code class="language-plaintext highlighter-rouge">protoc-gen-repo</code>,
+reads the same field options and emits a complete Go repository — no hand-written code at all. The
+rules are simple:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">primary_key</code> or <code class="language-plaintext highlighter-rouge">unique</code> → <code class="language-plaintext highlighter-rouge">GetBy{Field}(ctx, val) (*T, error)</code></li>
+  <li><code class="language-plaintext highlighter-rouge">index</code> → <code class="language-plaintext highlighter-rouge">ListBy{Field}(ctx, val) ([]*T, error)</code></li>
+  <li>Fields with a <code class="language-plaintext highlighter-rouge">default_val</code> are omitted from <code class="language-plaintext highlighter-rouge">INSERT</code> (the DB supplies the default)</li>
+</ul>
+
+<p>The template lives in its own file — a plain text file where backticks in SQL strings cause no
+issues. The plugin loads it at compile time with <code class="language-plaintext highlighter-rouge">//go:embed</code> and only concerns itself with
+collecting data to pass in.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>// cmd/protoc-gen-repo/repo.tmpl
+package repo
+
+import (
+	"context"
+	"database/sql"
+	_ "embed"
+
+	_ "modernc.org/sqlite"
+	{{.Pkg}} "{{.Imp}}"
+	scan "github.com/yourorg/app/internal/sqlreflect"
+)
+
+//go:embed {{.SchemaFile}}
+var {{.Lower}}Schema string
+
+type {{.GoType}}Repo struct{ db *sql.DB }
+
+func New{{.GoType}}Repo(path string) (*{{.GoType}}Repo, error) {
+	db, err := sql.Open("sqlite", path)
+	if err != nil { return nil, err }
+	if _, err = db.Exec({{.Lower}}Schema); err != nil { return nil, err }
+	return &amp;{{.GoType}}Repo{db: db}, nil
+}
+
+func (r *{{.GoType}}Repo) Create(ctx context.Context, v *{{.Pkg}}.{{.GoType}}) error {
+	_, err := r.db.ExecContext(ctx,
+		`INSERT INTO {{.Table}} ({{.InsertCols}}) VALUES ({{.Placeholders}})`,
+		{{.InsertVals}},
+	)
+	return err
+}
+{{range .Methods}}
+func (r *{{.GoType}}Repo) {{.Name}}(ctx context.Context, val {{.GoKind}}) {{.Return}} {
+	rows, err := r.db.QueryContext(ctx,
+		`SELECT * FROM {{.Table}} WHERE {{.Col}} = ?`, val)
+	if err != nil { return nil, err }
+	defer rows.Close()
+	{{- if .IsList}}
+	items, err := scan.ScanRows[{{.Pkg}}.{{.GoType}}](rows)
+	if err != nil { return nil, err }
+	out := make([]*{{.Pkg}}.{{.GoType}}, len(items))
+	for i := range items { out[i] = &amp;items[i] }
+	return out, nil
+	{{- else}}
+	if !rows.Next() { return nil, sql.ErrNoRows }
+	var v {{.Pkg}}.{{.GoType}}
+	return &amp;v, scan.ScanRow(rows, &amp;v)
+	{{- end}}
+}
+{{end}}
+</code></pre></div></div>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// cmd/protoc-gen-repo/main.go</span>
+<span class="k">package</span> <span class="n">main</span>
+
+<span class="k">import</span> <span class="p">(</span>
+  <span class="n">_</span> <span class="s">"embed"</span>
+  <span class="s">"strings"</span>
+  <span class="s">"text/template"</span>
+  <span class="s">"unicode"</span>
+
+  <span class="s">"google.golang.org/protobuf/compiler/protogen"</span>
+  <span class="s">"google.golang.org/protobuf/proto"</span>
+  <span class="s">"google.golang.org/protobuf/reflect/protoreflect"</span>
+
+  <span class="n">options</span> <span class="s">"github.com/yourorg/app/gen/options"</span>
+<span class="p">)</span>
+
+<span class="c">//go:embed repo.tmpl</span>
+<span class="k">var</span> <span class="n">repoTmplSrc</span> <span class="kt">string</span>
+
+<span class="k">var</span> <span class="n">repoTmpl</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">Must</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">New</span><span class="p">(</span><span class="s">"repo"</span><span class="p">)</span><span class="o">.</span><span class="n">Parse</span><span class="p">(</span><span class="n">repoTmplSrc</span><span class="p">))</span>
+
+<span class="k">type</span> <span class="n">repoData</span> <span class="k">struct</span> <span class="p">{</span>
+  <span class="n">Pkg</span><span class="p">,</span> <span class="n">Imp</span><span class="p">,</span> <span class="n">GoType</span><span class="p">,</span> <span class="n">Lower</span><span class="p">,</span> <span class="n">Table</span><span class="p">,</span> <span class="n">SchemaFile</span> <span class="kt">string</span>
+  <span class="n">InsertCols</span><span class="p">,</span> <span class="n">Placeholders</span><span class="p">,</span> <span class="n">InsertVals</span>       <span class="kt">string</span>
+  <span class="n">Methods</span>                                    <span class="p">[]</span><span class="n">methodData</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">methodData</span> <span class="k">struct</span> <span class="p">{</span>
+  <span class="n">Name</span><span class="p">,</span> <span class="n">GoType</span><span class="p">,</span> <span class="n">Pkg</span><span class="p">,</span> <span class="n">Table</span><span class="p">,</span> <span class="n">Col</span><span class="p">,</span> <span class="n">GoKind</span><span class="p">,</span> <span class="n">Return</span> <span class="kt">string</span>
+  <span class="n">IsList</span>                                         <span class="kt">bool</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">protogen</span><span class="o">.</span><span class="n">Options</span><span class="p">{}</span><span class="o">.</span><span class="n">Run</span><span class="p">(</span><span class="k">func</span><span class="p">(</span><span class="n">gen</span> <span class="o">*</span><span class="n">protogen</span><span class="o">.</span><span class="n">Plugin</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">f</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">gen</span><span class="o">.</span><span class="n">Files</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="o">!</span><span class="n">f</span><span class="o">.</span><span class="n">Generate</span> <span class="p">{</span> <span class="k">continue</span> <span class="p">}</span>
+      <span class="n">generateRepo</span><span class="p">(</span><span class="n">gen</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="no">nil</span>
+  <span class="p">})</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">generateRepo</span><span class="p">(</span><span class="n">gen</span> <span class="o">*</span><span class="n">protogen</span><span class="o">.</span><span class="n">Plugin</span><span class="p">,</span> <span class="n">f</span> <span class="o">*</span><span class="n">protogen</span><span class="o">.</span><span class="n">File</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">msg</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">f</span><span class="o">.</span><span class="n">Messages</span> <span class="p">{</span>
+    <span class="n">msgOpts</span><span class="p">,</span> <span class="n">_</span> <span class="o">:=</span> <span class="n">proto</span><span class="o">.</span><span class="n">GetExtension</span><span class="p">(</span>
+      <span class="n">msg</span><span class="o">.</span><span class="n">Desc</span><span class="o">.</span><span class="n">Options</span><span class="p">(),</span> <span class="n">options</span><span class="o">.</span><span class="n">E_DbMsg</span><span class="p">,</span>
+    <span class="p">)</span><span class="o">.</span><span class="p">(</span><span class="o">*</span><span class="n">options</span><span class="o">.</span><span class="n">DbMessageOptions</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">msgOpts</span> <span class="o">==</span> <span class="no">nil</span> <span class="p">{</span> <span class="k">continue</span> <span class="p">}</span>
+
+    <span class="n">goType</span> <span class="o">:=</span> <span class="n">msg</span><span class="o">.</span><span class="n">GoIdent</span><span class="o">.</span><span class="n">GoName</span>
+    <span class="n">lower</span>  <span class="o">:=</span> <span class="n">strings</span><span class="o">.</span><span class="n">ToLower</span><span class="p">(</span><span class="n">goType</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">:=</span> <span class="n">repoData</span><span class="p">{</span>
+      <span class="n">Pkg</span><span class="o">:</span> <span class="n">lower</span><span class="p">,</span> <span class="n">Imp</span><span class="o">:</span> <span class="kt">string</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">GoImportPath</span><span class="p">),</span>
+      <span class="n">GoType</span><span class="o">:</span> <span class="n">goType</span><span class="p">,</span> <span class="n">Lower</span><span class="o">:</span> <span class="n">lower</span><span class="p">,</span>
+      <span class="n">Table</span><span class="o">:</span>      <span class="n">msgOpts</span><span class="o">.</span><span class="n">GetTableName</span><span class="p">(),</span>
+      <span class="n">SchemaFile</span><span class="o">:</span> <span class="n">f</span><span class="o">.</span><span class="n">GeneratedFilenamePrefix</span> <span class="o">+</span> <span class="s">"_schema.sql"</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="c">// Collect columns for INSERT, skipping fields with a server-side default.</span>
+    <span class="k">var</span> <span class="n">cols</span><span class="p">,</span> <span class="n">vals</span> <span class="p">[]</span><span class="kt">string</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">field</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">msg</span><span class="o">.</span><span class="n">Fields</span> <span class="p">{</span>
+      <span class="n">fo</span><span class="p">,</span> <span class="n">_</span> <span class="o">:=</span> <span class="n">proto</span><span class="o">.</span><span class="n">GetExtension</span><span class="p">(</span>
+        <span class="n">field</span><span class="o">.</span><span class="n">Desc</span><span class="o">.</span><span class="n">Options</span><span class="p">(),</span> <span class="n">options</span><span class="o">.</span><span class="n">E_DbField</span><span class="p">,</span>
+      <span class="p">)</span><span class="o">.</span><span class="p">(</span><span class="o">*</span><span class="n">options</span><span class="o">.</span><span class="n">DbFieldOptions</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">fo</span> <span class="o">!=</span> <span class="no">nil</span> <span class="o">&amp;&amp;</span> <span class="n">fo</span><span class="o">.</span><span class="n">GetDefaultVal</span><span class="p">()</span> <span class="o">!=</span> <span class="s">""</span> <span class="p">{</span> <span class="k">continue</span> <span class="p">}</span>
+      <span class="n">col</span> <span class="o">:=</span> <span class="n">toSnake</span><span class="p">(</span><span class="kt">string</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">Desc</span><span class="o">.</span><span class="n">Name</span><span class="p">()))</span>
+      <span class="n">cols</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">cols</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
+      <span class="n">vals</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="s">"v."</span><span class="o">+</span><span class="n">toPascal</span><span class="p">(</span><span class="n">col</span><span class="p">))</span>
+    <span class="p">}</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">InsertCols</span>   <span class="o">=</span> <span class="n">strings</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span><span class="n">cols</span><span class="p">,</span> <span class="s">", "</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">Placeholders</span> <span class="o">=</span> <span class="n">strings</span><span class="o">.</span><span class="n">TrimSuffix</span><span class="p">(</span><span class="n">strings</span><span class="o">.</span><span class="n">Repeat</span><span class="p">(</span><span class="s">"?, "</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">)),</span> <span class="s">", "</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">InsertVals</span>   <span class="o">=</span> <span class="n">strings</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="s">", "</span><span class="p">)</span>
+
+    <span class="c">// One query method per annotated field.</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">field</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">msg</span><span class="o">.</span><span class="n">Fields</span> <span class="p">{</span>
+      <span class="n">fo</span><span class="p">,</span> <span class="n">_</span> <span class="o">:=</span> <span class="n">proto</span><span class="o">.</span><span class="n">GetExtension</span><span class="p">(</span>
+        <span class="n">field</span><span class="o">.</span><span class="n">Desc</span><span class="o">.</span><span class="n">Options</span><span class="p">(),</span> <span class="n">options</span><span class="o">.</span><span class="n">E_DbField</span><span class="p">,</span>
+      <span class="p">)</span><span class="o">.</span><span class="p">(</span><span class="o">*</span><span class="n">options</span><span class="o">.</span><span class="n">DbFieldOptions</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">fo</span> <span class="o">==</span> <span class="no">nil</span> <span class="p">{</span> <span class="k">continue</span> <span class="p">}</span>
+      <span class="n">col</span>    <span class="o">:=</span> <span class="n">toSnake</span><span class="p">(</span><span class="kt">string</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">Desc</span><span class="o">.</span><span class="n">Name</span><span class="p">()))</span>
+      <span class="n">goKind</span> <span class="o">:=</span> <span class="n">kindToGoType</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">Desc</span><span class="o">.</span><span class="n">Kind</span><span class="p">())</span>
+
+      <span class="k">if</span> <span class="n">fo</span><span class="o">.</span><span class="n">GetPrimaryKey</span><span class="p">()</span> <span class="o">||</span> <span class="n">fo</span><span class="o">.</span><span class="n">GetUnique</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">Methods</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">Methods</span><span class="p">,</span> <span class="n">methodData</span><span class="p">{</span>
+          <span class="n">Name</span><span class="o">:</span> <span class="s">"GetBy"</span> <span class="o">+</span> <span class="n">toPascal</span><span class="p">(</span><span class="n">col</span><span class="p">),</span> <span class="n">GoType</span><span class="o">:</span> <span class="n">goType</span><span class="p">,</span> <span class="n">Pkg</span><span class="o">:</span> <span class="n">lower</span><span class="p">,</span>
+          <span class="n">Table</span><span class="o">:</span> <span class="n">data</span><span class="o">.</span><span class="n">Table</span><span class="p">,</span> <span class="n">Col</span><span class="o">:</span> <span class="n">col</span><span class="p">,</span> <span class="n">GoKind</span><span class="o">:</span> <span class="n">goKind</span><span class="p">,</span>
+          <span class="n">Return</span><span class="o">:</span> <span class="s">"*"</span> <span class="o">+</span> <span class="n">lower</span> <span class="o">+</span> <span class="s">"."</span> <span class="o">+</span> <span class="n">goType</span> <span class="o">+</span> <span class="s">", error"</span><span class="p">,</span>
+        <span class="p">})</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="n">fo</span><span class="o">.</span><span class="n">GetIndex</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">Methods</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">Methods</span><span class="p">,</span> <span class="n">methodData</span><span class="p">{</span>
+          <span class="n">Name</span><span class="o">:</span> <span class="s">"ListBy"</span> <span class="o">+</span> <span class="n">toPascal</span><span class="p">(</span><span class="n">col</span><span class="p">),</span> <span class="n">GoType</span><span class="o">:</span> <span class="n">goType</span><span class="p">,</span> <span class="n">Pkg</span><span class="o">:</span> <span class="n">lower</span><span class="p">,</span>
+          <span class="n">Table</span><span class="o">:</span> <span class="n">data</span><span class="o">.</span><span class="n">Table</span><span class="p">,</span> <span class="n">Col</span><span class="o">:</span> <span class="n">col</span><span class="p">,</span> <span class="n">GoKind</span><span class="o">:</span> <span class="n">goKind</span><span class="p">,</span>
+          <span class="n">Return</span><span class="o">:</span> <span class="s">"[]*"</span> <span class="o">+</span> <span class="n">lower</span> <span class="o">+</span> <span class="s">"."</span> <span class="o">+</span> <span class="n">goType</span> <span class="o">+</span> <span class="s">", error"</span><span class="p">,</span>
+          <span class="n">IsList</span><span class="o">:</span> <span class="no">true</span><span class="p">,</span>
+        <span class="p">})</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">var</span> <span class="n">buf</span> <span class="n">strings</span><span class="o">.</span><span class="n">Builder</span>
+    <span class="n">repoTmpl</span><span class="o">.</span><span class="n">Execute</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+    <span class="n">g</span> <span class="o">:=</span> <span class="n">gen</span><span class="o">.</span><span class="n">NewGeneratedFile</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">GeneratedFilenamePrefix</span><span class="o">+</span><span class="s">"_repo.go"</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">GoImportPath</span><span class="p">)</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">P</span><span class="p">(</span><span class="n">buf</span><span class="o">.</span><span class="n">String</span><span class="p">())</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">kindToGoType</span><span class="p">(</span><span class="n">k</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">Kind</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+  <span class="k">switch</span> <span class="n">k</span> <span class="p">{</span>
+  <span class="k">case</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">BoolKind</span><span class="o">:</span>                            <span class="k">return</span> <span class="s">"bool"</span>
+  <span class="k">case</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">Int32Kind</span><span class="p">,</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">Sint32Kind</span><span class="o">:</span>  <span class="k">return</span> <span class="s">"int32"</span>
+  <span class="k">case</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">Int64Kind</span><span class="p">,</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">Sint64Kind</span><span class="o">:</span>  <span class="k">return</span> <span class="s">"int64"</span>
+  <span class="k">case</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">FloatKind</span><span class="o">:</span>                           <span class="k">return</span> <span class="s">"float32"</span>
+  <span class="k">case</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">DoubleKind</span><span class="o">:</span>                          <span class="k">return</span> <span class="s">"float64"</span>
+  <span class="k">case</span> <span class="n">protoreflect</span><span class="o">.</span><span class="n">BytesKind</span><span class="o">:</span>                           <span class="k">return</span> <span class="s">"[]byte"</span>
+  <span class="k">default</span><span class="o">:</span>                                               <span class="k">return</span> <span class="s">"string"</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">toPascal</span><span class="p">(</span><span class="n">s</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+  <span class="k">var</span> <span class="n">b</span> <span class="n">strings</span><span class="o">.</span><span class="n">Builder</span>
+  <span class="n">upper</span> <span class="o">:=</span> <span class="no">true</span>
+  <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">r</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">s</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="n">r</span> <span class="o">==</span> <span class="sc">'_'</span> <span class="p">{</span> <span class="n">upper</span> <span class="o">=</span> <span class="no">true</span><span class="p">;</span> <span class="k">continue</span> <span class="p">}</span>
+    <span class="k">if</span> <span class="n">upper</span> <span class="p">{</span> <span class="n">b</span><span class="o">.</span><span class="n">WriteRune</span><span class="p">(</span><span class="n">unicode</span><span class="o">.</span><span class="n">ToUpper</span><span class="p">(</span><span class="n">r</span><span class="p">));</span> <span class="n">upper</span> <span class="o">=</span> <span class="no">false</span> <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="n">b</span><span class="o">.</span><span class="n">WriteRune</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">b</span><span class="o">.</span><span class="n">String</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Running this against <code class="language-plaintext highlighter-rouge">user.proto</code> produces the following — the entire repository, derived purely
+from the annotations already in the <code class="language-plaintext highlighter-rouge">.proto</code> file:</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// generated: proto/user/v1/user_repo.go</span>
+<span class="k">package</span> <span class="n">repo</span>
+
+<span class="k">import</span> <span class="p">(</span>
+  <span class="s">"context"</span>
+  <span class="s">"database/sql"</span>
+  <span class="n">_</span> <span class="s">"embed"</span>
+
+  <span class="n">_</span> <span class="s">"modernc.org/sqlite"</span>
+  <span class="n">userv1</span> <span class="s">"github.com/yourorg/app/gen/user/v1"</span>
+  <span class="n">scan</span>   <span class="s">"github.com/yourorg/app/internal/sqlreflect"</span>
+<span class="p">)</span>
+
+<span class="c">//go:embed proto/user/v1/user_schema.sql</span>
+<span class="k">var</span> <span class="n">userSchema</span> <span class="kt">string</span>
+
+<span class="k">type</span> <span class="n">UserRepo</span> <span class="k">struct</span><span class="p">{</span> <span class="n">db</span> <span class="o">*</span><span class="n">sql</span><span class="o">.</span><span class="n">DB</span> <span class="p">}</span>
+
+<span class="k">func</span> <span class="n">NewUserRepo</span><span class="p">(</span><span class="n">path</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="n">UserRepo</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">db</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">sql</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="s">"sqlite"</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span> <span class="k">return</span> <span class="no">nil</span><span class="p">,</span> <span class="n">err</span> <span class="p">}</span>
+  <span class="k">if</span> <span class="n">_</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Exec</span><span class="p">(</span><span class="n">userSchema</span><span class="p">);</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span> <span class="k">return</span> <span class="no">nil</span><span class="p">,</span> <span class="n">err</span> <span class="p">}</span>
+  <span class="k">return</span> <span class="o">&amp;</span><span class="n">UserRepo</span><span class="p">{</span><span class="n">db</span><span class="o">:</span> <span class="n">db</span><span class="p">},</span> <span class="no">nil</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">r</span> <span class="o">*</span><span class="n">UserRepo</span><span class="p">)</span> <span class="n">Create</span><span class="p">(</span><span class="n">ctx</span> <span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span> <span class="n">v</span> <span class="o">*</span><span class="n">userv1</span><span class="o">.</span><span class="n">User</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+  <span class="n">_</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">r</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">ExecContext</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span>
+    <span class="s">`INSERT INTO users (id, email, display_name, org_id) VALUES (?, ?, ?, ?)`</span><span class="p">,</span>
+    <span class="n">v</span><span class="o">.</span><span class="n">Id</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">Email</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">DisplayName</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">OrgId</span><span class="p">,</span>
+  <span class="p">)</span>
+  <span class="k">return</span> <span class="n">err</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">r</span> <span class="o">*</span><span class="n">UserRepo</span><span class="p">)</span> <span class="n">GetById</span><span class="p">(</span><span class="n">ctx</span> <span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span> <span class="n">val</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="n">userv1</span><span class="o">.</span><span class="n">User</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">rows</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">r</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">QueryContext</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span>
+    <span class="s">`SELECT * FROM users WHERE id = ?`</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span> <span class="k">return</span> <span class="no">nil</span><span class="p">,</span> <span class="n">err</span> <span class="p">}</span>
+  <span class="k">defer</span> <span class="n">rows</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
+  <span class="k">if</span> <span class="o">!</span><span class="n">rows</span><span class="o">.</span><span class="n">Next</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="no">nil</span><span class="p">,</span> <span class="n">sql</span><span class="o">.</span><span class="n">ErrNoRows</span> <span class="p">}</span>
+  <span class="k">var</span> <span class="n">v</span> <span class="n">userv1</span><span class="o">.</span><span class="n">User</span>
+  <span class="k">return</span> <span class="o">&amp;</span><span class="n">v</span><span class="p">,</span> <span class="n">scan</span><span class="o">.</span><span class="n">ScanRow</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">v</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">r</span> <span class="o">*</span><span class="n">UserRepo</span><span class="p">)</span> <span class="n">GetByEmail</span><span class="p">(</span><span class="n">ctx</span> <span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span> <span class="n">val</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="n">userv1</span><span class="o">.</span><span class="n">User</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">rows</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">r</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">QueryContext</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span>
+    <span class="s">`SELECT * FROM users WHERE email = ?`</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span> <span class="k">return</span> <span class="no">nil</span><span class="p">,</span> <span class="n">err</span> <span class="p">}</span>
+  <span class="k">defer</span> <span class="n">rows</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
+  <span class="k">if</span> <span class="o">!</span><span class="n">rows</span><span class="o">.</span><span class="n">Next</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="no">nil</span><span class="p">,</span> <span class="n">sql</span><span class="o">.</span><span class="n">ErrNoRows</span> <span class="p">}</span>
+  <span class="k">var</span> <span class="n">v</span> <span class="n">userv1</span><span class="o">.</span><span class="n">User</span>
+  <span class="k">return</span> <span class="o">&amp;</span><span class="n">v</span><span class="p">,</span> <span class="n">scan</span><span class="o">.</span><span class="n">ScanRow</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">v</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">r</span> <span class="o">*</span><span class="n">UserRepo</span><span class="p">)</span> <span class="n">ListByOrgId</span><span class="p">(</span><span class="n">ctx</span> <span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span> <span class="n">val</span> <span class="kt">string</span><span class="p">)</span> <span class="p">([]</span><span class="o">*</span><span class="n">userv1</span><span class="o">.</span><span class="n">User</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">rows</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">r</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">QueryContext</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span>
+    <span class="s">`SELECT * FROM users WHERE org_id = ?`</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span> <span class="k">return</span> <span class="no">nil</span><span class="p">,</span> <span class="n">err</span> <span class="p">}</span>
+  <span class="k">defer</span> <span class="n">rows</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
+  <span class="n">items</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">scan</span><span class="o">.</span><span class="n">ScanRows</span><span class="p">[</span><span class="n">userv1</span><span class="o">.</span><span class="n">User</span><span class="p">](</span><span class="n">rows</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span> <span class="k">return</span> <span class="no">nil</span><span class="p">,</span> <span class="n">err</span> <span class="p">}</span>
+  <span class="n">out</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="o">*</span><span class="n">userv1</span><span class="o">.</span><span class="n">User</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">))</span>
+  <span class="k">for</span> <span class="n">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">items</span> <span class="p">{</span> <span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">items</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="p">}</span>
+  <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="no">nil</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="wiring-it-all-together">Wiring it all together</h3>
+
+<p>A single <code class="language-plaintext highlighter-rouge">protoc</code> invocation drives all three plugins, producing <code class="language-plaintext highlighter-rouge">.pb.go</code>, <code class="language-plaintext highlighter-rouge">_schema.sql</code>, and
+<code class="language-plaintext highlighter-rouge">_repo.go</code> in one pass:</p>
+
+<div class="language-makefile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">.PHONY</span><span class="o">:</span> <span class="nf">generate</span>
+<span class="nl">generate</span><span class="o">:</span>
+	protoc <span class="se">\</span>
+	  <span class="nt">--go_out</span><span class="o">=</span>gen  <span class="nt">--go_opt</span><span class="o">=</span><span class="nv">paths</span><span class="o">=</span>source_relative <span class="se">\</span>
+	  <span class="nt">--sql_out</span><span class="o">=</span>gen <span class="nt">--sql_opt</span><span class="o">=</span><span class="nv">paths</span><span class="o">=</span>source_relative <span class="se">\</span>
+	  <span class="nt">--repo_out</span><span class="o">=</span>gen <span class="nt">--repo_opt</span><span class="o">=</span><span class="nv">paths</span><span class="o">=</span>source_relative <span class="se">\</span>
+	  proto/user/v1/user.proto
+</code></pre></div></div>
+
+<p>A single <code class="language-plaintext highlighter-rouge">make generate</code> now produces all three artifacts from one <code class="language-plaintext highlighter-rouge">.proto</code> file.</p>
+
+<h3 id="using-the-generated-repository">Using the generated repository</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">repo</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">NewUserRepo</span><span class="p">(</span><span class="s">"app.db"</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span> <span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span> <span class="p">}</span>
+
+<span class="c">// Insert a new user.</span>
+<span class="n">err</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">userv1</span><span class="o">.</span><span class="n">User</span><span class="p">{</span>
+  <span class="n">Id</span><span class="o">:</span>          <span class="s">"u_123"</span><span class="p">,</span>
+  <span class="n">Email</span><span class="o">:</span>       <span class="s">"alice@example.com"</span><span class="p">,</span>
+  <span class="n">DisplayName</span><span class="o">:</span> <span class="s">"Alice"</span><span class="p">,</span>
+  <span class="n">OrgId</span><span class="o">:</span>       <span class="s">"org_456"</span><span class="p">,</span>
+<span class="p">})</span>
+
+<span class="c">// Look up by primary key.</span>
+<span class="n">user</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">repo</span><span class="o">.</span><span class="n">GetById</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="s">"u_123"</span><span class="p">)</span>
+
+<span class="c">// Look up by unique field.</span>
+<span class="n">user</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">GetByEmail</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="s">"alice@example.com"</span><span class="p">)</span>
+
+<span class="c">// List all users in an org.</span>
+<span class="n">users</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">repo</span><span class="o">.</span><span class="n">ListByOrgId</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="s">"org_456"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Every method, its signature, and its SQL query were derived entirely from the annotations in
+<code class="language-plaintext highlighter-rouge">user.proto</code> — no repository code was written by hand.</p>
+
+<h2 id="tradeoffs">Tradeoffs</h2>
+
+<p><strong>What you gain:</strong></p>
+
+<ul>
+  <li><strong>One file to rule them all</strong> — add a field to the proto, re-run <code class="language-plaintext highlighter-rouge">make generate</code>, done.</li>
+  <li><strong>No ORM magic</strong> — plain SQL queries, full visibility into what hits the DB.</li>
+  <li><strong>Embeddable binary</strong> — schema ships inside the binary via <code class="language-plaintext highlighter-rouge">//go:embed</code>.</li>
+  <li><strong>Natural relations</strong> — when two proto messages reference each other (e.g. <code class="language-plaintext highlighter-rouge">User</code> and <code class="language-plaintext highlighter-rouge">Org</code>),
+annotate both with <code class="language-plaintext highlighter-rouge">db_msg</code> and use an <code class="language-plaintext highlighter-rouge">index: true</code> field on the foreign key. Each message
+gets its own table and its own generated repository; joining them is a plain SQL query rather
+than a nested-message blob.</li>
+</ul>
+
+<p><strong>Watch out for:</strong></p>
+
+<ul>
+  <li><strong>Reflection cost</strong> — cache the column map for hot paths.</li>
+  <li><strong>Proto field numbers vs column order</strong> — proto field numbers are for wire encoding; column order
+in <code class="language-plaintext highlighter-rouge">SELECT *</code> is defined by DDL order. Keep them aligned or always name columns explicitly.</li>
+  <li><strong>Schema migrations</strong> — <code class="language-plaintext highlighter-rouge">CREATE TABLE IF NOT EXISTS</code> is idempotent for creation but won’t add new
+columns to an existing table. Use a migration tool like <strong>golang-migrate</strong> or <strong>Atlas</strong> for
+production schema evolution.</li>
+  <li><strong>Complex types</strong> — nested proto messages become <code class="language-plaintext highlighter-rouge">TEXT</code> (JSON-encoded). Fine for rarely-queried
+data; a poor fit for deeply queryable nested structures.</li>
+</ul>
+
+<h2 id="beyond-sqlite--porting-to-other-databases">Beyond SQLite — Porting to Other Databases</h2>
+
+<p>The same proto annotation trick extends beyond SQL. Point a different plugin at your <code class="language-plaintext highlighter-rouge">.proto</code> file
+and emit a MongoDB validator schema, a DynamoDB attribute map, or a Redis hash structure. The plugin
+ecosystem is the leverage point — the proto file stays the same regardless of where the data lands.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>The <code class="language-plaintext highlighter-rouge">.proto</code> file has always been the contract between services. This post extends that idea one
+step further: make it the contract between your code and your database too. A custom <code class="language-plaintext highlighter-rouge">protoc</code> plugin
+turns field annotations into DDL; a reflection-based scanner maps rows back to structs without
+manual binding; a second plugin generates the entire repository from the same source. The result is
+a system where adding a field, an index, or a new query method is a single edit in one file followed
+by <code class="language-plaintext highlighter-rouge">make generate</code> — no drift, no duplication, no boilerplate.</p>
+
+<hr />
+
+<p><strong>Disclaimer:</strong> My postings are my own and don’t necessarily represent Stripe’s positions, strategies or opinions.</p>
+
+                </div>
+            </section>
+
+            <!-- Email subscribe form at the bottom of the page -->
+            
+
+            <footer class="post-full-footer">
+                <!-- Everything inside the #author tags pulls data from the author -->
+                <!-- #author-->
+                
+                
+                    
+                    
+                        
+                    
+                        
+                            <section class="author-card">
+                                
+                                    <img class="author-profile-image" src="/assets/images/venilnoronha.png" alt="venilnoronha" />
+                                
+                                <section class="author-card-content">
+                                    <h4 class="author-card-name">
+                                        
+                                            <a href="/about/">Venil Noronha</a>
+                                        
+                                    </h4>
+                                    
+                                        <p>Software architecture, service mesh, microservices, and more...</p>
+                                    
+                                    
+                                        <p style="margin-top: 2px;">
+                                            <a href="https://github.com/venilnoronha" target="_blank" rel="noopener">GitHub</a> |
+                                            
+                                            <a href="https://twitter.com/venilnoronha" target="_blank" rel="noopener">Twitter</a> |
+                                            
+                                            <a href="https://linkedin.com/in/venilnoronha" target="_blank" rel="noopener">LinkedIn</a>
+                                        </p>
+                                    
+                                </section>
+                            </section>
+                        
+                    
+                
+                    
+                    
+                        
+                            <section class="author-card">
+                                
+                                    <img class="author-profile-image" src="/assets/images/claude-code.png" alt="claude-code" />
+                                
+                                <section class="author-card-content">
+                                    <h4 class="author-card-name">
+                                        
+                                            <a href="https://claude.ai/code" target="_blank" rel="noopener">Claude Code</a>
+                                        
+                                    </h4>
+                                    
+                                        <p>AI coding assistant by Anthropic.</p>
+                                    
+                                    
+                                </section>
+                            </section>
+                        
+                    
+                        
+                    
+                
+                
+                    
+                    
+                        
+                    
+                        
+                            <div class="post-full-footer-right">
+                                <a class="author-card-button" href="/author/venilnoronha">Read More</a>
+                            </div>
+                        
+                    
+                
+                    
+                    
+                        
+                    
+                        
+                    
+                
+                <!-- /author  -->
+            </footer>
+
+            <!-- If you use Disqus comments, just uncomment this block.
+            The only thing you need to change is "test-apkdzgmqhj" - which
+            should be replaced with your own Disqus site-id. -->
+            
+                <section class="post-full-comments">
+                    <div id="disqus_thread"></div>
+                </section>
+            
+
+        </article>
+
+    </div>
+</main>
+
+<!-- Links to Previous/Next posts -->
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+            
+                
+                
+                
+                
+                    <article class="read-next-card"
+                        
+                            style="background-image: url(/assets/images/blog-cover.jpg)"
+                        
+                    >
+                        <header class="read-next-card-header">
+                            <small class="read-next-card-header-sitetitle">&mdash; Venil Noronha &mdash;</small>
+                            
+                                <h3 class="read-next-card-header-title"><a href="/tag/distributed-systems/">Distributed systems</a></h3>
+                            
+                        </header>
+                        <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
+</div>
+                        <div class="read-next-card-content">
+                            <ul>
+                                
+                                
+                                  
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/introduction-to-original-destination-in-envoy">Introduction to Original Destination in Envoy</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/a-beginners-guide-to-authn-and-authz-with-istio">A Beginner's Guide to AuthN and AuthZ with Istio</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/a-simple-state-machine-framework-in-go">A Simple State Machine Framework in Go</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                            </ul>
+                        </div>
+                        <footer class="read-next-card-footer">
+                            <a href="/tag/distributed-systems/">
+                                
+                                    See all 14 posts  →
+                                
+                            </a>
+                        </footer>
+                    </article>
+                
+            
+
+            <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
+            
+
+            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+    <article class="post-card post-template">
+        
+            <a class="post-card-image-link" href="/introduction-to-original-destination-in-envoy">
+                <div class="post-card-image" style="background-image: url(/assets/images/2021-06-25-introduction-to-original-destination-in-envoy/banner.jpg)"></div>
+            </a>
+        
+        <div class="post-card-content">
+            <a class="post-card-content-link" href="/introduction-to-original-destination-in-envoy">
+                <header class="post-card-header">
+                    
+                        
+                            
+                                <span class="post-card-tags">Distributed systems</span>
+                            
+                        
+                    
+
+                    <h2 class="post-card-title">Introduction to Original Destination in Envoy</h2>
+                </header>
+                <section class="post-card-excerpt">
+                    <p>Envoy is a service mesh proxy with a ton of built-in capabilities. In this post, I’ll be discussing the Original Destination feature in Envoy. Read it on Medium Disclaimer: My postings are my</p>
+                </section>
+            </a>
+            <footer class="post-card-meta">
+                
+                    
+                
+                    
+                        
+                        <img class="author-profile-image" src="/assets/images/venilnoronha.png" alt="Venil Noronha" />
+                        
+                        <span class="post-card-author">
+                            
+                                <a href="/about/">Venil Noronha</a>
+                            
+                        </span>
+                    
+                
+            </footer>
+        </div>
+    </article>
+
+            
+
+        </div>
+    </div>
+</aside>
+
+<!-- Floating header which appears on-scroll, included from includes/floating-header.hbs -->
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="https://venilnoronha.io/">
+            
+                <img src="/assets/images/favicon.png" alt="Venil Noronha icon" />
+            
+            <span>Venil Noronha</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">&mdash;</span>
+    <div class="floating-header-title">Dead Reckoning for Databases</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
+</svg>
+</div>
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Dead+Reckoning+for+Databases&amp;url=https://venilnoronha.io/dead-reckoning-for-databases"
+            onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+
+        </a>
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://venilnoronha.io/dead-reckoning-for-databases"
+            onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
+
+        </a>
+    </div>
+    <progress class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+<!-- /post -->
+
+<!-- The #contentFor helper here will send everything inside it up to the matching #block helper found in default.hbs -->
+
+
+        <!-- Previous/next page links - displayed on every page -->
+        
+
+        <!-- The footer at the very bottom of the screen -->
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="https://venilnoronha.io/">Venil Noronha</a> &copy; 2026</section>
+                <section class="poweredby">Proudly published with <a href="https://jekyllrb.com/">Jekyll</a> &
+                    <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> using
+                    <a href="https://github.com/jekyller/jasper2" target="_blank" rel="noopener">Jasper2</a></section>
+                <nav class="site-footer-nav">
+                    <a href="https://github.com/venilnoronha" target="_blank" rel="noopener">GitHub</a>
+                    
+                    <a href="https://twitter.com/venilnoronha" target="_blank" rel="noopener">Twitter</a>
+                    
+                    <a href="https://linkedin.com/in/venilnoronha" target="_blank" rel="noopener">LinkedIn</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- The big email subscribe modal content -->
+    
+
+    <!-- highlight.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.10.0/components/prism-abap.min.js"></script>
+    <script>$(document).ready(function() {
+      $('pre code').each(function(i, block) {
+        hljs.highlightBlock(block);
+      });
+    });</script>
+
+    <!-- jQuery + Fitvids, which makes all video embeds responsive -->
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="https://demo.ghost.io/assets/js/jquery.fitvids.js?v=724281a32e"></script>
+
+
+    <!-- Paginator increased to "infinit" in _config.yml -->
+    <!-- if paginator.posts  -->
+    <!-- <script>
+        var maxPages = parseInt('');
+    </script>
+    <script src="/assets/js/infinitescroll.js"></script> -->
+    <!-- /endif -->
+
+    
+
+    <!-- The #block helper will pull in data from the #contentFor other template files. In this case, there's some JavaScript which we only want to use in post.hbs, but it needs to be included down here, after jQuery has already loaded. -->
+    
+        <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+});
+</script>
+
+    
+
+    <!-- Ghost outputs important scripts and data with this tag - it should always be the very last thing before the closing body tag -->
+    <!-- ghost_foot -->
+
+<!-- Add cookie consent  -->
+<style>
+    #cookie-notice {padding: 0.5rem 1rem; display: none; text-align: center; position: fixed; bottom: 0; width: 100%; background: #222; color: rgba(255,255,255,0.8); z-index: 2147483647;}
+    #cookie-notice a {display: inline-block; cursor: pointer; margin-left: 0.5rem;}
+    #cookie-notice em {font-style:normal;}
+    @media (max-width: 767px) {
+        #cookie-notice span {display: block; padding-top: 3px; margin-bottom: 1rem;}
+        #cookie-notice a {position: relative; bottom: 4px;}
+        #cookie-notice em {position: relative; bottom: 4px;}
+    }
+</style>
+<div id="cookie-notice"><span>We would like to use third party cookies and scripts to improve the functionality of this website.</span><a id="cookie-notice-accept" class="btn btn-primary btn-sm">Approve</a><em> |</em><a href="/privacy" class="btn btn-primary btn-sm">More info</a></div><script>
+    function createCookie(name,value,days) {
+        var expires = "";
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime() + (days*24*60*60*1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + value + expires + "; path=/";
+    }
+    function readCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0;i < ca.length;i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1,c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+        }
+        return null;
+    }
+    function eraseCookie(name) {
+        createCookie(name,"",-1);
+    }
+
+    if(readCookie('cookie-notice-dismissed')=='true') {
+        var script = document.createElement('script');
+script.src = 'https://www.googletagmanager.com/gtag/js?id=G-PP90X6NKJH';
+script.async = true;
+document.head.appendChild(script);
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-PP90X6NKJH');
+
+        if (!!document.getElementById('disqus_thread')) {
+
+    var disqus_config = function () {
+        this.page.url = "https://venilnoronha.io/dead-reckoning-for-databases";
+        this.page.identifier = "Dead Reckoning for Databases";
+    };
+
+    (function() {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://venilnoronha-io.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+}
+
+    } else {
+        document.getElementById('cookie-notice').style.display = 'block';
+    }
+    document.getElementById('cookie-notice-accept').addEventListener("click",function() {
+        createCookie('cookie-notice-dismissed','true',31);
+        document.getElementById('cookie-notice').style.display = 'none';
+        location.reload();
+    });
+
+</script>
+
+</body>
+</html>

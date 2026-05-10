@@ -8,6 +8,22 @@
     
       
       <item>
+        <title>Dead Reckoning for Databases</title>
+        
+          <description>&lt;p&gt;One file. One source of truth. Write a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.proto&lt;/code&gt; message, get a database table and type-safe Go
+bindings.&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Sat, 09 May 2026 00:00:00 +0000</pubDate>
+        <link>
+        https://venilnoronha.io/dead-reckoning-for-databases</link>
+        <guid isPermaLink="true">https://venilnoronha.io/dead-reckoning-for-databases</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>Introduction to Original Destination in Envoy</title>
         
           <description>&lt;p&gt;&lt;a href=&quot;https://envoyproxy.io&quot;&gt;Envoy&lt;/a&gt; is a service mesh proxy with a ton of built-in
