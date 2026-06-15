@@ -19,6 +19,8 @@ subclass: 'post page'
   }
 </style>
 
+<span class="date">Jun 2026 |</span> **Stripe Fireside Chat** &nbsp;
+
 <span class="date">Jun 2025 |</span> **Open Source Summit Europe** &nbsp;
   [program committee](https://www.credly.com/badges/c7ef70d6-457f-4007-9e46-23607c29a8bf)
 
