@@ -19,6 +19,9 @@ subclass: 'post page'
   }
 </style>
 
+<span class="date">Aug 2026 |</span> **Open Source Summit + Embedded Linux Conference Europe** &nbsp;
+  [program committee](https://www.credly.com/badges/1c343818-5c1c-494e-a31a-4ddafce876ec/public_url)
+
 <span class="date">Jun 2026 |</span> **Open Source Summit Korea** &nbsp;
   [program committee](https://www.credly.com/badges/fb5f765e-5f5d-4721-8eec-bf118d273a9c)
 
